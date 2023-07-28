@@ -1,0 +1,3098 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-8665",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateLogin - missing login, it will return the related errCode",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "10",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "login": null,
+            "custom": "NINGBO",
+            "merchantCustomNumber": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "200",
+            "subOrderId": "S12214125",
+            "orderAmount": "10",
+            "transportAmount": "10",
+            "productAmount": "10",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "errorCode": "NE1012",
+                "errorDesc": "Missing parameter - login",
+                "respcode": "01",
+                "respdesc": "Missing parameter - login"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8671",
+        "OD": "Test CHINA - Customs Declaration for Alipay, validatePass - incorrect pass, it will return the related errCode",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "10",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "pass": "abc",
+            "custom": "NINGBO",
+            "merchantCustomNumber": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "200",
+            "subOrderId": "S12214125",
+            "orderAmount": "10",
+            "transportAmount": "10",
+            "productAmount": "10",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8668",
+        "OD": "Test CHINA - Customs Declaration for Alipay, validatePass - missing pass, it will return the related errCode",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "10",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "Nttrefid": "#Contains-1",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "nttrefid",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "pass": null,
+            "custom": "NINGBO",
+            "merchantCustomNumber": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "200",
+            "subOrderId": "S12214125",
+            "orderAmount": "10",
+            "transportAmount": "10",
+            "productAmount": "10",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "errorCode": "NE1013",
+                "errorDesc": "Missing parameter - pass",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Missing parameter - pass"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8674",
+        "OD": "Test CHINA - Customs Declaration for Alipay, validateSignature - missing signature, it will return the related errCode",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "10",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "signature": "skip",
+            "custom": "NINGBO",
+            "merchantCustomNumber": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "200",
+            "subOrderId": "S12214125",
+            "orderAmount": "10",
+            "transportAmount": "10",
+            "productAmount": "10",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "errorCode": "NE1026",
+                "errorDesc": "Missing parameter - signature",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Missing parameter - signature"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8677",
+        "OD": "Test CHINA - Customs Declaration for Alipay, validateSignature - incorrect signature, it will return the related errCode",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "10",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "signature": "abc",
+            "custom": "NINGBO",
+            "merchantCustomNumber": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "200",
+            "subOrderId": "S12214125",
+            "orderAmount": "10",
+            "transportAmount": "10",
+            "productAmount": "10",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8678",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateNttrefid - missing nttrefid, it will return NE1018",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "10",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "nttrefid": "",
+            "custom": "NINGBO",
+            "merchantCustomNumber": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "200",
+            "subOrderId": "S12214125",
+            "orderAmount": "10",
+            "transportAmount": "10",
+            "productAmount": "10",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE1018",
+                "errorDesc": "Missing parameter - nttrefid",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Missing parameter - nttrefid",
+                "signature": "eca151a4561eae412545b6aad4cd573e925edd0c7917c4d72075125da3e5e1916ec15f54fbf0b6a07e0fa7dd13997bf3cc324b8ae2b5af117c3d0df9bb4bf7aa"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8681",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateCustom - missing custom, it will return NE1120",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "Nttrefid": "#Contains-1",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "nttrefid",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom1": "NINGBO",
+            "merchantCustomNumber": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "10",
+            "subOrderId": "S12214125",
+            "orderAmount": "200",
+            "transportAmount": "200",
+            "productAmount": "100",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE1120",
+                "errorDesc": "Missing parameter - custom",
+                "login": "NTT_AUTO",
+                "nttrefid": "942320214",
+                "respcode": "01",
+                "respdesc": "Missing parameter - custom"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8682",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateMerchantCustomNumber - missing merchantCustomNumber, it will return NE1121",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "Nttrefid": "#Contains-1",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "nttrefid",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber1": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "10",
+            "subOrderId": "S12214125",
+            "orderAmount": "200",
+            "transportAmount": "200",
+            "productAmount": "100",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "errorCode": "NE1121",
+                "errorDesc": "Missing parameter - merchantCustomNumber",
+                "login": "NTT_AUTO",
+                "nttrefid": "942320215",
+                "respcode": "01",
+                "respdesc": "Missing parameter - merchantCustomNumber"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8683",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateMerchantCustomNumber - missing merchantCustomNumber, it will return NE1121",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "123456789012345678901",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "10",
+            "subOrderId": "S12214125",
+            "orderAmount": "200",
+            "transportAmount": "200",
+            "productAmount": "100",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE1122",
+                "errorDesc": "Invalid parameter - merchantCustomNumber",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Invalid parameter - merchantCustomNumber",
+                "signature": "0a9f2d8b85b78ee6c75fa11a91dc17e6252ffb58c74a2c06f51c6af735edc1531276a60c6e389d837312c156826bfb1e17b139dd4d2728489d8f58083bdd1120"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8684",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateSubOrderID - missing subOrderID, it will return NE1123",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "10",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "10",
+            "subOrderId": "",
+            "orderAmount": "200",
+            "transportAmount": "200",
+            "productAmount": "100",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE1123",
+                "errorDesc": "Missing parameter - subOrderId",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Missing parameter - subOrderId",
+                "signature": "39e2e0469206996b9a7310b0aeec3c37643055bcca151d747e8945515b09f2dd599c21ae60e8cd0bb9d7a6f90d549f13b4a365e323eb5f0d932301b1b391fba3"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8688",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateSubOrderID - subOrderID>32,it will return NE1124",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "10",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "10",
+            "subOrderId": "123456789012345678901234567890123",
+            "orderAmount": "200",
+            "transportAmount": "200",
+            "productAmount": "100",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE1124",
+                "errorDesc": "Invalid parameter - subOrderId",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Invalid parameter - subOrderId",
+                "signature": "6112a13cc8ebef679424a8121686f5237c64706cae2503b9225c045f100453d89c4694d1566987820b6c443a1eada31afdee671e477c7ed41eae381f0c200c5f"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8690",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateOrderAmount - missing orderAmount, it will return NE1125",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "10",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "10",
+            "subOrderId": "1",
+            "orderAmount": "",
+            "transportAmount": "200",
+            "productAmount": "100",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE1125",
+                "errorDesc": "Missing parameter - orderAmount",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Missing parameter - orderAmount",
+                "signature": "689efe5f684c89dc599bfee54ac6a7d24173b725987ae2f07c3dc8c490ef4d1588f98a92c6e5bcae827e4a9ead8b2d52a8b9ba138e6d2daf9cd93ba2ed65db2a"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8692",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateTransportAmount - missing transportAmount, it will return NE1126",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "10",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "10",
+            "subOrderId": "1",
+            "orderAmount": "10",
+            "transportAmount": "",
+            "productAmount": "100",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE1126",
+                "errorDesc": "Missing parameter - transportAmount",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Missing parameter - transportAmount",
+                "signature": "1abb45de9d81fb650c7e19b52cd38e00bb0fd22fdd567b69ac208b4396cffd8e0de79c34c44d2378c992523c43296d7eadb097f32133373593dc21db7c76311e"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8693",
+        "OD": "Test CHINA - Customs Declaraton for Alipay，validateProductAmount - missing productAmount, it will return NE1127",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "10",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "10",
+            "subOrderId": "1",
+            "orderAmount": "10",
+            "transportAmount": "10",
+            "productAmount": "",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE1127",
+                "errorDesc": "Missing parameter - productAmount",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Missing parameter - productAmount",
+                "signature": "ac9fc3d4e1968c179a293d56790b138a34f3719a50f0c21574b8a7b332848b256eb6b7f760978bde16ba4aa08f3114f179f20e40f323cd028ac393eb664167fd"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8695",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateOrderAmount - orderAmount not equal to transportAmount + productAmount, it will return NE1128",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "200",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "200",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "63463",
+            "dutyAmount": "200",
+            "subOrderId": "S12214125",
+            "orderAmount": "200",
+            "transportAmount": "100",
+            "productAmount": "300",
+            "certType": "",
+            "certNo": "",
+            "certName": "",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE1128",
+                "errorDesc": "Invalid parameter - orderAmount",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Invalid parameter - orderAmount",
+                "signature": "9db4cb74a514bb355e05394fd81e94e07d8576f779fe6f3558bf9d7fa2dfb770698f316c01f504b2776b55ecee09c141dc219e5feb01535af35839d7681f2bec"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8697",
+        "OD": "Test CHINA - Customs Declaration for Alipay, If transaction not found in transaction _log table, it will return NE3027",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "customDeclare-customDeclare"
+        ],
+        "customDeclare": {
+            "nttrefid": "99999999",
+            "custom": "NINGBO",
+            "merchantCustomNumber": "63463",
+            "dutyAmount": "200",
+            "subOrderId": "S12214125",
+            "orderAmount": "200",
+            "transportAmount": "100",
+            "productAmount": "100",
+            "certType": "",
+            "certNo": "",
+            "certName": "",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE3027",
+                "errorDesc": "Transaction not found",
+                "login": "NTT_AUTO",
+                "nttrefid": "99999999",
+                "respcode": "01",
+                "respdesc": "Related transaction not found",
+                "signature": "57d5ad97f1d450ccc4d5f1723cb4784983f54e7e203cc94f0d3c5887f08b7b83768711d4e3368c9668cde132a893ee534a5bfeee115ad3b600fbda7c227d9d79"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8700",
+        "OD": "Test CHINA - Customs Declaration for Alipay，If channelType is not wechatpay or alipay or unionpay, it will return NE3036",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "210",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "N",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "udf5": "udf5 - uat",
+                "amt": "210",
+                "txncurr": "HKD",
+                "channelType": "cybs",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "respcode": "00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "auth_code": "831000",
+                "respdesc": "success",
+                "proc_code": "100",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCaptureStatus",
+                "manualCapture",
+                "udf5",
+                "amt",
+                "txncurr",
+                "channelType",
+                "udf3",
+                "udf4",
+                "respcode",
+                "login",
+                "udf1",
+                "udf2",
+                "auth_code",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "63463",
+            "dutyAmount": "200",
+            "subOrderId": "S12214125",
+            "orderAmount": "200",
+            "transportAmount": "100",
+            "productAmount": "100",
+            "certType": "",
+            "certNo": "",
+            "certName": "",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE3036",
+                "errorDesc": "The processor of the transaction does not support custom declaration.",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "The processor of the transaction does not support custom declaration.",
+                "signature": "fd203165b6dc337a0858ef0c2d83edffe70ddd8a869b53c6e3e48c3ccb3e51b93e05c0dde1769082cbedfb252852d2990326799557f104b2a9d06d772590e2a3"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8702",
+        "OD": "Test CHINA - Customs Declaration for Alipay，if transaction state is not OK, it will return NE3034",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "200",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "200",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "63463",
+            "dutyAmount": "200",
+            "subOrderId": "S12214125",
+            "orderAmount": "200",
+            "transportAmount": "100",
+            "productAmount": "100",
+            "certType": "",
+            "certNo": "",
+            "certName": "",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "errorCode": "NE3034",
+                "errorDesc": "Transaction state is invalid for declaration",
+                "login": "NTT_AUTO",
+                "respcode": "01",
+                "respdesc": "Transaction not available for declaration",
+                "signature": "5b5fe28138685186f5dbbaa40df36ac699ee71969b51e75cd3e06d055250ddc182fda446d37fb12403a2ac76b57526e5514b7387732edf89c9ef0c9fa88b88d4"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    }
+]

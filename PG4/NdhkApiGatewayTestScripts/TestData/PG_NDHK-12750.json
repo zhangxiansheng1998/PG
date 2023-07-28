@@ -1,0 +1,502 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-14044",
+        "OD": "When minPayAmount = 10, try to complete full point redemption via /v2/paymentLinks and rewards redeem page, where amount = 1500",
+        "merchantId": "nttstargate1",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "frontend_cybsDB-CheckDB",
+            "createPaymentLinkV2ApiKey-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-CheckDB1"
+        ],
+        "CheckDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": " merchant_config",
+                        "columnNames": [
+                            "feature_config"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id ='NTT_STARGATE_1'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "feature_config": "#Contains-\"pointPaymentFeatures\": {\"haseCashDollar\": {\"enabled\": true, \"multipleUp\": true, \"useMerchantDollar\": false}"
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "transactionId": "generate",
+            "amount": "1500",
+            "transactionCurrency": "HKD",
+            "paymentMode": "PURCHASE",
+            "orderDescription": "測試 Cash dollar",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/6e874a84-fb36-4ad9-831b-2f49d43a906a",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "hasecardinstalment",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4012000077777777",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "100",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "name",
+                    "value": "du",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "status",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "amounttxt",
+                    "byValue": "//*[@id=\"resultPage-amount-key\"]"
+                },
+                {
+                    "elementName": "amount",
+                    "byValue": "//*[@id=\"resultPage-amount-value\"]"
+                },
+                {
+                    "elementName": "Txnidtxt",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Nttrefidtxt",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "Datetxt",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                },
+                {
+                    "elementName": "Order_Amount_txt",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[1]/div[1]"
+                },
+                {
+                    "elementName": "Order_Amount",
+                    "byValue": "//*[@id=\"resultPage-orderAmount\"]"
+                },
+                {
+                    "elementName": "cash_dollar_txt",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[2]/div[1]"
+                },
+                {
+                    "elementName": "cash_dollar",
+                    "byValue": "//*[@id=\"resultPage-cashDollarAmt\"]"
+                },
+                {
+                    "elementName": "Net_Payment_Amount_txt",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[3]/div[1]"
+                },
+                {
+                    "elementName": "Net_Payment_Amount",
+                    "byValue": "//*[@id=\"resultPage-netAmount\"]"
+                },
+                {
+                    "elementName": "Hang_Seng_Cash_Dollars",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div[2]/div[1]/b"
+                }
+            ],
+            "expectedResult": {
+                "status": "Payment Successful",
+                "amounttxt": "Amount:",
+                "amount": "HKD 15.00",
+                "Txnidtxt": "Transaction ID:",
+                "Txnid": "#Contains-1",
+                "Nttrefidtxt": "Gateway Reference Number:",
+                "Nttrefid": "#Contains-1",
+                "Datetxt": "Date:",
+                "Date": "#Contains-202",
+                "Order_Amount_txt": "Order Amount:",
+                "Order_Amount": "HKD 15.00",
+                "cash_dollar_txt": "Cash Dollars used:",
+                "cash_dollar": "- $ 14.00",
+                "Net_Payment_Amount_txt": "Net Amount:",
+                "Net_Payment_Amount": "HKD 1.00",
+                "Hang_Seng_Cash_Dollars": "Hang Seng Cash Dollars:"
+            }
+        },
+        "CheckDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-14042",
+        "OD": "When minPayAmount = 10, try to complete full point redemption via /v2/paymentLinks and rewards redeem page, where amount = 1410",
+        "merchantId": "nttstargate1",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "frontend_cybsDB-CheckDB",
+            "createPaymentLinkV2ApiKey-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-CheckDB1"
+        ],
+        "CheckDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": " merchant_config",
+                        "columnNames": [
+                            "feature_config"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id ='NTT_STARGATE_1'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "feature_config": "#Contains-\"pointPaymentFeatures\": {\"haseCashDollar\": {\"enabled\": true, \"multipleUp\": true, \"useMerchantDollar\": false"
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "transactionId": "generate",
+            "amount": "1410",
+            "transactionCurrency": "HKD",
+            "paymentMode": "PURCHASE",
+            "orderDescription": "測試 Cash dollar",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/6e874a84-fb36-4ad9-831b-2f49d43a906a",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "hasecardinstalment",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4012000077777777",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "100",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "name",
+                    "value": "du",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "status",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "amounttxt",
+                    "byValue": "//*[@id=\"resultPage-amount-key\"]"
+                },
+                {
+                    "elementName": "amount",
+                    "byValue": "//*[@id=\"resultPage-amount-value\"]"
+                },
+                {
+                    "elementName": "Txnidtxt",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Nttrefidtxt",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "Datetxt",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                },
+                {
+                    "elementName": "Order_Amount_txt",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[1]/div[1]"
+                },
+                {
+                    "elementName": "Order_Amount",
+                    "byValue": "//*[@id=\"resultPage-orderAmount\"]"
+                },
+                {
+                    "elementName": "cash_dollar_txt",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[2]/div[1]"
+                },
+                {
+                    "elementName": "cash_dollar",
+                    "byValue": "//*[@id=\"resultPage-cashDollarAmt\"]"
+                },
+                {
+                    "elementName": "Net_Payment_Amount_txt",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[3]/div[1]"
+                },
+                {
+                    "elementName": "Net_Payment_Amount",
+                    "byValue": "//*[@id=\"resultPage-netAmount\"]"
+                },
+                {
+                    "elementName": "Hang_Seng_Cash_Dollars",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div[2]/div[1]"
+                }
+            ],
+            "expectedResult": {
+                "status": "Payment Successful",
+                "amounttxt": "Amount:",
+                "amount": "HKD 14.10",
+                "Txnidtxt": "Transaction ID:",
+                "Txnid": "#Contains-1",
+                "Nttrefidtxt": "Gateway Reference Number:",
+                "Nttrefid": "#Contains-1",
+                "Datetxt": "Date:",
+                "Date": "#Contains-202",
+                "Order_Amount_txt": "Order Amount:",
+                "Order_Amount": "HKD 14.10",
+                "cash_dollar_txt": "Cash Dollars used:",
+                "cash_dollar": "- $ 14.00",
+                "Net_Payment_Amount_txt": "Net Amount:",
+                "Net_Payment_Amount": "HKD 0.10",
+                "Hang_Seng_Cash_Dollars": "Hang Seng Cash Dollars:"
+            }
+        },
+        "CheckDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

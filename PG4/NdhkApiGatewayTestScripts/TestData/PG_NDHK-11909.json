@@ -1,0 +1,170 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-12984",
+        "OD": "Verify NTTerrorcode is displayed when transactionCurrency is invalid in request.",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-purchase",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "purchase": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "amount": "100",
+            "transactionCurrency": "RandomTxncurr",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "returnUrl": "https://www.merchant.com/return",
+            "callbackUrl": "https://www.merchant.com/callback",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "errorCode": "NE1207",
+                "errorDescription": "Invalid parameter - transactionCurrency",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "userData27",
+                            "userData28"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL",
+                            "stage": "Transaction Failed",
+                            "userData27": "NE1207",
+                            "userData28": "Invalid parameter - transactionCurrency"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "/api/v2/transactions request from NTT_V2_AUTO to NTT with RandomTxncurr"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "/api/v2/transactions response from NTT to NTT_V2_AUTO with RandomTxncurr"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    }
+]

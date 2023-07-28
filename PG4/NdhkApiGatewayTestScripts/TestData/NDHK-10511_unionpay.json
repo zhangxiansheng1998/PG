@@ -1,0 +1,953 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-10610",
+        "OD": "Hosted Page UnionPay Processing",
+        "merchantId": "nttm3",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "host_page_processor_routing",
+                        "columnNames": [
+                            "channel_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "channel_type = 'unionpay'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "channel_type": "unionpay"
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "CNY",
+            "od": "Testing - Pengfei",
+            "selectedMethod": "unionpay",
+            "urlExpiryDate": "CurrentTime",
+            "isAllowSelection": false,
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Pengfei",
+            "expectedResult": {
+                "respdesc": "success",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "respcode"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "6250947000000014",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_16"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "user_data_16": "#Contains-http"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "create payment link request from NTT_M_3 to NTT with CNY"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "respdesc=success",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "create payment link response from NTT to NTT_M_3 with CNY"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10611",
+        "OD": "Hosted Page UnionPay Processing",
+        "merchantId": "nttm3",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "host_page_processor_routing",
+                        "columnNames": [
+                            "channel_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "channel_type = 'unionpay'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "channel_type": "unionpay"
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "USD",
+            "od": "Testing - Pengfei",
+            "selectedMethod": "unionpay",
+            "urlExpiryDate": "CurrentTime",
+            "isAllowSelection": false,
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Pengfei",
+            "expectedResult": {
+                "respdesc": "success",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "respcode"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cardNumber",
+                    "value": "6250947000000014",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "btnNext",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "expireMonth",
+                    "value": "12",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "expireYear",
+                    "value": "33",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvn2",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "btnGetCode",
+                    "value": null,
+                    "waitingTime": "3000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "name",
+                    "byValue": "smsCode",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "isCheckAgreement",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "btnCardPay",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_16"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "user_data_16": "#Contains-http"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "create payment link request from NTT_M_3 to NTT with USD"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "respdesc=success",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "create payment link response from NTT to NTT_M_3 with USD"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10612",
+        "OD": "Hosted Page UnionPay Processing",
+        "merchantId": "nttm3auto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "host_page_processor_routing",
+                        "columnNames": [
+                            "channel_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "channel_type = 'unionpay'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "channel_type": "unionpay"
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "Testing - Pengfei",
+            "selectedMethod": "unionpay",
+            "urlExpiryDate": "CurrentTime",
+            "isAllowSelection": false,
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Pengfei",
+            "expectedResult": {
+                "respdesc": "success",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "respcode"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "react-tabs-2",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "6250946000000016",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "mobile-number",
+                    "value": "12345678912",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "email",
+                    "value": "test@123.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_16"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "user_data_16": "#Contains-http"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "create payment link request from NTT_M_3_AUTO to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "respdesc=success",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "create payment link response from NTT to NTT_M_3_AUTO with HKD"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10613",
+        "OD": "Hosted Page UnionPay Processing",
+        "merchantId": "nttm3auto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "host_page_processor_routing",
+                        "columnNames": [
+                            "channel_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "channel_type = 'unionpay'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "channel_type": "unionpay"
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "Testing - Pengfei",
+            "selectedMethod": "unionpay",
+            "urlExpiryDate": "CurrentTime",
+            "isAllowSelection": false,
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Pengfei",
+            "expectedResult": {
+                "respdesc": "success",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "respcode"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "6250947000000014",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "mobile-number",
+                    "value": "12345678912",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_16"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "user_data_16": "#Contains-http"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "create payment link request from NTT_M_3_AUTO to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "respdesc=success",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "create payment link response from NTT to NTT_M_3_AUTO with HKD"
+                    ]
+                }
+            }
+        }
+    }
+]

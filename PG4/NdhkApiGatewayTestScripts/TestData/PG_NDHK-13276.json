@@ -1,0 +1,407 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-15025",
+        "OD": "Cybs - Card - isStoreToken",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2transactions",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsDB-cybsDB3"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "HKD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "paymentMethod": "card",
+            "channelType": "cybs",
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "isAuthentication": false,
+            "isStoreToken": true,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelType": "cybs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "100",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenization": {
+                    "cardBrand": "VISA",
+                    "cardHolderName": "John Doe",
+                    "expiryMonth": "12",
+                    "expiryYear": "2033",
+                    "maskedCardNumber": "401200XXXXXX7777",
+                    "responseCode": "00",
+                    "tokenProvider": "GATEWAY"
+                },
+                "transactionCurrency": "HKD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "tokenization",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_iin_mapping",
+                        "columnNames": [
+                            "card_property"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "provider='ndhk' and start_range='400000000' and end_range='499999999'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "card_property": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "alias",
+                            "merchantid",
+                            "status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "alias": "401200XXXXXX7777",
+                            "merchantid": "NTT_V2_AUTO",
+                            "status": "CREATED"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-15027",
+        "OD": "For v2/transactions, when isStoreToken is true, if expiry Month format is wrong in carddata,return Invalid Expiry Date",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2transactions",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "HKD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "paymentMethod": "card",
+            "channelType": "cybs",
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oOFnGfQxjPEpbKw4plVZEkE=|John Doe|CC|VISA",
+            "isAuthentication": false,
+            "isStoreToken": true,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "PE4013",
+                "errorDescription": "API format error - invalid data by merchants",
+                "processorCode": "102",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-15028",
+        "OD": "For v2/transactions, when isStoreToken is true, if expiry Year format is wrong in carddata,return Invalid Expiry Date",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2transactions",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "HKD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "paymentMethod": "card",
+            "channelType": "cybs",
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oJZ3yYZhuuYrh8phRxDky1g=|John Doe|CC|VISA",
+            "isAuthentication": false,
+            "isStoreToken": true,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "PE4013",
+                "errorDescription": "API format error - invalid data by merchants",
+                "processorCode": "102",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-15029",
+        "OD": "For v2/transactions, when isStoreToken is true, if missing expiry Month in carddata,return Invalid carddata",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2transactions",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "HKD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "paymentMethod": "card",
+            "channelType": "cybs",
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oCEiwMZkd7TJQB1dp3R56yM=|John Doe|CC|VISA",
+            "isAuthentication": false,
+            "isStoreToken": true,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "PE4011",
+                "errorDescription": "API format error - missing mandatory fields by merchants",
+                "processorCode": "101",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-15030",
+        "OD": "For v2/transactions, when isStoreToken is true, if missing expiry Year in carddata,return Invalid carddata",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2transactions",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "HKD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "paymentMethod": "card",
+            "channelType": "cybs",
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oFTGZyYHR/IG8qcEhQy5r80=|John Doe|CC|VISA",
+            "isAuthentication": false,
+            "isStoreToken": true,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "PE4011",
+                "errorDescription": "API format error - missing mandatory fields by merchants",
+                "processorCode": "101",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-15031",
+        "OD": "For v2/transactions, when isStoreToken is true, if expiry Year is 2020 in carddata,return Invalid carddata",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2transactions",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "HKD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "paymentMethod": "card",
+            "channelType": "cybs",
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oGP3i4x1aqkjxJiOP/KhmLA=|John Doe|CC|VISA",
+            "isAuthentication": false,
+            "isStoreToken": true,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "AE0017",
+                "errorDescription": "Invalid Expiry Date",
+                "processorCode": "202",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    }
+]

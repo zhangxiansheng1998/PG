@@ -1,0 +1,2301 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-15147",
+        "OD": "Verify post full refund /v2/refund success with Oauth token(Master_Merchant) ,apikey,signature , Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsDB-cybsDB3"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "oauth_client_details",
+                        "columnNames": [
+                            "client_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "client_name = 'NTT_MASTER'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "client_type": "MASTER_MERCHANT"
+                        }
+                    ]
+                }
+            }
+        },
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "100",
+                "processorCode": "000",
+                "remainingAmount": "0",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "refund_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": "000",
+                            "resp_msg": "SUCCESS",
+                            "currency": "TWD",
+                            "refund_status": "OK",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_25"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Completed",
+                            "user_data_25": "Fully_Refunded"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15148",
+        "OD": "Verify post partial refund /v2/refund success with Oauth token(Master_Merchant) ,apikey,signature , Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsDB-cybsDB3"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "oauth_client_details",
+                        "columnNames": [
+                            "client_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "client_name = 'NTT_MASTER'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "client_type": "MASTER_MERCHANT"
+                        }
+                    ]
+                }
+            }
+        },
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "processorCode": "000",
+                "remainingAmount": "50",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "refund_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": "000",
+                            "resp_msg": "SUCCESS",
+                            "currency": "TWD",
+                            "refund_status": "OK",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_25"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Completed",
+                            "user_data_25": "Partially_Refunded"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15149",
+        "OD": "Verify post multiple partial refund /v2/refund success with Oauth token(Master_Merchant) ,apikey,signature , Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund1",
+            "frontend_cybsDB-cybsDB2",
+            "refundsV2ApiKey-refund2",
+            "frontend_cybsDB-cybsDB3",
+            "frontend_cybsDB-cybsDB4"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "oauth_client_details",
+                        "columnNames": [
+                            "client_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "client_name = 'NTT_MASTER'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "client_type": "MASTER_MERCHANT"
+                        }
+                    ]
+                }
+            }
+        },
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund1": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "processorCode": "000",
+                "remainingAmount": "50",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "refund_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": "000",
+                            "resp_msg": "SUCCESS",
+                            "currency": "TWD",
+                            "refund_status": "OK",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund2": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "processorCode": "000",
+                "remainingAmount": "0",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "refund_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": "000",
+                            "resp_msg": "SUCCESS",
+                            "currency": "TWD",
+                            "refund_status": "OK",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_25"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Completed",
+                            "user_data_25": "Fully_Refunded"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15150",
+        "OD": "Verify post full refund  /v2/refund  success with Oauth token(MERCHANT) ,signature , Content-Type(json) .",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsDB-cybsDB3"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "oauth_client_details",
+                        "columnNames": [
+                            "client_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "client_name = 'NTT'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "client_type": "MERCHANT"
+                        }
+                    ]
+                }
+            }
+        },
+        "oauthToken": {
+            "client_id": "0c0b68a3844242d3bb3270c122954f18",
+            "client_secret": "NYC1cNbKjJkHniOqP7n8lOFXstAlVonS",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MERCHANT",
+                "client_name": "NTT",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "apikey": "",
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund": {
+            "apikey": "",
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "100",
+                "processorCode": "000",
+                "remainingAmount": "0",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "refund_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": "000",
+                            "resp_msg": "SUCCESS",
+                            "currency": "TWD",
+                            "refund_status": "OK",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_25"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Completed",
+                            "user_data_25": "Fully_Refunded"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15151",
+        "OD": "Verify post partial refund /v2/refund success with Oauth token(MERCHANT) ,signature , Content-Type(json) .",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsDB-cybsDB3"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "oauth_client_details",
+                        "columnNames": [
+                            "client_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "client_name = 'NTT'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "client_type": "MERCHANT"
+                        }
+                    ]
+                }
+            }
+        },
+        "oauthToken": {
+            "client_id": "0c0b68a3844242d3bb3270c122954f18",
+            "client_secret": "NYC1cNbKjJkHniOqP7n8lOFXstAlVonS",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MERCHANT",
+                "client_name": "NTT",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "apikey": "",
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund": {
+            "apikey": "",
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "processorCode": "000",
+                "remainingAmount": "50",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "refund_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": "000",
+                            "resp_msg": "SUCCESS",
+                            "currency": "TWD",
+                            "refund_status": "OK",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_25"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Completed",
+                            "user_data_25": "Partially_Refunded"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15152",
+        "OD": "Verify post /v2/refund gen by refund failed with access token isn't equal Bearer",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund": {
+            "headerToken": true,
+            "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiUGF5bWVudEdhdGV3YXkiXSwic2NvcGUiOlsicGF5bWVudCJdLCJjbGllbnRfdHlwZSI6Ik1FUkNIQU5UIiwiZXhwIjoxNjM4ODY2OTM0LCJjbGllbnRfbmFtZSI6Ik5UVCIsInZlcnNpb24iOiIyIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJqdGkiOiIxYzgzZjJkYi0yMmJjLTQ1MDktYmU2ZC0xNWEzOGQ2MDIyNWIiLCJjbGllbnRfaWQiOiIwYzBiNjhhMzg0NDI0MmQzYmIzMjcwYzEyMjk1NGYxOCJ9.tI61f9VdXiZivEaUOBZnUjxFgJ-Ck_jmGi_3pKl_YCo4X6e0FGZzbi_mroN3T9Hh7FrlEGHRa3sr6W_Ricfz6ZXXXcxLkXIGKlCFqwBpAszMFs_fKe4JeL94uLnqGaFmKH25MsdPul0LZKXiS8FS8e5nf2GOlmEq7kPQ1dLmM5c",
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "NE0103",
+                "errorDescription": "Incorrect access token type",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15153",
+        "OD": "Verify post /v2/refund gen by refund failed with access token format isn't correct",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund": {
+            "headerToken": true,
+            "accessToken": "Bearer RandomAccessToken",
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "NE0104",
+                "errorDescription": "Invalid access token format",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15154",
+        "OD": "Verify post /v2/refund gen by refund(MPGS ) failed with access token has expired .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund": {
+            "headerToken": true,
+            "accessToken": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiUGF5bWVudEdhdGV3YXkiXSwic2NvcGUiOlsicGF5bWVudCJdLCJjbGllbnRfdHlwZSI6Ik1BU1RFUl9NRVJDSEFOVCIsImV4cCI6MTYzNzY0OTQ0MywiY2xpZW50X25hbWUiOiJOVFRfTUFTVEVSIiwidmVyc2lvbiI6IjIiLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl0sImp0aSI6IjZjODllYWJmLWQxOTAtNDExYS04OWU4LTQ1YjNhNjdmYjM3MiIsImNsaWVudF9pZCI6ImY4OWI0NTllNmEwYjQwMTNhZGRjZTY2Mzk5MTYyMDdhIn0.LY0qbgkv6JQpPf3d1uk4kNOMa7DkS5XUOAxAArlttwmNGhca1izyeDgqJJnn8UW6ug8zbto71Ld80QGUuj9N43a1ZNiI28zOHrQsvcTzZSwGEdj1C_rYC5eqLJ6E3rynRG2ixhHB2lhCYFwGiG1-Y43FvL-JKVCzQEa7X1NIayY",
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "NE0105",
+                "errorDescription": "The access token has expired",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15155",
+        "OD": "Verify post /v2/refund gen by refund(MPGS ) failed master_merchant without apikey .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "oauth_client_details",
+                        "columnNames": [
+                            "client_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "client_name = 'NTT_MASTER'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "client_type": "MASTER_MERCHANT"
+                        }
+                    ]
+                }
+            }
+        },
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund": {
+            "headerToken": true,
+            "apikey": "",
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 401,
+                "errorCode": "NE1171",
+                "errorDescription": "Missing parameter - apikey",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15156",
+        "OD": "Verify post /v2/refund gen by refund(MPGS ) failed with Master_Merchant does't match signature.",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund": {
+            "headerToken": true,
+            "headerSignature": true,
+            "signature": "RandomSignature",
+            "bodySignature": false,
+            "amount": "100",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 403,
+                "errorCode": "NE0100",
+                "errorDescription": "Invalid API credentials",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15157",
+        "OD": "Verify post multiple partial refund /v2/refund success with Oauth token(MERCHANT) ,signature , Content-Type(json) .",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "v2refunds",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "refundsV2ApiKey-refund1",
+            "frontend_cybsDB-cybsDB2",
+            "refundsV2ApiKey-refund2",
+            "frontend_cybsDB-cybsDB3",
+            "frontend_cybsDB-cybsDB4"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "oauth_client_details",
+                        "columnNames": [
+                            "client_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "client_name = 'NTT'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "client_type": "MERCHANT"
+                        }
+                    ]
+                }
+            }
+        },
+        "oauthToken": {
+            "client_id": "0c0b68a3844242d3bb3270c122954f18",
+            "client_secret": "NYC1cNbKjJkHniOqP7n8lOFXstAlVonS",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MERCHANT",
+                "client_name": "NTT",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "apikey": "",
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "PURCHASE",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "refund1": {
+            "apikey": "",
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "processorCode": "000",
+                "remainingAmount": "50",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "refund_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": "000",
+                            "resp_msg": "SUCCESS",
+                            "currency": "TWD",
+                            "refund_status": "OK",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund2": {
+            "apikey": "",
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "processorCode": "000",
+                "remainingAmount": "0",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "refund_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": "000",
+                            "resp_msg": "SUCCESS",
+                            "currency": "TWD",
+                            "refund_status": "OK",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_25"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Completed",
+                            "user_data_25": "Fully_Refunded"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

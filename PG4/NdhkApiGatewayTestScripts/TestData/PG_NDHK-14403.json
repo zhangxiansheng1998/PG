@@ -1,0 +1,696 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-15364",
+        "OD": "Verify hostpage mpgs 3ds auth payment is successful without paymentMethod:card.",
+        "merchantId": "nttm4v2auto",
+        "Skip": false,
+        "caseType": "mpgs",
+        "testFlow": [
+            "createPaymentLinkV2ApiKey-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "paymentLink": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionId": "generate",
+            "transactionCurrency": "PHP",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "isAllowSelection": true,
+            "isAuthentication": true,
+            "selectedMethod": "master",
+            "3dsVersion": "1",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "John"
+            },
+            "expectedResult": {
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "responseCode",
+                "responseDescription"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "5123450000000008",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div/div[2]/span",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div/div[2]/span",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[18]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "100",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ContainerContent\"]/center/form/table/tbody/tr[13]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "amount",
+                    "byValue": "//*[@id=\"resultPage-amount-value\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "result": "Payment Successful",
+                "amount": "PHP 1.00",
+                "Txnid": "#Contains-1",
+                "Nttrefid": "#Contains-1",
+                "date": "#Contains-202"
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "rrn",
+                            "payment_type",
+                            "channel_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded",
+                            "rrn": "isNotNull",
+                            "payment_type": "card",
+                            "channel_type": "mpgs"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "1"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15363",
+        "OD": "Verify mpgs 3ds auth payment is successful use V1 /paymentRequest",
+        "merchantId": "nttm4auto",
+        "Skip": false,
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "mpgs",
+            "carddata": "6RiWp9L0lkt8f6hgBigMWJEEAvBKN99LL198X+eNsuE=|John Doe|CC|MASTER",
+            "authentication": "Y",
+            "manualCapture": "Y",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "channelType": "mpgs",
+                "maskcardnumber": "512345XXXXXX0008",
+                "respcode": "02",
+                "respdesc": "pending",
+                "txncurr": "PHP"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "channelType",
+                "maskcardnumber",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ContainerContent\"]/center/form/table/tbody/tr[13]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "result",
+                    "byValue": "/html/body/div/div[2]/div/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "amount",
+                    "byValue": "/html/body/div/div[2]/div/div/div/div/div[2]/div[1]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "/html/body/div/div[2]/div/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "/html/body/div/div[2]/div/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "/html/body/div/div[2]/div/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "result": "Transaction completed successfully",
+                "amount": "PHP 1.00",
+                "Txnid": "#Contains-1",
+                "Nttrefid": "#Contains-1",
+                "date": "#Contains-202"
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "rrn",
+                            "payment_type",
+                            "channel_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded",
+                            "rrn": "isNotNull",
+                            "payment_type": "card",
+                            "channel_type": "mpgs"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "1"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15362",
+        "OD": "Verify mpgs 3ds auth payment is successful use V1 /paymentRequest",
+        "merchantId": "nttm4v2auto",
+        "Skip": false,
+        "caseType": "mpgs",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "PHP",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "cardData": "XZ13aC5625frSmc4IyWfwrzzT5HTY1sC8jkZz++VnyQleDSGovImvQpKjL8=|John Doe|CC|MASTER",
+            "isAuthentication": true,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "amount": "100",
+                "authenticationStatus": "Y",
+                "channelType": "mpgs",
+                "maskedCardNumber": "512345XXXXXX0008",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "responseCode": "02",
+                "responseDescription": "Redirect To 3D Secure Page",
+                "transactionCurrency": "PHP"
+            },
+            "needAssert": [
+                "amount",
+                "authenticationStatus",
+                "maskedCardNumber",
+                "paymentMethod",
+                "paymentMode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ContainerContent\"]/center/form/table/tbody/tr[13]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "amount",
+                    "byValue": "//*[@id=\"resultPage-amount-value\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "result": "Payment Successful",
+                "amount": "PHP 1.00",
+                "Txnid": "#Contains-1",
+                "Nttrefid": "#Contains-1",
+                "date": "#Contains-202"
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "rrn",
+                            "payment_type",
+                            "channel_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded",
+                            "rrn": "isNotNull",
+                            "payment_type": "card",
+                            "channel_type": "mpgs"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "1"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15361",
+        "OD": "Verify mpgs 3ds 2.0 auth payment is successful with 3ds1 fallback.",
+        "merchantId": "nttm4v2auto",
+        "Skip": false,
+        "caseType": "mpgs",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "PHP",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "userAgent": "MOZILLA/4.0 (COMPATIBLE; MSIE 5.0; WINDOWS 95)",
+            "cardData": "NASE4wk0ep5nyYJYC+2UgDrpd/lPMstoIXMf7VsHax0CRbn4pMio06ZXtcY=|John Doe|CC|MASTERCARD",
+            "isAuthentication": true,
+            "3dsVersion": "2",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "amount": "100",
+                "authenticationStatus": "Y",
+                "channelType": "mpgs",
+                "maskedCardNumber": "550690XXXXXX0305",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "responseCode": "02",
+                "responseDescription": "Redirect To 3D Secure Page",
+                "transactionCurrency": "PHP"
+            },
+            "needAssert": [
+                "amount",
+                "authenticationStatus",
+                "channelType",
+                "maskedCardNumber",
+                "paymentMethod",
+                "paymentMode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ContainerContent\"]/center/form/table/tbody/tr[13]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "amount",
+                    "byValue": "//*[@id=\"resultPage-amount-value\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "result": "Payment Successful",
+                "amount": "PHP 1.00",
+                "Txnid": "#Contains-1",
+                "Nttrefid": "#Contains-1",
+                "date": "#Contains-202"
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "rrn",
+                            "payment_type",
+                            "channel_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded",
+                            "rrn": "isNotNull",
+                            "payment_type": "card",
+                            "channel_type": "mpgs"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "1"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

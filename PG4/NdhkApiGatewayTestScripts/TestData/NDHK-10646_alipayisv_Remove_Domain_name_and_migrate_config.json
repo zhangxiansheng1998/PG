@@ -1,0 +1,440 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-11481",
+        "OD": "alipayisv wap- Remove Domain name and migrate config",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB2",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB3",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLog4",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "application_property",
+                        "columnNames": [
+                            "application_key"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "application_key like 'alipayisv%'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "application_key": "alipayisv.gatewayUrl"
+                        },
+                        {
+                            "application_key": "alipayisv.notifyUrlv2"
+                        },
+                        {
+                            "application_key": "alipayisv.redirectPreAuthUrlv2"
+                        },
+                        {
+                            "application_key": "alipayisv.redirectUrlv2"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment": {
+            "amt": "100",
+            "txncurr": "HKD",
+            "txnid": "generate",
+            "od": "alipaytest",
+            "paymentMethod": "wap",
+            "channelType": "alipayisv",
+            "channelId": "alipaycn",
+            "expirydate": "CurrentTime",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "customerDetails": {
+                "name": "Alex",
+                "flName": "Alex",
+                "phone": "86-1312341234"
+            },
+            "expectedResult": {
+                "respdesc": "pending",
+                "amt": "100",
+                "txncurr": "HKD",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "respdesc",
+                "amt",
+                "txncurr",
+                "login",
+                "respcode",
+                "udf1"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "stepInfo": "change to alipay account login",
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"cashier\"]/div[2]/h5/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "logon_id",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "pwd",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "stepInfo": "click login button",
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"cashier\"]/div[2]/div/button",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "stepInfo": "pay confirm",
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"cashierPreConfirm\"]/div[2]/button",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "pwd",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "stepInfo": "pay confirm",
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"cashier\"]/div[2]/button",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "100",
+            "nttrefid": "",
+            "txnid": "reuse",
+            "expectedResult": {
+                "respdesc": "success",
+                "proc_code": "T",
+                "amt": "100",
+                "respcode": "00",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "amt",
+                "respdesc",
+                "proc_code",
+                "respcode",
+                "signature"
+            ]
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_msg",
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "REFUND",
+                            "resp_msg": "SUCCESS"
+                        }
+                    ]
+                }
+            },
+            "needAssert": {}
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_AUTO"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "refund request from NTT to alipayisv"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "refund response from alipayisv to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Refund response from NTT to NTT_AUTO"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    }
+]

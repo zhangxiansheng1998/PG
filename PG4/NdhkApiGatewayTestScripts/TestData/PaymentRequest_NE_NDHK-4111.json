@@ -1,0 +1,1874 @@
+[
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4151",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "date": "00:00:00",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Invalid parameter - date",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1054",
+                "errorDesc": "Invalid parameter - date"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "txn_type",
+                            "user_data_45",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "1.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "txn_type": "DIRECT",
+                            "user_data_45": "AUTH",
+                            "userData27": "NE1054",
+                            "user_data_3": "100",
+                            "userData28": "Invalid parameter - date",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 15:21:48,383 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-5) 940943830: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=1592378506898, nttrefid=940943830, respcode=01, respdesc=Invalid parameter - date, date=00:00:00, signature=59624e931c8bf04233230dd5d9a077506d0aa245433aea7098bb8ea1c0bfee57f9fa7dc385549538e71f6ff184dad374935807d12322a6bb6df06c7425ffab8b, login=NTT, isEnableRetry=null, udf1=udf1 - uat, udf2=udf2 - uat, udf3=udf3 - uat, udf4=udf4 - uat, udf5=udf5 - uat, errorCode=NE1054, errorDesc=Invalid parameter - date]"
+                        },
+                        {
+                            "raw": "2020-06-17 15:21:48,390 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread3) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"1592378506898\",\"nttrefid\":\"940943830\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - date\",\"date\":\"00:00:00\",\"signature\":\"59624e931c8bf04233230dd5d9a077506d0aa245433aea7098bb8ea1c0bfee57f9fa7dc385549538e71f6ff184dad374935807d12322a6bb6df06c7425ffab8b\",\"login\":\"NTT\",\"udf1\":\"udf1 - uat\",\"udf2\":\"udf2 - uat\",\"udf3\":\"udf3 - uat\",\"udf4\":\"udf4 - uat\",\"udf5\":\"udf5 - uat\",\"errorCode\":\"NE1054\",\"errorDesc\":\"Invalid parameter - date\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4150",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "ABC",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Invalid parameter - manualCapture",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1053",
+                "errorDesc": "Invalid parameter - manualCapture"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "1.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1053",
+                            "user_data_3": "100",
+                            "userData28": "Invalid parameter - manualCapture",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:25:01,444 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-25) 940943855: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943855, respcode=01, respdesc=Invalid parameter - manualCapture, date=2020-06-17 16:25:01, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1053, errorDesc=Invalid parameter - manualCapture]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:25:01,445 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread11) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943855\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - manualCapture\",\"date\":\"2020-06-17 16:25:01\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1053\",\"errorDesc\":\"Invalid parameter - manualCapture\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4149",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "ABC",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Invalid parameter - authentication",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1052",
+                "errorDesc": "Invalid parameter - authentication"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "1.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1052",
+                            "user_data_3": "100",
+                            "userData28": "Invalid parameter - authentication",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:25:01,444 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-25) 940943855: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943855, respcode=01, respdesc=Invalid parameter - manualCapture, date=2020-06-17 16:25:01, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1053, errorDesc=Invalid parameter - manualCapture]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:25:01,445 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread11) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943855\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - manualCapture\",\"date\":\"2020-06-17 16:25:01\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1053\",\"errorDesc\":\"Invalid parameter - manualCapture\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4143",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "cardEncryptionMethod": "DES1234",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Invalid parameter - cardEncryptionMethod",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1040",
+                "errorDesc": "Invalid parameter - cardEncryptionMethod"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "1.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1040",
+                            "user_data_3": "100",
+                            "userData28": "Invalid parameter - cardEncryptionMethod",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4142",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "token": "098765443211356789098765432356",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Both carddata AND token are submitted together",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1039",
+                "errorDesc": "Both carddata AND token are submitted together"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "1.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1039",
+                            "user_data_3": "100",
+                            "userData28": "Both carddata AND token are submitted together",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4140",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "invalid",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Invalid parameter - carddata",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1037",
+                "errorDesc": "Invalid parameter - carddata"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "1.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1037",
+                            "user_data_3": "100",
+                            "userData28": "Invalid parameter - carddata",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4133",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "nicepay1",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Invalid parameter - channelType",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1030",
+                "errorDesc": "Invalid parameter - channelType"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "1.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1030",
+                            "user_data_3": "100",
+                            "userData28": "Invalid parameter - channelType",
+                            "currency": "HKD",
+                            "channel_type": "nicepay1",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4129",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "bodySignature": false,
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Missing parameter - signature",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1026",
+                "errorDesc": "Missing parameter - signature"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "1.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1026",
+                            "user_data_3": "100",
+                            "userData28": "Missing parameter - signature",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4127",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "99999999999999999999999",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "99999999999999999999999",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Requested amt is not in acceptable range",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1024",
+                "errorDesc": "Requested amt is not in acceptable range"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1024",
+                            "user_data_3": "99999999999999999999999",
+                            "userData28": "Requested amt is not in acceptable range",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4125",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Missing parameter - amt",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1022",
+                "errorDesc": "Missing parameter - amt"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "0.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1022",
+                            "user_data_3": "0",
+                            "userData28": "Missing parameter - amt",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4123",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Missing parameter - od",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1020",
+                "errorDesc": "Missing parameter - od"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "1.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1020",
+                            "user_data_3": "100",
+                            "userData28": "Missing parameter - od",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4120",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-transaction_log",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": null,
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Missing parameter - txnid",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1016",
+                "errorDesc": "Missing parameter - txnid"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "transaction_log": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "userData27",
+                            "userData28",
+                            "merchantid",
+                            "currency",
+                            "txn_status",
+                            "user_data_25",
+                            "channel_type",
+                            "stage",
+                            "user_data_3"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "user_data_25": null,
+                            "amount": "1.0000",
+                            "stage": "Transaction Failed",
+                            "merchantid": "NTT_AUTO",
+                            "userData27": "NE1016",
+                            "user_data_3": "100",
+                            "userData28": "Missing parameter - txnid",
+                            "currency": "HKD",
+                            "channel_type": "cybs",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4116",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "login": "",
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Missing parameter - login",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE1012",
+                "errorDesc": "Missing parameter - login"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentRequest_NE_NDHK-4114",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "PG Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "login": "NTT1",
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "01",
+                "respdesc": "Invalid API credentials",
+                "date": "00:00:00",
+                "login": "NTT_AUTO",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat",
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 16:33:51,942 INFO  [com.nttdata.hk.api.utils.NttUtils] (default task-8) 940943863: Payment response from NTT to NTT_AUTO with HKD@210.3.198.58:NttResponse [amt=100, txncurr=HKD, txnid=test39, nttrefid=940943863, respcode=01, respdesc=Invalid parameter - cardEncryptionMethod, date=2020-06-17 16:33:51, signature=120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535, login=NTT, isEnableRetry=null, udf1=HIVE, udf2=PIG, udf3=SPARK, udf4=MAP-REDUCE, udf5=YARN, errorCode=NE1040, errorDesc=Invalid parameter - cardEncryptionMethod]"
+                        },
+                        {
+                            "raw": "2020-06-17 16:33:51,944 INFO  [com.nttdata.hk.business.utils.CallbackExecutor] (common_util_thread8) Callback Json: {\"amt\":\"100\",\"txncurr\":\"HKD\",\"txnid\":\"test39\",\"nttrefid\":\"940943863\",\"respcode\":\"01\",\"respdesc\":\"Invalid parameter - cardEncryptionMethod\",\"date\":\"2020-06-17 16:33:51\",\"signature\":\"120994c7c09f888ef1a156f8d3f3a5814a9d00ed95f194f961c7639f87985b67ec0e5b0e8128ef572615e7e2a80d2e8146ef8d91759c0931123ccbb628b52535\",\"login\":\"NTT\",\"udf1\":\"HIVE\",\"udf2\":\"PIG\",\"udf3\":\"SPARK\",\"udf4\":\"MAP-REDUCE\",\"udf5\":\"YARN\",\"errorCode\":\"NE1040\",\"errorDesc\":\"Invalid parameter - cardEncryptionMethod\"}"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

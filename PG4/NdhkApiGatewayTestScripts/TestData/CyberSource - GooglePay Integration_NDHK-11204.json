@@ -1,0 +1,306 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-11221",
+        "OD": "Processor Specific NE Error Codes",
+        "merchantId": "nttm2",
+        "Skip": false,
+        "caseType": "orbital",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "paymentRequest-payment1",
+            "frontend_cybsDB-cybsDB1",
+            "paymentRequest-payment2",
+            "frontend_cybsDB-cybsDB2",
+            "paymentRequest-payment3",
+            "frontend_cybsDB-cybsDB3"
+        ],
+        "payment": {
+            "amt": "300",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "9997CybsGooglepay",
+            "channelType": "ctbc",
+            "paymentMethod": "googlepay",
+            "authentication": "N",
+            "expirydate": "CurrentTime",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "300",
+                "errorCode": "NE1119",
+                "errorDesc": "Missing parameter - token",
+                "respcode": "01",
+                "respdesc": "fail",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "callbackUrl",
+                "channelType",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "ru",
+                "txncurr"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "userData27",
+                            "userData28"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL",
+                            "userData27": "NE1119",
+                            "userData28": "Missing parameter - token"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment1": {
+            "amt": "300",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "9997_googlepay_visa",
+            "channelType": "abc",
+            "paymentMethod": "googlepay",
+            "authentication": "N",
+            "expirydate": "CurrentTime",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "token": "eyJzaWduYXR1cmUiOiJNRVVDSVFEcHNwWERhRUQ0T3AzejB3eU5tUlJHQlRlVXhsU1c5WnI5eEFRRUtjMlltQUlnV2NjQzR4endzZVFicXFHd2JETjZaSHJtTU5GMGFEeWtheHRjVGtaNTB1Z1x1MDAzZCIsImludGVybWVkaWF0ZVNpZ25pbmdLZXkiOnsic2lnbmVkS2V5Ijoie1wia2V5VmFsdWVcIjpcIk1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRTdRWUxsRzRLZ1Z1Y1FPMmp0a0pZVEJTcUVmOGdmdEt6V3dXdy9nUXpGeG5VRVVQaGhxbjJXWUdiQm1MSlZJZjNnbUgzd1JDS0JTR1kvWmV5RWo0SVFnXFx1MDAzZFxcdTAwM2RcIixcImtleUV4cGlyYXRpb25cIjpcIjE2MjAzMzU2MDI0NDVcIn0iLCJzaWduYXR1cmVzIjpbIk1FWUNJUUNwejVjK2N3d0RZOTB6Q1Y1RlU0a2IyTmFhN0VCcnJNVjh2TXdOdXRVSXRBSWhBS0FvdlJyNzkxTm5zYzA3SEhaeHR3TnNoQ0lKVEdqYmdDWm5pVm5rR29iWSJdfSwicHJvdG9jb2xWZXJzaW9uIjoiRUN2MiIsInNpZ25lZE1lc3NhZ2UiOiJ7XCJlbmNyeXB0ZWRNZXNzYWdlXCI6XCJZczF2bkR3NFUvcnA0bE9qeWxtbzI0ZnRpakFoSUw2VEVyaHlIYkhhNWRsaFErb0NRc084NGUydGZQMnA4bExxMzlUd2s0RmtBc0M1aUFZaGhFeHo4VEJMZHBiMTAzeGp2UkFrM3lqVUxEVjBvdmxGWXl5OE01MTd0Wi9tYnFhb3RUaE0vcjNZVDFPVUJ3MkhzMXo2NWt5QkdhcjJQS01rM0x6Z1o1UnRQRlAxZ0N3TzdKSjlRc3hYUll2U3B0cUQwbUpKc1RlRkMrMkREd1pKdzZTZXRVQzlhNHNpZFR1c1FCb0h0QW9maTEwQnIxSU5vNG5FVW1aZ3U5WDBzbUFNV0pFZXdyUFVqcGdXNjRIenNVOHQvSVVLT05TRkRzT21TTnNSTHRyek5ZUXpHNGoydGxVdUtYTEhxdWZNVW5pY040QzdxMU5TTlRVZU4yTnI3amZYbmtaVzA1QnZXaWkydTBoWVpOK0NqQmtZSmVxU3RIdWdZVndCRGRnaGFqR2dwdVVDZGdQUGdHditobHo2WjVUMHJrcFdJNlA4YzcyRFFNeGZybHdsZWRnQmtpU1dqdlR5cWlJNDAwMWRVRnJpK2Z3dm5sMXVqcUJjWTY1KzFsZCt1aGJsY3RVbzdRUzRzYzdQc2ZxcFVaNlZKU2tcXHUwMDNkXCIsXCJlcGhlbWVyYWxQdWJsaWNLZXlcIjpcIkJNUThkOEFtWnVIQVIxQ1VsZ0EyaTU5M2FVbjA2Yllya1RYa055MCswRWx4aC9lYTRiVmxSVzN4clhXVk1JZUdzMjVuUUU1UXFUTXo1ZzBaWTNBbVBjVVxcdTAwM2RcIixcInRhZ1wiOlwiY2VOQnVKSWNoSm8wRjJ6Q3VCTzUrY25DVjNsQjRtYUFOSGlVQ055bkI2SVxcdTAwM2RcIn0ifQ==",
+            "expectedResult": {
+                "amt": "300",
+                "errorCode": "NE1118",
+                "errorDesc": "Invalid parameter - tokenType",
+                "respcode": "01",
+                "respdesc": "fail",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "callbackUrl",
+                "channelType",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "ru",
+                "txncurr"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "userData27",
+                            "userData28"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL",
+                            "userData27": "NE1118",
+                            "userData28": "Invalid parameter - tokenType"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment2": {
+            "amt": "300",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "9997CybsGooglepay",
+            "tokenType": "googlepay",
+            "paymentMethod": "googlepay",
+            "authentication": "N",
+            "expirydate": "CurrentTime",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "token": "ey==",
+            "expectedResult": {
+                "amt": "300",
+                "errorCode": "NE0018",
+                "errorDesc": "Decrypt token failed",
+                "respcode": "01",
+                "respdesc": "fail",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "callbackUrl",
+                "errorCode",
+                "errorDesc",
+                "channelType",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "userData27",
+                            "userData28"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL",
+                            "userData27": "NE0018",
+                            "userData28": "Decrypt token failed"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment3": {
+            "amt": "300",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "9997CybsGooglepay",
+            "tokenType": "googlepay",
+            "paymentMethod": "applepay",
+            "authentication": "Y",
+            "expirydate": "CurrentTime",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "token": "eyJzaWduYXR1cmUiOiJNRVVDSVFEcHNwWERhRUQ0T3AzejB3eU5tUlJHQlRlVXhsU1c5WnI5eEFRRUtjMlltQUlnV2NjQzR4endzZVFicXFHd2JETjZaSHJtTU5GMGFEeWtheHRjVGtaNTB1Z1x1MDAzZCIsImludGVybWVkaWF0ZVNpZ25pbmdLZXkiOnsic2lnbmVkS2V5Ijoie1wia2V5VmFsdWVcIjpcIk1Ga3dFd1lIS29aSXpqMENBUVlJS29aSXpqMERBUWNEUWdBRTdRWUxsRzRLZ1Z1Y1FPMmp0a0pZVEJTcUVmOGdmdEt6V3dXdy9nUXpGeG5VRVVQaGhxbjJXWUdiQm1MSlZJZjNnbUgzd1JDS0JTR1kvWmV5RWo0SVFnXFx1MDAzZFxcdTAwM2RcIixcImtleUV4cGlyYXRpb25cIjpcIjE2MjAzMzU2MDI0NDVcIn0iLCJzaWduYXR1cmVzIjpbIk1FWUNJUUNwejVjK2N3d0RZOTB6Q1Y1RlU0a2IyTmFhN0VCcnJNVjh2TXdOdXRVSXRBSWhBS0FvdlJyNzkxTm5zYzA3SEhaeHR3TnNoQ0lKVEdqYmdDWm5pVm5rR29iWSJdfSwicHJvdG9jb2xWZXJzaW9uIjoiRUN2MiIsInNpZ25lZE1lc3NhZ2UiOiJ7XCJlbmNyeXB0ZWRNZXNzYWdlXCI6XCJZczF2bkR3NFUvcnA0bE9qeWxtbzI0ZnRpakFoSUw2VEVyaHlIYkhhNWRsaFErb0NRc084NGUydGZQMnA4bExxMzlUd2s0RmtBc0M1aUFZaGhFeHo4VEJMZHBiMTAzeGp2UkFrM3lqVUxEVjBvdmxGWXl5OE01MTd0Wi9tYnFhb3RUaE0vcjNZVDFPVUJ3MkhzMXo2NWt5QkdhcjJQS01rM0x6Z1o1UnRQRlAxZ0N3TzdKSjlRc3hYUll2U3B0cUQwbUpKc1RlRkMrMkREd1pKdzZTZXRVQzlhNHNpZFR1c1FCb0h0QW9maTEwQnIxSU5vNG5FVW1aZ3U5WDBzbUFNV0pFZXdyUFVqcGdXNjRIenNVOHQvSVVLT05TRkRzT21TTnNSTHRyek5ZUXpHNGoydGxVdUtYTEhxdWZNVW5pY040QzdxMU5TTlRVZU4yTnI3amZYbmtaVzA1QnZXaWkydTBoWVpOK0NqQmtZSmVxU3RIdWdZVndCRGRnaGFqR2dwdVVDZGdQUGdHditobHo2WjVUMHJrcFdJNlA4YzcyRFFNeGZybHdsZWRnQmtpU1dqdlR5cWlJNDAwMWRVRnJpK2Z3dm5sMXVqcUJjWTY1KzFsZCt1aGJsY3RVbzdRUzRzYzdQc2ZxcFVaNlZKU2tcXHUwMDNkXCIsXCJlcGhlbWVyYWxQdWJsaWNLZXlcIjpcIkJNUThkOEFtWnVIQVIxQ1VsZ0EyaTU5M2FVbjA2Yllya1RYa055MCswRWx4aC9lYTRiVmxSVzN4clhXVk1JZUdzMjVuUUU1UXFUTXo1ZzBaWTNBbVBjVVxcdTAwM2RcIixcInRhZ1wiOlwiY2VOQnVKSWNoSm8wRjJ6Q3VCTzUrY25DVjNsQjRtYUFOSGlVQ055bkI2SVxcdTAwM2RcIn0ifQ==",
+            "expectedResult": {
+                "amt": "300",
+                "errorCode": "NE1118",
+                "errorDesc": "Invalid parameter - tokenType",
+                "respcode": "01",
+                "respdesc": "fail",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "callbackUrl",
+                "errorCode",
+                "errorDesc",
+                "channelType",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "userData27",
+                            "userData28"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL",
+                            "userData27": "NE1118",
+                            "userData28": "Invalid parameter - tokenType"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

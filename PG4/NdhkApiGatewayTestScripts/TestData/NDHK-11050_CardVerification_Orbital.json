@@ -1,0 +1,936 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-11500",
+        "OD": "Test /v2/cardVerification - Orbital-DES,when payment model is Auth in card_verification_config table then do Auth-Capture",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "orbital",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "cardVerificationV2-cardVerificationV2",
+            "frontend_cybsLog-cybsLog1",
+            "paymentRequest-paymentRequest",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLog4",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-cybsDB3",
+            "frontend_cybsLog-cybsLog5",
+            "frontend_cybsLog-cybsLog6",
+            "frontend_cybsLog-cybsLog7",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "channel_type"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_config",
+                        "columnNames": [
+                            "payment_model",
+                            "currency",
+                            "amount"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "channel_type='orbital'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "payment_model": "AUTH",
+                            "currency": "USD",
+                            "amount": "1.00"
+                        }
+                    ]
+                }
+            }
+        },
+        "cardVerificationV2": {
+            "carddata": "XZ13aC5625frSmc4D6fjFl5scqP5k/R7AUWud0KiuwmFw30u3uFAK/b+zf4=|John Doe|CC|AMEX",
+            "transactionCurrency": "USD",
+            "headerSignature": true,
+            "bodySignature": false,
+            "isStoreToken": true,
+            "channelType": "orbital",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "transactionCurrency": "USD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0"
+            },
+            "needAssert": [
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "CardVerification payment response from NTT to NTT_AUTO with USD"
+                    ]
+                }
+            }
+        },
+        "paymentRequest": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "USD",
+            "od": "NTT Test",
+            "bodyCarddata": false,
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "channelType": "orbital",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "fraudControl": "Y",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "fraudData": {
+                "order": {
+                    "email": "test@approve.com",
+                    "gateway": "authorize_net",
+                    "browser_ip": "111.111.111.111",
+                    "total_discounts": 10,
+                    "cart_token": "68778783ad298f1c80c3bafcddeea02f",
+                    "device_id": "01234567-89ABCDEF-01234567-89ABCDEF",
+                    "referring_site": "google.com",
+                    "line_items": [
+                        {
+                            "price": 329,
+                            "quantity": 1,
+                            "title": "Apple Watch Series 3 GPS,38mm Silver Aluminum Case with Fog Sport Band",
+                            "product_id": "632910392",
+                            "category": "electronics",
+                            "brand": "apple",
+                            "product_type": "physical"
+                        }
+                    ],
+                    "discount_codes": [
+                        {
+                            "amount": 10,
+                            "code": "TENOFF"
+                        }
+                    ],
+                    "shipping_lines": [
+                        {
+                            "price": 0,
+                            "title": "Free Shipping"
+                        }
+                    ],
+                    "customer": {
+                        "email": "bob.norman@hostmail.com",
+                        "verified_email": true,
+                        "first_name": "Bob",
+                        "last_name": "Norman",
+                        "id": "207119551",
+                        "created_at": "2013-04-23 13:36:50"
+                    },
+                    "billing_address": {
+                        "first_name": "Bob",
+                        "last_name": "Norman",
+                        "address1": "Chestnut Street 92",
+                        "country": "United States",
+                        "country_code": "US",
+                        "phone": "555-625-1199",
+                        "city": "Louisville",
+                        "province": "Kentucky",
+                        "province_code": "KY",
+                        "zip": "40202"
+                    },
+                    "shipping_address": {
+                        "first_name": "Bob",
+                        "last_name": "Norman",
+                        "address1": "Chestnut Street 92",
+                        "country": "United States",
+                        "country_code": "US",
+                        "phone": "555-625-1199",
+                        "city": "Louisville",
+                        "province": "Kentucky",
+                        "province_code": "KY",
+                        "zip": "40202"
+                    },
+                    "source": "desktop_web",
+                    "client_details": {
+                        "accept_language": "en-CA",
+                        "user_agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+                    }
+                }
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorize  request from NTT to orbital with currency USD"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorize  response from orbital to NTT with currency USD"
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_AUTO with USD"
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "amt": "200",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "200",
+                "txncurr": "USD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "00",
+                "login": "NTT_AUTO",
+                "manualCaptureStatus": "P"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "manualCaptureStatus"
+            ]
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_msg"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_msg": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "CaptureV2 request from NTT_AUTO to NTT with null"
+                    ]
+                }
+            }
+        },
+        "cybsLog6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Capture  request from NTT to orbital with currency USD"
+                    ]
+                }
+            }
+        },
+        "cybsLog7": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Capture  response from orbital to NTT with currency USD"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-11560",
+        "OD": "Test /v2/cardVerification - Orbital-DES,when payment model is Auth in card_verification_config table then do Purchase",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "orbital",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "cardVerificationV2-cardVerificationV2",
+            "frontend_cybsLog-cybsLog1",
+            "paymentRequest-paymentRequest",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLog4",
+            "refundRequestV2-refund",
+            "frontend_cybsLog-cybsLog5",
+            "frontend_cybsDB-cybsDB3",
+            "frontend_cybsLog-cybsLog6",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "channel_type"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_config",
+                        "columnNames": [
+                            "payment_model",
+                            "currency",
+                            "amount"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "channel_type='orbital'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "payment_model": "AUTH",
+                            "currency": "USD",
+                            "amount": "1.00"
+                        }
+                    ]
+                }
+            }
+        },
+        "cardVerificationV2": {
+            "carddata": "XZ13aC5625frSmc4D6fjFl5scqP5k/R7AUWud0KiuwmFw30u3uFAK/b+zf4=|John Doe|CC|AMEX",
+            "transactionCurrency": "USD",
+            "headerSignature": true,
+            "bodySignature": false,
+            "isStoreToken": true,
+            "channelType": "orbital",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "transactionCurrency": "USD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0"
+            },
+            "needAssert": [
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "CardVerification payment response from NTT to NTT_AUTO with USD"
+                    ]
+                }
+            }
+        },
+        "paymentRequest": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "USD",
+            "bodyCarddata": false,
+            "od": "NTT Test",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "channelType": "orbital",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "authentication": "N",
+            "manualCapture": "N",
+            "fraudControl": "Y",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "fraudData": {
+                "order": {
+                    "email": "test@approve.com",
+                    "gateway": "authorize_net",
+                    "browser_ip": "111.111.111.111",
+                    "total_discounts": 10,
+                    "cart_token": "68778783ad298f1c80c3bafcddeea02f",
+                    "device_id": "01234567-89ABCDEF-01234567-89ABCDEF",
+                    "referring_site": "google.com",
+                    "line_items": [
+                        {
+                            "price": 329,
+                            "quantity": 1,
+                            "title": "Apple Watch Series 3 GPS,38mm Silver Aluminum Case with Fog Sport Band",
+                            "product_id": "632910392",
+                            "category": "electronics",
+                            "brand": "apple",
+                            "product_type": "physical"
+                        }
+                    ],
+                    "discount_codes": [
+                        {
+                            "amount": 10,
+                            "code": "TENOFF"
+                        }
+                    ],
+                    "shipping_lines": [
+                        {
+                            "price": 0,
+                            "title": "Free Shipping"
+                        }
+                    ],
+                    "customer": {
+                        "email": "bob.norman@hostmail.com",
+                        "verified_email": true,
+                        "first_name": "Bob",
+                        "last_name": "Norman",
+                        "id": "207119551",
+                        "created_at": "2013-04-23 13:36:50"
+                    },
+                    "billing_address": {
+                        "first_name": "Bob",
+                        "last_name": "Norman",
+                        "address1": "Chestnut Street 92",
+                        "country": "United States",
+                        "country_code": "US",
+                        "phone": "555-625-1199",
+                        "city": "Louisville",
+                        "province": "Kentucky",
+                        "province_code": "KY",
+                        "zip": "40202"
+                    },
+                    "shipping_address": {
+                        "first_name": "Bob",
+                        "last_name": "Norman",
+                        "address1": "Chestnut Street 92",
+                        "country": "United States",
+                        "country_code": "US",
+                        "phone": "555-625-1199",
+                        "city": "Louisville",
+                        "province": "Kentucky",
+                        "province_code": "KY",
+                        "zip": "40202"
+                    },
+                    "source": "desktop_web",
+                    "client_details": {
+                        "accept_language": "en-CA",
+                        "user_agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+                    }
+                }
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Purchase  request from NTT to orbital with currency USD"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Purchase  response from orbital to NTT with currency USD"
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_AUTO with USD"
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "100",
+            "txnid": "reuse",
+            "expectedResult": {
+                "respdesc": "success",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "respcode"
+            ]
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_msg"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_msg": "SUCCESS"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Refund  request from NTT to orbital with currency USD"
+                    ]
+                }
+            }
+        },
+        "cybsLog6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Refund  response from orbital to NTT with currency USD"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    }
+]

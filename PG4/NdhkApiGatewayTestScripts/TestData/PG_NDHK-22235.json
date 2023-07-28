@@ -1,0 +1,1810 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-22820",
+        "OD": "generate new token in /v2/tokens then use the same card to generate token, there is no accountUpdater parameter in response_4716311183148293|913|2023|08",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "GMO Account Updater",
+        "testFlow": [
+            "jsonV2TokenApiKey-generateToken",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "frontend_cybsDB-DB3",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2",
+            "frontend_cybsLog-Log3",
+            "frontend_cybsLog-Log4",
+            "frontend_cybsLog-Log5",
+            "frontend_cybsLog-Log6",
+            "jsonV2TokenApiKey-generateToken2",
+            "deleteV2TokenApiKey-delectToken"
+        ],
+        "generateToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc45kkRSyJoBI1Z/NlWlDGZxhn9kptdUcuNZHI2Zq4YwH0=|John Doe|CC|VISA",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "currency": "JPY",
+            "expectedResult": {
+                "httpCode": 400,
+                "accountUpdater": "success-regist",
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "08",
+                "expiryYear": "2023",
+                "maskedCardNumber": "471631XXXXXX8293",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY"
+            },
+            "needAssert": [
+                "httpCode",
+                "accountUpdater",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider"
+            ]
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid": "NTT_JPMC",
+                            "alias": "471631XXXXXX8293",
+                            "status": "CREATED",
+                            "source": "NDHK",
+                            "customer_id": "0",
+                            "save_token": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "DB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "processor_member_log",
+                        "columnNames": [
+                            "processor",
+                            "processor_mid",
+                            "merchant_id"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "processor_member_id = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "processor": "gmo",
+                            "processor_mid": "tshop00044244",
+                            "merchant_id": "NTT_JPMC"
+                        }
+                    ]
+                }
+            }
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "start account updater register for GMO"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater REGISTER request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "Log3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater REGISTER response from gmo to NTT"
+                    ]
+                }
+            }
+        },
+        "Log4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater UPDATE request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "Log5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater UPDATE response from gmo to NTT"
+                    ]
+                }
+            }
+        },
+        "Log6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "end account updater register for GMO result successful"
+                    ]
+                }
+            }
+        },
+        "generateToken2": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc45kkRSyJoBI1Z/NlWlDGZxhn9kptdUcuNZHI2Zq4YwH0=|John Doe|CC|VISA",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "currency": "JPY",
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "08",
+                "expiryYear": "2023",
+                "maskedCardNumber": "471631XXXXXX8293",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider"
+            ]
+        },
+        "DB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid": "NTT_JPMC",
+                            "alias": "411111XXXXXX1111",
+                            "status": "MODIFIED",
+                            "source": "NDHK",
+                            "customer_id": "0",
+                            "save_token": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "delectToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "httpCode": 400,
+                "accountUpdater": "success-delete",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "accountUpdater",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-22821",
+        "OD": "generate new token in /v2/transactions then use the same card to generate token, there is no accountUpdater parameter in response_4485719559721817|571|2025|04",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "GMO Account Updater",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-generateToken",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "frontend_cybsDB-DB3",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2",
+            "frontend_cybsLog-Log3",
+            "frontend_cybsLog-Log4",
+            "frontend_cybsLog-Log5",
+            "frontend_cybsLog-Log6",
+            "jsonV2TokenApiKey-generateToken2",
+            "frontend_cybsDB-DB4",
+            "deleteV2TokenApiKey-delectToken"
+        ],
+        "generateToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "isStoreToken": true,
+            "amount": "1000",
+            "transactionId": "generate",
+            "transactionCurrency": "JPY",
+            "orderDescription": "test gmo",
+            "channelType": "gmo",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "cardData": "XZ13aC5625frSmc4AC+g6zAIV4P1jjLo3ziXvopMpzVBYbJpjipcyFz/91E=|John Doe|CC|VISA",
+            "paymentMode": "PURCHASE",
+            "returnUrl": "https://sit-paymentsvcs.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/98053dec-6ac9-4d95-bcdf-ca2eaf082503",
+            "expectedResult": {
+                "httpCode": 400,
+                "accountUpdater": "success-regist",
+                "amount": "1000",
+                "callbackUrl": "https://webhook.site/98053dec-6ac9-4d95-bcdf-ca2eaf082503",
+                "cardCode": "2a99662",
+                "channelType": "gmo",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "success",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "JPY"
+            },
+            "needAssert": [
+                "httpCode",
+                "accountUpdater",
+                "amount",
+                "callbackUrl",
+                "cardCode",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid": "NTT_JPMC",
+                            "alias": "448571XXXXXX1817",
+                            "status": "CREATED",
+                            "source": "NDHK",
+                            "customer_id": "0",
+                            "save_token": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "DB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "processor_member_log",
+                        "columnNames": [
+                            "processor",
+                            "processor_mid",
+                            "merchant_id"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "processor_member_id = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "processor": "gmo",
+                            "processor_mid": "tshop00044244",
+                            "merchant_id": "NTT_JPMC"
+                        }
+                    ]
+                }
+            }
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "start account updater register for GMO"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater REGISTER request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "Log3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater REGISTER response from gmo to NTT"
+                    ]
+                }
+            }
+        },
+        "Log4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater UPDATE request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "Log5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater UPDATE response from gmo to NTT"
+                    ]
+                }
+            }
+        },
+        "Log6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "end account updater register for GMO result successful"
+                    ]
+                }
+            }
+        },
+        "generateToken2": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4AC+g6zAIV4P1jjLo3ziXvopMpzVBYbJpjipcyFz/91E=|John Doe|CC|VISA",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "currency": "JPY",
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "04",
+                "expiryYear": "2025",
+                "maskedCardNumber": "448571XXXXXX1817",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider"
+            ]
+        },
+        "DB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid": "NTT_JPMC",
+                            "alias": "448571XXXXXX1817",
+                            "status": "MODIFIED",
+                            "source": "NDHK",
+                            "customer_id": "0",
+                            "save_token": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "delectToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "httpCode": 400,
+                "accountUpdater": "success-delete",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "accountUpdater",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-22823",
+        "OD": "generate new token in /v2/cardVerification then use the same card to generate token, there is no accountUpdater parameter in response_4532510156353218|746|2023|02",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "GMO Account Updater",
+        "testFlow": [
+            "cardVerificationV2ApiKey-generateToken",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "frontend_cybsDB-DB3",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2",
+            "frontend_cybsLog-Log3",
+            "frontend_cybsLog-Log4",
+            "frontend_cybsLog-Log5",
+            "frontend_cybsLog-Log6",
+            "jsonV2TokenApiKey-generateToken2",
+            "frontend_cybsDB-DB4",
+            "deleteV2TokenApiKey-delectToken"
+        ],
+        "generateToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "isStoreToken": true,
+            "cardData": "XZ13aC5625frSmc4LtlAw1At+PK1SsAXu1HcxEuC3RkwJ2cjRSR5wXgIUpY=|John Doe|CC|VISA",
+            "transactionCurrency": "JPY",
+            "channelType": "gmo",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "returnUrl": "https://sit-paymentsvcs.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/98053dec-6ac9-4d95-bcdf-ca2eaf082503",
+            "expectedResult": {
+                "httpCode": 400,
+                "accountUpdater": "success-regist",
+                "processorCode": "success",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "JPY"
+            },
+            "needAssert": [
+                "httpCode",
+                "accountUpdater",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid": "NTT_JPMC",
+                            "alias": "453251XXXXXX3218",
+                            "status": "CREATED",
+                            "source": "NDHK",
+                            "customer_id": "0",
+                            "save_token": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "DB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "processor_member_log",
+                        "columnNames": [
+                            "processor",
+                            "processor_mid",
+                            "merchant_id"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "processor_member_id = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "processor": "gmo",
+                            "processor_mid": "tshop00044244",
+                            "merchant_id": "NTT_JPMC"
+                        }
+                    ]
+                }
+            }
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "start account updater register for GMO"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater REGISTER request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "Log3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater REGISTER response from gmo to NTT"
+                    ]
+                }
+            }
+        },
+        "Log4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater UPDATE request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "Log5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater UPDATE response from gmo to NTT"
+                    ]
+                }
+            }
+        },
+        "Log6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "end account updater register for GMO result successful"
+                    ]
+                }
+            }
+        },
+        "generateToken2": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4LtlAw1At+PK1SsAXu1HcxEuC3RkwJ2cjRSR5wXgIUpY=|John Doe|CC|VISA",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "currency": "JPY",
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "02",
+                "expiryYear": "2023",
+                "maskedCardNumber": "453251XXXXXX3218",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider"
+            ]
+        },
+        "DB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid": "NTT_JPMC",
+                            "alias": "453251XXXXXX3218",
+                            "status": "MODIFIED",
+                            "source": "NDHK",
+                            "customer_id": "0",
+                            "save_token": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "delectToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "httpCode": 400,
+                "accountUpdater": "success-delete",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "accountUpdater",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-22824",
+        "OD": "generate new token in /v2/transactions then use the same card to pay in /v2/transactions_4916109387459344|069|2024|01",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "GMO Account Updater",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-generateToken",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "frontend_cybsDB-DB3",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2",
+            "frontend_cybsLog-Log3",
+            "frontend_cybsLog-Log4",
+            "frontend_cybsLog-Log5",
+            "frontend_cybsLog-Log6",
+            "jsonTransactionsV2ApiKey-generateToken2",
+            "frontend_cybsDB-DB4",
+            "deleteV2TokenApiKey-delectToken"
+        ],
+        "generateToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "isStoreToken": true,
+            "amount": "1000",
+            "transactionId": "generate",
+            "transactionCurrency": "JPY",
+            "orderDescription": "test gmo",
+            "channelType": "gmo",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "cardData": "XZ13aC5625frSmc4qdczEiEuxejVv9/Oo9prUj9g2JSwSDLNAzSfsyL80bY=|John Doe|CC|VISA",
+            "paymentMode": "PURCHASE",
+            "returnUrl": "https://sit-paymentsvcs.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/98053dec-6ac9-4d95-bcdf-ca2eaf082503",
+            "expectedResult": {
+                "httpCode": 400,
+                "accountUpdater": "success-regist",
+                "amount": "1000",
+                "callbackUrl": "https://webhook.site/98053dec-6ac9-4d95-bcdf-ca2eaf082503",
+                "cardCode": "2a99662",
+                "channelType": "gmo",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "success",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "JPY"
+            },
+            "needAssert": [
+                "httpCode",
+                "accountUpdater",
+                "amount",
+                "callbackUrl",
+                "cardCode",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid": "NTT_JPMC",
+                            "alias": "491610XXXXXX9344",
+                            "status": "CREATED",
+                            "source": "NDHK",
+                            "customer_id": "0",
+                            "save_token": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "DB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "processor_member_log",
+                        "columnNames": [
+                            "processor",
+                            "processor_mid",
+                            "merchant_id"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "processor_member_id = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "processor": "gmo",
+                            "processor_mid": "tshop00044244",
+                            "merchant_id": "NTT_JPMC"
+                        }
+                    ]
+                }
+            }
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "start account updater register for GMO"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater REGISTER request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "Log3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater REGISTER response from gmo to NTT"
+                    ]
+                }
+            }
+        },
+        "Log4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater UPDATE request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "Log5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater UPDATE response from gmo to NTT"
+                    ]
+                }
+            }
+        },
+        "Log6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "signMix": [
+                    "token"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{token}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "end account updater register for GMO result successful"
+                    ]
+                }
+            }
+        },
+        "generateToken2": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "isStoreToken": true,
+            "amount": "1000",
+            "transactionId": "generate",
+            "transactionCurrency": "JPY",
+            "orderDescription": "test gmo",
+            "channelType": "gmo",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "cardData": "XZ13aC5625frSmc4qdczEiEuxejVv9/Oo9prUj9g2JSwSDLNAzSfsyL80bY=|John Doe|CC|VISA",
+            "token": "",
+            "paymentMode": "PURCHASE",
+            "returnUrl": "https://sit-paymentsvcs.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/98053dec-6ac9-4d95-bcdf-ca2eaf082503",
+            "expectedResult": {
+                "httpCode": 400,
+                "amount": "1000",
+                "callbackUrl": "https://webhook.site/98053dec-6ac9-4d95-bcdf-ca2eaf082503",
+                "cardCode": "2a99662",
+                "channelType": "gmo",
+                "paymentMethod": "card",
+                "paymentMode": "PURCHASE",
+                "processorCode": "success",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "JPY"
+            },
+            "needAssert": [
+                "httpCode",
+                "amount",
+                "callbackUrl",
+                "cardCode",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "DB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid": "NTT_JPMC",
+                            "alias": "491610XXXXXX9344",
+                            "status": "MODIFIED",
+                            "source": "NDHK",
+                            "customer_id": "0",
+                            "save_token": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "delectToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "httpCode": 400,
+                "accountUpdater": "success-delete",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "accountUpdater",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    }
+]

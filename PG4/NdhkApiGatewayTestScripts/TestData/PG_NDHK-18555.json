@@ -1,0 +1,655 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-19569",
+        "OD": "Verify for error code NE1207, when specified transactionCurrency is not valid for KCP Process",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "KCP Installment",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "jsonTransactionsV2ApiKey-auth",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "processors_config",
+                        "columnNames": [
+                            "merchant_id"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id = 'NTT_JPMC' and currency = 'KRW' and processor = 'kcp-direct' and payment_method = 'installment'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchant_id": "NTT_JPMC"
+                        }
+                    ]
+                }
+            }
+        },
+        "auth": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "transactionId": "generate",
+            "amount": "10000",
+            "transactionCurrency": "CNY",
+            "channelType": "kcp-direct",
+            "paymentMethod": "installment",
+            "paymentMode": "AUTH",
+            "isAuthentication": false,
+            "cardData": "XZ13aC5625frSmc4jfgI3DcD6/26Taf9BbWE2oFgAKLf5a+07jHdN+Wj+vo=|John Doe|CC|Hyundai Card",
+            "cardPin": "10",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/c92ea0eb-a67b-4419-8b1a-7b9368caa8b3",
+            "orderDescription": "KCP Installment API Test -Xiaojing",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "firstName": "Joe",
+                "lastName": "Dee",
+                "phone": "852-94717223",
+                "email": "sample@gmail.com",
+                "country": "US",
+                "state": "NY",
+                "city": "NewYork",
+                "streetNumber": "100",
+                "address": "flat A, 15/f, 1063 Kings Road",
+                "postCode": "00000",
+                "taxNumber": "880808"
+            },
+            "installment": {
+                "term": "4"
+            },
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1207",
+                "errorDescription": "Invalid parameter - transactionCurrency",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "userData27",
+                            "userData28"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL",
+                            "userData27": "NE1207",
+                            "userData28": "Invalid parameter - transactionCurrency"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "/v2/transactions request from NTT_JPMC to NTT with CNY"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "/v2/transactions response from NTT to NTT_JPMC with null"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-19568",
+        "OD": "Verify for error code NE1032, when specified paymentMethod is not valid for KCP Process",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "KCP Installment",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "jsonTransactionsV2ApiKey-auth",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "processors_config",
+                        "columnNames": [
+                            "merchant_id"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id = 'NTT_JPMC' and currency = 'KRW' and processor = 'kcp-direct' and payment_method = 'installment'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchant_id": "NTT_JPMC"
+                        }
+                    ]
+                }
+            }
+        },
+        "auth": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "transactionId": "generate",
+            "amount": "10000",
+            "transactionCurrency": "KRW",
+            "channelType": "kcp-direct",
+            "paymentMethod": "instalment",
+            "paymentMode": "AUTH",
+            "isAuthentication": false,
+            "cardData": "XZ13aC5625frSmc4jfgI3DcD6/26Taf9BbWE2oFgAKLf5a+07jHdN+Wj+vo=|John Doe|CC|Hyundai Card",
+            "cardPin": "10",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/c92ea0eb-a67b-4419-8b1a-7b9368caa8b3",
+            "orderDescription": "KCP Installment API Test -Xiaojing",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "firstName": "Joe",
+                "lastName": "Dee",
+                "phone": "852-94717223",
+                "email": "sample@gmail.com",
+                "country": "US",
+                "state": "NY",
+                "city": "NewYork",
+                "streetNumber": "100",
+                "address": "flat A, 15/f, 1063 Kings Road",
+                "postCode": "00000",
+                "taxNumber": "880808"
+            },
+            "installment": {
+                "term": "4"
+            },
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1032",
+                "errorDescription": "Invalid parameter - paymentMethod",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "userData27",
+                            "userData28"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL",
+                            "userData27": "NE1032",
+                            "userData28": "Invalid parameter - paymentMethod"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "/v2/transactions request from NTT_JPMC to NTT with KRW"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "/v2/transactions response from NTT to NTT_JPMC with null"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-19567",
+        "OD": "Verify for error code NE1031, when paymentMethod is not available",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "KCP Installment",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "jsonTransactionsV2ApiKey-auth",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "processors_config",
+                        "columnNames": [
+                            "merchant_id"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id = 'NTT_JPMC' and currency = 'KRW' and processor = 'kcp-direct' and payment_method = 'installment'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchant_id": "NTT_JPMC"
+                        }
+                    ]
+                }
+            }
+        },
+        "auth": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "transactionId": "generate",
+            "amount": "10000",
+            "transactionCurrency": "KRW",
+            "channelType": "kcp-direct",
+            "paymentMode": "AUTH",
+            "isAuthentication": false,
+            "cardData": "XZ13aC5625frSmc4jfgI3DcD6/26Taf9BbWE2oFgAKLf5a+07jHdN+Wj+vo=|John Doe|CC|Hyundai Card",
+            "cardPin": "10",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/c92ea0eb-a67b-4419-8b1a-7b9368caa8b3",
+            "orderDescription": "KCP Installment API Test -Xiaojing",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "firstName": "Joe",
+                "lastName": "Dee",
+                "phone": "852-94717223",
+                "email": "sample@gmail.com",
+                "country": "US",
+                "state": "NY",
+                "city": "NewYork",
+                "streetNumber": "100",
+                "address": "flat A, 15/f, 1063 Kings Road",
+                "postCode": "00000",
+                "taxNumber": "880808"
+            },
+            "installment": {
+                "term": "4"
+            },
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1031",
+                "errorDescription": "Missing parameter - paymentMethod",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "userData27",
+                            "userData28"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL",
+                            "userData27": "NE1031",
+                            "userData28": "Missing parameter - paymentMethod"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "/v2/transactions request from NTT_JPMC to NTT with KRW"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "/v2/transactions response from NTT to NTT_JPMC with null"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    }
+]

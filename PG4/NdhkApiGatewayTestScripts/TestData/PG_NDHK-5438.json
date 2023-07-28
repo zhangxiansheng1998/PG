@@ -1,0 +1,712 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-5437",
+        "OD": "Test IOS SDK 2.2 Union Pay SDK-When txncurr is missing in request,the error message will return in response.",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-paymentDB"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "",
+            "txnid": "generate",
+            "od": "od",
+            "paymentMethod": "app",
+            "channelType": "unionpay",
+            "merchantDescriptor": "NTT",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "10",
+                "date": "2021-12-13 17:34:50",
+                "errorCode": "NE1014",
+                "errorDesc": "Missing parameter - txncurr",
+                "login": "NTT_AUTO",
+                "Nttrefid": "#Contains-1",
+                "respcode": "01",
+                "respdesc": "Missing parameter - txncurr",
+                "signature": "d4ea4c04ddba61983dcd2625b9d103bf003c24dfa4cb0c342f481df6c8adcf1ecb12af2bde41633504236e4f5483e40b1ecd0670764f68caf840f93966782f7b",
+                "txnid": "1639388090069"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "paymentDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "stage",
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "stage": "Transaction Failed",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-5441",
+        "OD": "Test IOS SDK 2.2 Union Pay SDK-Verify the behaviour when paymentMethod is missing in request",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-paymentDB"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "USD",
+            "txnid": "generate",
+            "od": "od",
+            "paymentMethod": "",
+            "channelType": "unionpay",
+            "merchantDescriptor": "NTT",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "10",
+                "date": "2021-12-14 11:12:11",
+                "login": "NTT_AUTO",
+                "Nttrefid": "#Contains-1",
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid paymentMethod: ",
+                "signature": "5c517d6bb85151e5e6037ca6b009b13e4c0f03f54b284fae198567a10d7b50f56c8447303dfa23b2aac1cd1d6829e735b79e601f3786dee39c25ecbcf7c54288",
+                "txncurr": "USD",
+                "txnid": "#Contains-1"
+            },
+            "needAssert": [
+                "amt",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc",
+                "result",
+                "txncurr"
+            ]
+        },
+        "paymentDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "stage",
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "stage": "Transaction Failed",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-5445",
+        "OD": "Test IOS SDK 2.2 Union Pay SDK-Verify error message is displayed when amt is missing in request",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-paymentDB"
+        ],
+        "payment": {
+            "amt": "",
+            "txncurr": "USD",
+            "txnid": "generate",
+            "od": "od",
+            "paymentMethod": "app",
+            "channelType": "unionpay",
+            "merchantDescriptor": "NTT",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "date": "2021-12-14 11:41:25",
+                "errorCode": "NE1022",
+                "errorDesc": "Missing parameter - amt",
+                "login": "NTT_AUTO",
+                "Nttrefid": "#Contains-1",
+                "respcode": "01",
+                "respdesc": "Missing parameter - amt",
+                "signature": "1d3469cba9aff8ee116a8bbea0d56de337caa0a98957fe0c3a287ac8faafd23703229801136c6331af073f9132932d6042849db0b70d4e1ad74b1d0d69e3eb82",
+                "txncurr": "USD",
+                "txnid": "#Contains-1"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "paymentDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "stage",
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "stage": "Transaction Failed",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-5448",
+        "OD": "Test IOS SDK 2.2 Union Pay SDK-Verify error message is displayed when od is missing in request",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-paymentDB"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "USD",
+            "txnid": "generate",
+            "od": " ",
+            "paymentMethod": "app",
+            "channelType": "unionpay",
+            "merchantDescriptor": "NTT",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "10",
+                "date": "2021-12-14 13:09:57",
+                "errorCode": "NE1020",
+                "errorDesc": "Missing parameter - od",
+                "login": "NTT_AUTO",
+                "Nttrefid": "#Contains-1",
+                "respcode": "01",
+                "respdesc": "Missing parameter - od",
+                "signature": "d940d5ad7e0edccfaa275b85b99b6f5f42d9034d9e9c37a6060eeb2a3d0ca2ff3b76eab117c6fee8199fd28f07f8c771a1e298953e33b83d44c70e594aa46648",
+                "txncurr": "USD",
+                "txnid": "#Contains-1"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "paymentDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "stage",
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "stage": "Transaction Failed",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-5452",
+        "OD": "Test IOS SDK 2.2 Union Pay SDK-Verify error message is displayed when login is missing in request.",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "paymentRequest-payment"
+        ],
+        "payment": {
+            "login": "",
+            "amt": "10",
+            "txncurr": "USD",
+            "txnid": "generate",
+            "od": "od",
+            "paymentMethod": "app",
+            "channelType": "unionpay",
+            "merchantDescriptor": "NTT",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - login",
+                "login": "",
+                "errorCode": "NE1012",
+                "errorDesc": "Missing parameter - login"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "paymentDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "stage",
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "stage": "Transaction Failed",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-5455",
+        "OD": "Test IOS SDK 2.2 Union Pay SDK-verify the behaviour when callbackUrl is empty in request",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-paymentDB"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "USD",
+            "txnid": "generate",
+            "od": "od",
+            "paymentMethod": "app",
+            "channelType": "unionpay",
+            "merchantDescriptor": "NTT",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "",
+            "expectedResult": {
+                "amt": "10",
+                "channelType": "unionpay",
+                "date": "2021-12-14 13:43:32",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "Nttrefid": "#Contains-1",
+                "paymentMethod": "app",
+                "prepayId": "676222823388611468210",
+                "proc_code": "00",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "signature": "fe4b4c64ce84e83ce280304a9723cc9f39160346a6bb5cc852f5fd5d188d4c6621194ae481172a6e198d66ec752596dabec04c9a85a9ac391cf1ff09fb1ff513",
+                "txncurr": "USD",
+                "txnid": "#Contains-1"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "login",
+                "manualCapture",
+                "nttrefid",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "paymentDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "stage",
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "stage": "Transaction Purchase Pending",
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-5456",
+        "OD": "Test IOS SDK 2.2 Union Pay SDK-Verify error message is displayed when txnid is missing in request",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-paymentDB"
+        ],
+        "payment": {
+            "amt": "10",
+            "txncurr": "USD",
+            "od": "od",
+            "paymentMethod": "app",
+            "channelType": "unionpay",
+            "merchantDescriptor": "NTT",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "10",
+                "date": "2021-12-14 13:49:19",
+                "errorCode": "NE1016",
+                "errorDesc": "Missing parameter - txnid",
+                "login": "NTT_AUTO",
+                "Nttrefid": "#Contains-1",
+                "respcode": "01",
+                "respdesc": "Missing parameter - txnid",
+                "signature": "7115b9ad15f8458307e659c35d9be1babbdde5e5c3b7060591f8b8f6a3091b90ed904521856221cffab110c011115f3d51900f2f4d0a1151504fb8cb382adecc",
+                "txncurr": "USD"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "paymentDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "stage",
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "stage": "Transaction Failed",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-5443",
+        "OD": "Test IOS SDK 2.2 Union Pay SDK-Verify error message is displayed when signature is missing in request.",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-paymentDB"
+        ],
+        "payment": {
+            "signature": "skip",
+            "amt": "10",
+            "txncurr": "HKD",
+            "txnid": "generate",
+            "od": "od",
+            "paymentMethod": "app",
+            "channelType": "unionpay",
+            "merchantDescriptor": "NTT",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "",
+            "expectedResult": {
+                "amt": "10",
+                "date": "2021-12-14 15:02:53",
+                "errorCode": "NE1026",
+                "errorDesc": "Missing parameter - signature",
+                "login": "NTT_AUTO",
+                "Nttrefid": "#Contains-1",
+                "respcode": "01",
+                "respdesc": "Missing parameter - signature",
+                "signature": "91a2da8c7d698994895d3c4ece5de39fc3c53331ecdb76a03245deb3d1fbe7d78a6ba3f0f113a63c1b31472e908fc7344830ccfa2da87ac6898e59bdd97509d6",
+                "txncurr": "HKD",
+                "txnid": "1639465380404"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "paymentDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "stage",
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "stage": "Transaction Failed",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-5450",
+        "OD": "Test IOS SDK 2.2 Union Pay SDK-Verify error message is displayed when signature is missing in request.",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "unionpay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-paymentDB"
+        ],
+        "payment": {
+            "pass": "",
+            "amt": "10",
+            "txncurr": "HKD",
+            "txnid": "generate",
+            "od": "od",
+            "paymentMethod": "app",
+            "channelType": "unionpay",
+            "merchantDescriptor": "NTT",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "",
+            "expectedResult": {
+                "amt": "10",
+                "date": "2021-12-14 15:07:11",
+                "errorCode": "NE1013",
+                "errorDesc": "Missing parameter - pass",
+                "login": "NTT_AUTO",
+                "Nttrefid": "#Contains-1",
+                "respcode": "01",
+                "respdesc": "Missing parameter - pass",
+                "signature": "38f5de9d13327aa5a770f4e717c3680d0af9efd4ae5e246c73402d6cd23bbd8743ece4a24cac9cdf1c9d91a13d87d8ee1a7455fdc1e445e510e8c715428bd7d8",
+                "txncurr": "HKD",
+                "txnid": "1639465637522"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "paymentDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "stage",
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "stage": "Transaction Failed",
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

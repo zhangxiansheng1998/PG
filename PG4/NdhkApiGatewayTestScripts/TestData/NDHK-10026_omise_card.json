@@ -1,0 +1,1534 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-10499",
+        "OD": "Omise card enhancement",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "refundRequestV2-refund1",
+            "refundRequestV2-refund2"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "authentication": "Y",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "od": "omise-test",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "20000",
+                "txncurr": "THB",
+                "channelType": "omise",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "respdesc": "Transaction Pending",
+                "proc_code": "pending",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund1": {
+            "txnid": "reuse",
+            "amt": "20000",
+            "expectedResult": {
+                "respdesc": "success",
+                "proc_code": "closed",
+                "amt": "20000",
+                "txncurr": "THB",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respcode",
+                "respcode"
+            ]
+        },
+        "refund2": {
+            "txnid": "reuse",
+            "amt": "20000",
+            "expectedResult": {
+                "respdesc": "Refund amount exceeded the captured amount",
+                "errorDesc": "Refund amount exceeded the captured amount",
+                "errorCode": "NE3019",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respdesc",
+                "errorDesc",
+                "errorCode",
+                "respcode"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10498",
+        "OD": "Omise card enhancement",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "refundRequestV2-refund1"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "N",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "od": "omise-test",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "20000",
+                "txncurr": "THB",
+                "channelType": "omise",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "successful",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund1": {
+            "amt": "20000",
+            "expectedResult": {
+                "respdesc": "success",
+                "proc_code": "closed",
+                "amt": "20000",
+                "txncurr": "THB",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respcode",
+                "respcode"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10497",
+        "OD": "Omise card enhancement",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "refundRequestV2-refund1",
+            "refundRequestV2-refund2"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "carddata": "QxQIRijJmhNgP27vEuEu6xALHe9uhoHmJBuqCGi327Y=|John Doe|CC|JCB",
+            "authentication": "Y",
+            "manualCapture": "Y",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "od": "omise-test",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "manualCapture": "Y",
+                "amt": "20000",
+                "txncurr": "THB",
+                "channelType": "omise",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "respdesc": "Transaction Pending",
+                "proc_code": "pending",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "refund1": {
+            "txnid": "reuse",
+            "amt": "10000",
+            "expectedResult": {
+                "respdesc": "Partial void is not allowed",
+                "errorDesc": "Partial void is not allowed",
+                "errorCode": "NE3018",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respdesc",
+                "errorDesc",
+                "errorCode",
+                "respcode"
+            ]
+        },
+        "refund2": {
+            "txnid": "reuse",
+            "amt": "20000",
+            "expectedResult": {
+                "respdesc": "success",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respcode",
+                "respcode"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10496",
+        "OD": "Omise non-3DS card auth and void",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "refundRequestV2-refund1",
+            "refundRequestV2-refund2",
+            "initiateRefundRequestV2-refund3"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "manualCapture": "Y",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "od": "OmiseCard10052021",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "amt": "20000",
+                "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+                "channelType": "omise",
+                "date": "#Contains-202",
+                "manualCapture": "Y",
+                "paymentMethod": "card",
+                "proc_code": "pending",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "#Contains-ndhkpay.com/NTT_Pages/return",
+                "txncurr": "THB"
+            },
+            "needAssert": [
+                "amt",
+                "callbackUrl",
+                "channelType",
+                "date",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "ru",
+                "txncurr"
+            ]
+        },
+        "refund1": {
+            "amt": "10000",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Partial void is not allowed",
+                "errorCode": "NE3018",
+                "errorDesc": "Partial void is not allowed"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "refund2": {
+            "amt": "20000",
+            "expectedResult": {
+                "amt": "20000",
+                "txncurr": "THB",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "reversed",
+                "refundRefNum": "#Contains-9"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "refundRefNum"
+            ]
+        },
+        "refund3": {
+            "amt": "20000",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Nonvoidable transaction status - voided transaction",
+                "errorCode": "NE4023",
+                "errorDesc": "Nonvoidable transaction status - voided transaction"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10495(partially-automated)",
+        "OD": "Omise non-3DS card auth and full capture request with txnid on next day",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "manualCapture": "Y",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "od": "OmiseCard10052021",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "amt": "20000",
+                "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+                "channelType": "omise",
+                "date": "#Contains-202",
+                "manualCapture": "Y",
+                "paymentMethod": "card",
+                "proc_code": "pending",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "#Contains-ndhkpay.com/NTT_Pages/return",
+                "txncurr": "THB"
+            },
+            "needAssert": [
+                "amt",
+                "callbackUrl",
+                "channelType",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "ru",
+                "txncurr"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10494",
+        "OD": "Omise 3DS card auth and capture request",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "captureRequestV2-capture1",
+            "captureRequestV2-capture2"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "manualCapture": "Y",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "od": "order description",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "amt": "20000",
+                "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+                "channelType": "omise",
+                "date": "#Contains-202",
+                "manualCapture": "Y",
+                "paymentMethod": "card",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "#Contains-ndhkpay.com/NTT_Pages/return",
+                "txncurr": "THB"
+            },
+            "needAssert": [
+                "amt",
+                "callbackUrl",
+                "channelType",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "ru",
+                "txncurr"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "capture1": {
+            "amt": "1000",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Partial capture is not available for the payment processor",
+                "errorCode": "NE3015",
+                "errorDesc": "Partial capture is not available for the payment processor"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "capture2": {
+            "amt": "20000",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "successful",
+                "amt": "20000",
+                "captureId": "#Contains-1",
+                "txncurr": "THB",
+                "manualCaptureStatus": "F"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "manualCaptureStatus"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10493",
+        "OD": "Omise non-3DS card auth and capture request with nttrefid",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "captureRequestV2-capture1",
+            "captureRequestV2-capture2",
+            "captureRequestV2-capture3"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "manualCapture": "Y",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "od": "order description",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "amt": "20000",
+                "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+                "channelType": "omise",
+                "date": "#Contains-202",
+                "manualCapture": "Y",
+                "paymentMethod": "card",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "#Contains-ndhkpay.com/NTT_Pages/return",
+                "txncurr": "THB"
+            },
+            "needAssert": [
+                "amt",
+                "callbackUrl",
+                "channelType",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "ru",
+                "txncurr"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "capture1": {
+            "amt": "1000",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Partial capture is not available for the payment processor",
+                "errorCode": "NE3015",
+                "errorDesc": "Partial capture is not available for the payment processor"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "capture2": {
+            "amt": "20000",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "successful",
+                "amt": "20000",
+                "captureId": "#Contains-1",
+                "txncurr": "THB",
+                "manualCaptureStatus": "F"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "manualCaptureStatus"
+            ]
+        },
+        "capture3": {
+            "amt": "20000",
+            "expectedResult": {
+                "amt": "20000",
+                "errorCode": "NE4013",
+                "errorDesc": "Uncapturable transaction status - captured transaction",
+                "login": "NTT_AUTO",
+                "manualCaptureStatus": "N",
+                "respcode": "01",
+                "respdesc": "Uncapturable transaction status - captured transaction",
+                "txncurr": "THB"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "manualCaptureStatus",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10491_1",
+        "OD": "Omise card paymentRequest - NE",
+        "merchantId": "ntt_2auto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment1"
+        ],
+        "payment1": {
+            "amt": "20000",
+            "channelType": "omise",
+            "od": "order description",
+            "txnid": "generate",
+            "txncurr": "THB",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - paymentMethod",
+                "errorCode": "NE1031",
+                "errorDesc": "Missing parameter - paymentMethod"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10491_2",
+        "OD": "Omise card paymentRequest - NE",
+        "merchantId": "ntt_2auto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment2"
+        ],
+        "payment2": {
+            "amt": "20000",
+            "channelType": "omise",
+            "od": "order description",
+            "txnid": "generate",
+            "txncurr": "THB",
+            "paymentMethod": "ABC",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Invalid parameter - paymentMethod",
+                "errorCode": "NE1032",
+                "errorDesc": "Invalid parameter - paymentMethod"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10491_3",
+        "OD": "Omise card paymentRequest - NE",
+        "merchantId": "ntt_2auto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment3"
+        ],
+        "payment3": {
+            "amt": "20000",
+            "channelType": "omise",
+            "od": "order description",
+            "txnid": "generate",
+            "txncurr": "THB",
+            "paymentMethod": "card",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": true,
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "errorCode": "NE1036",
+                "errorDesc": "Invalid parameter - callbackUrl"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10491_4",
+        "OD": "Omise card paymentRequest - NE",
+        "merchantId": "ntt_2auto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment4"
+        ],
+        "payment4": {
+            "amt": "20000",
+            "channelType": "omise",
+            "od": "order description",
+            "txnid": "generate",
+            "ru": "",
+            "txncurr": "THB",
+            "paymentMethod": "card",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "errorCode": "NE1027",
+                "errorDesc": "Missing parameter - ru"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10491_5",
+        "OD": "Omise card paymentRequest - NE",
+        "merchantId": "ntt_2auto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment5"
+        ],
+        "payment5": {
+            "amt": "20000",
+            "channelType": "omise",
+            "od": "order description",
+            "txnid": "generate",
+            "txncurr": "THB",
+            "paymentMethod": "card",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "ru": true,
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "errorCode": "NE1028",
+                "errorDesc": "Invalid parameter - ru"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10491_6",
+        "OD": "Omise card paymentRequest - NE",
+        "merchantId": "ntt_2auto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment6"
+        ],
+        "payment6": {
+            "amt": "20000",
+            "channelType": "omise",
+            "od": "order description",
+            "txnid": "generate",
+            "txncurr": "THB",
+            "paymentMethod": "card",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Unauthorized request",
+                "errorCode": "NE0101",
+                "errorDesc": "Unauthorized request"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10491_7",
+        "OD": "Omise card paymentRequest - NE",
+        "merchantId": "ntt_2auto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment7"
+        ],
+        "payment7": {
+            "amt": "20000",
+            "channelType": "omise",
+            "od": "order description",
+            "txnid": "generate",
+            "txncurr": "THB",
+            "paymentMethod": "card",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "errorCode": "NE1038",
+                "errorDesc": "Missing parameter - carddata OR token"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10490",
+        "OD": "Omise card paymentRequest - PE",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "carddata": "wtuY0ewq97WI0qK007VlcxALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "od": "order description",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "respcode": "01",
+                "proc_code": "failed_fraud_check",
+                "errorCode": "PE3015",
+                "errorDesc": "Declined by processor risk engines"
+            },
+            "needAssert": [
+                "respcode",
+                "proc_code",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10489",
+        "OD": "Omise 3DS card paymentRequest - token",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "4111111111111111",
+            "cvv": "123",
+            "expiryDate": "12/24",
+            "txncurr": "THB",
+            "name": "Chan Tai Man",
+            "verifyRequest": false,
+            "expectedResult": {
+                "respCode": "00",
+                "respDesc": "success",
+                "maskcardnumber": "411111XXXXXX1111"
+            },
+            "needAssert": [
+                "respCode",
+                "respDesc",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "od": "order description",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "tokenType": "ntt",
+            "isStorePaymentMethod": "N",
+            "expectedResult": {
+                "respcode": "02",
+                "respdesc": "Transaction Pending",
+                "proc_code": "pending"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10488",
+        "OD": "Omise 3DS card paymentRequest - carddata",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "carddata": "QxQIRijJmhNgP27vEuEu6xALHe9uhoHmJBuqCGi327Y=|John Doe|CC|JCB",
+            "authentication": "Y",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "od": "OmiseCard24052021",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "respcode": "02",
+                "respdesc": "Transaction Pending",
+                "proc_code": "pending"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10487",
+        "OD": "Omise non-3DS card paymentRequest- token,withcardCvv",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "4111111111111111",
+            "cvv": "123",
+            "expiryDate": "12/24",
+            "txncurr": "THB",
+            "name": "Chan Tai Man",
+            "verifyRequest": false,
+            "expectedResult": {
+                "respCode": "00",
+                "respDesc": "success",
+                "maskcardnumber": "411111XXXXXX1111"
+            },
+            "needAssert": [
+                "respCode",
+                "respDesc",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "od": "order description",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "cardCvv": "999",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "tokenType": "ntt",
+            "isStorePaymentMethod": "N",
+            "customerDetails": {
+                "name": "Chan Tai Man",
+                "country": "HK",
+                "state": "HK",
+                "city": "Hong Kong",
+                "streetNumber": "1063",
+                "address": "King's Road",
+                "postcode": "00000"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "successful"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10486",
+        "OD": "Omise non-3DS card paymentRequest- token,withoutcardCvv",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "4111111111111111",
+            "cvv": "123",
+            "expiryDate": "12/24",
+            "txncurr": "THB",
+            "name": "Chan Tai Man",
+            "verifyRequest": false,
+            "expectedResult": {
+                "respCode": "00",
+                "respDesc": "success",
+                "maskcardnumber": "411111XXXXXX1111"
+            },
+            "needAssert": [
+                "respCode",
+                "respDesc",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "od": "order description",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "tokenType": "ntt",
+            "isStorePaymentMethod": "N",
+            "customerDetails": {
+                "name": "Chan Tai Man",
+                "country": "HK",
+                "state": "HK",
+                "city": "Hong Kong",
+                "streetNumber": "1063",
+                "address": "King's Road",
+                "postcode": "00000"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "successful"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'  "
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-10485",
+        "OD": "Omise non-3DS card paymentRequest - carddata",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "txncurr": "THB",
+            "amt": "20000",
+            "carddata": "QxQIRijJmhNgP27vEuEu6xALHe9uhoHmJBuqCGi327Y=|John Doe|CC|JCB",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "od": "OmiseCard24052021",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "successful"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

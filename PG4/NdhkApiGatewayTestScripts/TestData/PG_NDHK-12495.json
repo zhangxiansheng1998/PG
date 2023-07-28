@@ -1,0 +1,982 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-14103",
+        "OD": "Test hase.minPayAmount = 10, when \"multipleUp\" is enabled and  \"useMerchantDollar\" is disabled in merchant_config",
+        "merchantId": "nttstargate1mu",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "frontend_cybsDB-CheckDB",
+            "createPaymentLinkV2ApiKey-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-CheckDB1",
+            "frontend_cybsLog-CheckLog1",
+            "frontend_cybsLog-CheckLog2",
+            "frontend_cybsLog-CheckLog3",
+            "frontend_cybsLog-CheckLog4",
+            "frontend_cybsLog-CheckLog5",
+            "frontend_cybsLog-CheckLog6",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "CheckDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "merchant_config",
+                        "columnNames": [
+                            "feature_config"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id ='NTT_STARGATE_1_MU'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "feature_config": "#Contains-\"pointPayment\": {\"enabled\": true, \"pointPaymentFeatures\": {\"haseCashDollar\": {\"enabled\": true, \"multipleUp\": true, \"useMerchantDollar\": false"
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "transactionId": "generate",
+            "amount": "2000",
+            "transactionCurrency": "HKD",
+            "paymentMode": "PURCHASE",
+            "orderDescription": "測試 Cash dollar",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/6e874a84-fb36-4ad9-831b-2f49d43a906a",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "hasecardinstalment",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4012000077777777",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "100",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "name",
+                    "value": "du",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "UsernamePasswordEntry",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "title",
+                    "byValue": "/html/body/div/div/div/div/div/div[1]/header[2]/div/div[2]/div"
+                },
+                {
+                    "elementName": "status",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[1]/div/div[2]"
+                },
+                {
+                    "elementName": "amounttxt",
+                    "byValue": "//*[@id=\"resultPage-amount-key\"]"
+                },
+                {
+                    "elementName": "amount",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[2]/div/div[1]/div[1]/div[2]"
+                },
+                {
+                    "elementName": "Txnidtxt",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[2]/div/div[1]/div[2]/div[1]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[2]/div/div[1]/div[2]/div[2]"
+                },
+                {
+                    "elementName": "Nttrefidtxt",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[2]/div/div[1]/div[3]/div[1]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[2]/div/div[1]/div[3]/div[2]"
+                },
+                {
+                    "elementName": "Datetxt",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                },
+                {
+                    "elementName": "Order_Amount_txt",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[1]/div[1]"
+                },
+                {
+                    "elementName": "Order_Amount",
+                    "byValue": "//*[@id=\"resultPage-orderAmount\"]"
+                },
+                {
+                    "elementName": "cash_dollar_txt",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[2]/div[1]"
+                },
+                {
+                    "elementName": "cash_dollar",
+                    "byValue": "//*[@id=\"resultPage-cashDollarAmt\"]"
+                },
+                {
+                    "elementName": "Bonus_Cash_Dollars_txt",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[3]/div[1]"
+                },
+                {
+                    "elementName": "Bonus_Cash_Dollars",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[3]/div[2]"
+                },
+                {
+                    "elementName": "Net_Payment_Amount_txt",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[4]/div[1]"
+                },
+                {
+                    "elementName": "Net_Payment_Amount",
+                    "byValue": "//*[@id=\"resultPage-netAmount\"]"
+                },
+                {
+                    "elementName": "Hang_Seng_Cash_Dollars",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div[2]/div[1]/b"
+                }
+            ],
+            "expectedResult": {
+                "title": "Payment Completed",
+                "status": "Payment Successful",
+                "amounttxt": "Amount:",
+                "amount": "HKD 20.00",
+                "Txnidtxt": "Transaction ID:",
+                "Txnid": "#Contains-1",
+                "Nttrefidtxt": "Gateway Reference Number:",
+                "Nttrefid": "#Contains-1",
+                "Datetxt": "Date:",
+                "Date": "#Contains-202",
+                "Order_Amount_txt": "Order Amount:",
+                "Order_Amount": "HKD 20.00",
+                "cash_dollar_txt": "Cash Dollars Used:",
+                "cash_dollar": "- $ 9.00",
+                "Bonus_Cash_Dollars_txt": "Bonus Cash Dollars:",
+                "Bonus_Cash_Dollars": "- $ 9.00",
+                "Net_Payment_Amount_txt": "Net Amount:",
+                "Net_Payment_Amount": "HKD 2.00",
+                "Hang_Seng_Cash_Dollars": "Hang Seng Cash Dollars:"
+            }
+        },
+        "CheckDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "CheckLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Point Payment Cashdollar Enquiry request"
+                    ]
+                }
+            }
+        },
+        "CheckLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Point Payment Cashdollar Redemption request"
+                    ]
+                }
+            }
+        },
+        "CheckLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Point Payment Cashdollar Redemption response"
+                    ]
+                }
+            }
+        },
+        "CheckLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Purchase  request from NTT to cybs with currency HKD"
+                    ]
+                }
+            }
+        },
+        "CheckLog5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Purchase response from cybs to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "CheckLog6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        " Point Payment Cashdollar Enquiry response"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-14104",
+        "OD": "Verify when \"multipleUp\" is diabled, is not able to redeem rewards with bonus",
+        "merchantId": "nttstargate1",
+        "Skip": true,
+        "caseType": "hase",
+        "testFlow": [
+            "frontend_cybsDB-CheckDB",
+            "createPaymentLinkV2ApiKey-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-CheckDB1",
+            "frontend_cybsLog-CheckLog1",
+            "frontend_cybsLog-CheckLog2",
+            "frontend_cybsLog-CheckLog3",
+            "frontend_cybsLog-CheckLog4",
+            "frontend_cybsLog-CheckLog5",
+            "frontend_cybsLog-CheckLog6",
+            "frontend_cybsLog-CheckLog7",
+            "frontend_cybsLog-CheckLog8",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "CheckDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": " merchant_config",
+                        "columnNames": [
+                            "feature_config"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id ='NTT_STARGATE_1'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "feature_config": "#Contains-\"pointPaymentFeatures\": {\"haseCashDollar\": {\"enabled\": true, \"multipleUp\": true, \"useMerchantDollar\": false"
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "transactionId": "generate",
+            "amount": "2000",
+            "transactionCurrency": "HKD",
+            "paymentMode": "PURCHASE",
+            "selectedMethod": "hasecardinstalment",
+            "orderDescription": "測試 Cash dollar",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://webhook.site/6e874a84-fb36-4ad9-831b-2f49d43a906a",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4012000077777777",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "100",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "name",
+                    "value": "du",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "15000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "status",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "amounttxt",
+                    "byValue": "//*[@id=\"resultPage-amount-key\"]"
+                },
+                {
+                    "elementName": "amount",
+                    "byValue": "//*[@id=\"resultPage-amount-value\"]"
+                },
+                {
+                    "elementName": "Txnidtxt",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Nttrefidtxt",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "Datetxt",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                },
+                {
+                    "elementName": "Order_Amount_txt",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[1]/div[1]"
+                },
+                {
+                    "elementName": "Order_Amount",
+                    "byValue": "//*[@id=\"resultPage-orderAmount\"]"
+                },
+                {
+                    "elementName": "cash_dollar_txt",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[2]/div[1]"
+                },
+                {
+                    "elementName": "cash_dollar",
+                    "byValue": "//*[@id=\"resultPage-cashDollarAmt\"]"
+                },
+                {
+                    "elementName": "Net_Payment_Amount_txt",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[1]/div[3]/div[1]"
+                },
+                {
+                    "elementName": "Net_Payment_Amount",
+                    "byValue": "//*[@id=\"resultPage-netAmount\"]"
+                },
+                {
+                    "elementName": "Hang_Seng_Cash_Dollars",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div[2]/div[1]"
+                }
+            ],
+            "expectedResult": {
+                "status": "Payment Successful",
+                "amounttxt": "Amount:",
+                "amount": "HKD 20.00",
+                "Txnidtxt": "Transaction ID:",
+                "Txnid": "#Contains-1",
+                "Nttrefidtxt": "Gateway Reference Number:",
+                "Nttrefid": "#Contains-1",
+                "Datetxt": "Date:",
+                "Date": "#Contains-202",
+                "Order_Amount_txt": "Order Amount:",
+                "Order_Amount": "HKD 20.00",
+                "cash_dollar_txt": "Cash Dollars used:",
+                "cash_dollar": "- $ 19.00",
+                "Net_Payment_Amount_txt": "Net Amount:",
+                "Net_Payment_Amount": "HKD 1.00",
+                "Hang_Seng_Cash_Dollars": "Hang Seng Cash Dollars:"
+            }
+        },
+        "CheckDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "CheckLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "paymentLinks request from NTT_STARGATE_1 to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "CheckLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_STARGATE_1 with HKD"
+                    ]
+                }
+            }
+        },
+        "CheckLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Point Payment Cashdollar Enquiry request"
+                    ]
+                }
+            }
+        },
+        "CheckLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Point Payment Cashdollar Enquiry response"
+                    ]
+                }
+            }
+        },
+        "CheckLog5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Point Payment Cashdollar Redemption request"
+                    ]
+                }
+            }
+        },
+        "CheckLog6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Point Payment Cashdollar Redemption response"
+                    ]
+                }
+            }
+        },
+        "CheckLog7": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Purchase  request from NTT to cybs with currency HKD"
+                    ]
+                }
+            }
+        },
+        "CheckLog8": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Purchase response from cybs to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    }
+]

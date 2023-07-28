@@ -1,0 +1,271 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-15205",
+        "OD": "Verify OAuth generate token success with Content-Type(json)",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "oauth2",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "oauthTokenV2-oauthToken"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "oauth_client_details",
+                        "columnNames": [
+                            "client_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "client_name = 'NTT_MASTER'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "client_type": "MASTER_MERCHANT"
+                        }
+                    ]
+                }
+            }
+        },
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15207",
+        "OD": "Verify OAuth generate token success with Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "oauth2",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "oauthTokenV2-oauthToken"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "oauth_client_details",
+                        "columnNames": [
+                            "client_type"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "client_name = 'NTT'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "client_type": "MERCHANT"
+                        }
+                    ]
+                }
+            }
+        },
+        "oauthToken": {
+            "client_id": "0c0b68a3844242d3bb3270c122954f18",
+            "client_secret": "NYC1cNbKjJkHniOqP7n8lOFXstAlVonS",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MERCHANT",
+                "client_name": "NTT",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15209 (bug ticket NDHK-15053)",
+        "OD": "Verify clientId is mandatory with Content-Type(json) ",
+        "merchantId": "nttv2auto",
+        "Skip": true,
+        "caseType": "oauth2",
+        "testFlow": [
+            "oauthTokenV2-oauthToken"
+        ],
+        "oauthToken": {
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "httpCode":401,
+                "error": "invalid_request",
+                "error_description": "Missing client_id"
+            },
+            "needAssert": [
+                "httpCode",
+                "error",
+                "error_description"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15210 (bug ticket NDHK-15053)",
+        "OD": "Verify invalid clientId is failed with Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": true,
+        "caseType": "oauth2",
+        "testFlow": [
+            "oauthTokenV2-oauthToken"
+        ],
+        "oauthToken": {
+            "client_id": "RandomClientId",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "httpCode":400,
+                "error": "invalid_client",
+                "error_description": "Bad client credentials"
+            },
+            "needAssert": [
+                "httpCode",
+                "error",
+                "error_description"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15211",
+        "OD": "Verify clientSecret is mandatory with Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "oauth2",
+        "testFlow": [
+            "oauthTokenV2-oauthToken"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "httpCode":401,
+                "error": "invalid_client",
+                "error_description": "Bad client credentials"
+            },
+            "needAssert": [
+                "httpCode",
+                "error",
+                "error_description"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15212",
+        "OD": "Verify invalid clientSecret is failed with Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "oauth2",
+        "testFlow": [
+            "oauthTokenV2-oauthToken"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "RandomClientScret",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "httpCode":400,
+                "error": "invalid_client",
+                "error_description": "Bad client credentials"
+            },
+            "needAssert": [
+                "httpCode",
+                "error",
+                "error_description"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15274",
+        "OD": "Verify grantType is mandatory with aContent-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "oauth2",
+        "testFlow": [
+            "oauthTokenV2-oauthToken"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "expectedResult": {
+                "httpCode":400,
+                "error": "invalid_request",
+                "error_description": "Missing grant type"
+            },
+            "needAssert": [
+                "httpCode",
+                "error",
+                "error_description"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15275",
+        "OD": "Verify invalid grantType is failed with Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "oauth2",
+        "testFlow": [
+            "oauthTokenV2-oauthToken"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "RandomGrantType",
+            "expectedResult": {
+                "httpCode":400,
+                "error": "unsupported_grant_type",
+                "error_description": "Unsupported grant type: RandomGrantType"
+            },
+            "needAssert": [
+                "httpCode",
+                "error",
+                "error_description"
+            ]
+        }
+    }
+]

@@ -1,0 +1,45 @@
+import org.apache.jmeter.util.JMeterUtils;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+public String getJSONContent(String jsonPath){
+	try{
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(jsonPath),"UTF-8"));
+		StringBuilder content = new StringBuilder();
+		while ((thisLine = br.readLine()) != null) {
+            content.append(thisLine);
+         }
+         return content.toString();
+	}catch(FileNotFoundException e){
+		log.error("Cant find cvs file");	
+	}catch(Exception e){
+		log.error("Fail to get thread number");	
+	}
+	return null;
+}
+
+public String getJSONArrayContent(String jsonPath){
+        if(jsonPath == null || jsonPath.length() == 0){
+		return null;
+        }
+	String[] arrayjsonpath = jsonPath.split(",");  //json 路径数组
+	JSONArray jsonArray = new JSONArray();
+	String openBrowser = props.get("browser");//"chrome-firefox";
+	for(String str : arrayjsonpath){ //遍历
+		String[] bor = openBrowser.split("-");
+		for(String sto:bor) {
+			String jsonContent = getJSONContent(str);
+			 JSONArray picArray = JSONArray.fromObject(jsonContent);
+			 for (int i = 0; i < picArray.size(); i++) {
+			 	 JSONObject jsonObjecst = picArray.getJSONObject(i);
+			 	 jsonObjecst.accumulate("browsers",sto);
+			 }
+			 jsonArray.addAll(picArray);
+		}
+		//String jsonContent = getJSONContent(str);
+		//jsonArray.addAll(JSONArray.fromObject(jsonContent));
+	}
+	return jsonArray.toString();
+}
+
+vars.put("jsonContent", getJSONArrayContent(props.get("testDataJSONPath")));
+vars.put("specialJsonContent", getJSONArrayContent(props.get("specialTestDataJSONPath")));

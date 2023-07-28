@@ -1,0 +1,2005 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-21135",
+        "OD": "verify token creation is successful without cardverification and only with mandatory parameters in request and gds payment is succcesful with this token.",
+        "Skip": true,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB3"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDClYwFi9QuTIYlWZIpNBl1hrDzcUYGdcBPLJu+dEsZek=|John Doe|CC|master",
+            "verifyRequest": false,
+            "currency": "JPY",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "expectedResult": {
+                "respCode": "00",
+                "respDesc": "success",
+                "maskedCardNumber": "531288XXXXXX7202",
+                "cardBrand": "MASTERCARD",
+                "tokenProvider": "GATEWAY",
+                "nickname": "Family card",
+                "expiryYear": "2023",
+                "expiryMonth": "12",
+                "cardHolderName": "John Doe"
+            },
+            "needAssert": [
+                "respCode",
+                "respDesc",
+                "maskCardNumber",
+                "cardBrand",
+                "tokenProvider",
+                "nickname",
+                "expiryYear",
+                "expiryMonth",
+                "cardHolderName"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "/v1/token",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "POST /v1/token request from NTT to NTT with JPY"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "/v1/token",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "POST /v1/token response from NTT to NTT with JPY"
+                    ]
+                }
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "alias",
+                            "merchantid",
+                            "source",
+                            "status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "alias": "531288XXXXXX7202",
+                            "merchantid": "NTT",
+                            "source": "NDHK",
+                            "status": "CREATED"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"MASTERCARD\""
+                        }
+                    ]
+                }
+            }
+        },
+        "payment": {
+            "login": "NTT",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "",
+            "channelType": "cybs",
+            "manualCapture": "N",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "remarks": "remarks - migs",
+            "od": "test",
+            "udf1": "udf1 - sandbox",
+            "udf2": "udf2 - sandbox",
+            "udf3": "udf3 - sandbox",
+            "udf4": "udf4 - sandbox",
+            "udf5": "udf5 - sandbox",
+            "expectedResult": {
+                "amt": "100",
+                "channelType": "cybs",
+                "login": "NTT",
+                "manualCapture": "N",
+                "paymentMethod": "card",
+                "proc_code": "100",
+                "respCode": "00",
+                "respDesc": "success",
+                "txncurr": "HKD",
+                "udf1": "udf1 - sandbox",
+                "udf2": "udf2 - sandbox",
+                "udf3": "udf3 - sandbox",
+                "udf4": "udf4 - sandbox",
+                "udf5": "udf5 - sandbox"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respCode",
+                "respDesc",
+                "txncurr",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5"
+            ]
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttReservationId"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "tokenservicedb",
+                        "tableName": "reservation_payment_details_log",
+                        "columnNames": [
+                            "update_status",
+                            "payment_method",
+                            "ntt_response_code"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "tonttReservationIdken = '{nttReservationId}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "update_status": "OK",
+                            "payment_method": "CREDIT",
+                            "ntt_response_code": "00"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21130",
+        "OD": "verify token creation is successful with cardverification for cybs payment.",
+        "Skip": true,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLog4",
+            "frontend_cybsLog-cybsLog5",
+            "frontend_cybsLog-cybsLog6",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsDB-cybsDB3",
+            "frontend_cybsDB-cybsDB4",
+            "paymentRequest-payment",
+            "refundRequestV2-refund"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs66QeDjNud9/G0AsB3H2FosY=|John Doe|CC|VISA",
+            "verifyRequest": true,
+            "currency": "HKD",
+            "tokenProvider": "GATEWAY",
+            "expectedResult": {
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "currency": "HKD",
+                "expiryMonth": "12",
+                "expiryYear": "2023",
+                "maskedCardNumber": "411111XXXXXX1111",
+                "respCode": "00",
+                "respDesc": "success",
+                "tokenProvider": "GATEWAY"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "currency",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "respCode",
+                "respDesc",
+                "tokenProvider"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "/v1/token",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "POST /v1/token request from NTT to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Token Authorize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Verify Token Authorize request from NTT to cybs with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Token Authorize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Verify Token Authorize response from cybs to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Token ReverseAuth request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Verify Token ReverseAuth request from NTT to cybs with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Token ReverseAuth response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Verify Token ReverseAuth response from cybs to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "/v1/token",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "POST /v1/token response from NTT to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "alias",
+                            "merchantid",
+                            "source",
+                            "status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "alias": "411111XXXXXX1111",
+                            "merchantid": "NTT",
+                            "source": "NDHK",
+                            "status": "CREATED"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "merchantReferenceCode"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "tokenize_transaction_log",
+                        "columnNames": [
+                            "amount",
+                            "txn_status",
+                            "channel_type",
+                            "currency"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "tokenize_transaction_id = '{merchantReferenceCode}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "amount": "1.00",
+                            "txn_status": "ok",
+                            "channel_type": "cybs",
+                            "currency": "HKD"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "merchantReferenceCode"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "tokenize_refund",
+                        "columnNames": [
+                            "refund_amt",
+                            "resp_code"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "tokenize_transaction_id = '{merchantReferenceCode}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_amt": "1.00",
+                            "resp_code": "00"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment": {
+            "login": "NTT",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "",
+            "channelType": "cybs",
+            "manualCapture": "N",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "remarks": "remarks - migs",
+            "od": "test",
+            "udf1": "udf1 - sandbox",
+            "udf2": "udf2 - sandbox",
+            "udf3": "udf3 - sandbox",
+            "udf4": "udf4 - sandbox",
+            "udf5": "udf5 - sandbox",
+            "expectedResult": {
+                "amt": "100",
+                "channelType": "cybs",
+                "manualCapture": "N",
+                "paymentMethod": "card",
+                "proc_code": "100",
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "HKD",
+                "udf1": "udf1 - sandbox",
+                "udf2": "udf2 - sandbox",
+                "udf3": "udf3 - sandbox",
+                "udf4": "udf4 - sandbox",
+                "udf5": "udf5 - sandbox"
+            },
+            "needAssert": [
+                "amt",
+                "callbackUrl",
+                "channelType",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5"
+            ]
+        },
+        "refund": {
+            "amt": "100",
+            "txnid": "reuse",
+            "expectedResult": {
+                "amt": "100",
+                "proc_code": "100",
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21129",
+        "OD": "verify token creation is successful without cardverification and with optional parameters in request.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2",
+            "paymentRequest-payment",
+            "refundRequestV2-refund"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs66QeDjNud9/G0AsB3H2FosY=|John Doe|CC|VISA",
+            "currency": "USD",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "12",
+                "expiryYear": "2023",
+                "maskedCardNumber": "411111XXXXXX1111",
+                "nickname": "Family card",
+                "respCode": "00",
+                "respDesc": "success",
+                "tokenProvider": "GATEWAY",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "respCode",
+                "respDesc",
+                "tokenProvider",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "/v1/token",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "POST /v1/token request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "/v1/token",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "POST /v1/token response from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "alias",
+                            "merchantid",
+                            "source",
+                            "status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "alias": "411111XXXXXX1111",
+                            "merchantid": "NTT",
+                            "source": "NDHK",
+                            "status": "CREATED"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "payment": {
+            "login": "NTT",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "",
+            "channelType": "cybs",
+            "manualCapture": "N",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "remarks": "remarks - migs",
+            "od": "test",
+            "udf1": "udf1 - sandbox",
+            "udf2": "udf2 - sandbox",
+            "udf3": "udf3 - sandbox",
+            "udf4": "udf4 - sandbox",
+            "udf5": "udf5 - sandbox",
+            "expectedResult": {
+                "amt": "100",
+                "channelType": "cybs",
+                "manualCapture": "N",
+                "paymentMethod": "card",
+                "proc_code": "100",
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "HKD",
+                "udf1": "udf1 - sandbox",
+                "udf2": "udf2 - sandbox",
+                "udf3": "udf3 - sandbox",
+                "udf4": "udf4 - sandbox",
+                "udf5": "udf5 - sandbox"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5"
+            ]
+        },
+        "refund": {
+            "amt": "100",
+            "txnid": "reuse",
+            "expectedResult": {
+                "amt": "100",
+                "proc_code": "100",
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21128",
+        "OD": "verify token creation is successful without cardverification",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2",
+            "paymentRequest-payment",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB3",
+            "frontend_cybsDB-cybsDB4"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs66QeDjNud9/G0AsB3H2FosY=|John Doe|CC|VISA",
+            "expectedResult": {
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "12",
+                "expiryYear": "2023",
+                "maskedCardNumber": "411111XXXXXX1111",
+                "respCode": "00",
+                "respDesc": "success"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "respCode",
+                "respDesc"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "/v1/token",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "POST /v1/token request from NTT to NTT with no currency"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "/v1/token",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "POST /v1/token response from NTT to NTT with no currency"
+                    ]
+                }
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "alias",
+                            "merchantid",
+                            "source",
+                            "status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "alias": "411111XXXXXX1111",
+                            "merchantid": "NTT",
+                            "source": "NDHK",
+                            "status": "CREATED"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "payment": {
+            "login": "NTT",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "test",
+            "carddata": "",
+            "channelType": "cybs",
+            "manualCapture": "N",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "remarks": "remarks - migs",
+            "udf1": "udf1 - sandbox",
+            "udf2": "udf2 - sandbox",
+            "udf3": "udf3 - sandbox",
+            "udf4": "udf4 - sandbox",
+            "udf5": "udf5 - sandbox",
+            "expectedResult": {
+                "amt": "100",
+                "channelType": "cybs",
+                "manualCapture": "N",
+                "paymentMethod": "card",
+                "proc_code": "100",
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "HKD",
+                "udf1": "udf1 - sandbox",
+                "udf2": "udf2 - sandbox",
+                "udf3": "udf3 - sandbox",
+                "udf4": "udf4 - sandbox",
+                "udf5": "udf5 - sandbox"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5"
+            ]
+        },
+        "refund": {
+            "amt": "100",
+            "txnid": "reuse",
+            "expectedResult": {
+                "amt": "100",
+                "proc_code": "100",
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_45",
+                            "user_data_25"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "user_data_45": "PURCHASE",
+                            "user_data_25": "Fully_Refunded"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "refund_amt",
+                            "is_partial_refund",
+                            "txn_amt",
+                            "pending_amt",
+                            "resp_code",
+                            "resp_msg",
+                            "refund_mode",
+                            "currency"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_amt": "1.0000",
+                            "is_partial_refund": "0",
+                            "txn_amt": "1.0000",
+                            "pending_amt": "0.0000",
+                            "resp_code": "00",
+                            "resp_msg": "SUCCESS",
+                            "refund_mode": "REFUND",
+                            "currency": "HKD"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21127",
+        "OD": "Verify invalid parameter - userDefinedData5 error message is displayed when userDefinedData5 is invalid in request.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "Family caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily card Family caFamily cardFamily caFamily cardFamily caFamily",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1189",
+                "errorDesc": "Invalid parameter - userDefinedData5",
+                "respCode": "01",
+                "respDesc": "Invalid parameter - userDefinedData5"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21126",
+        "OD": "Verify invalid parameter - userDefinedData4 error message is displayed when userDefinedData4 is invalid in request.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "Family caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily card Family caFamily cardFamily caFamily cardFamily caFamily",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1188",
+                "errorDesc": "Invalid parameter - userDefinedData4",
+                "respCode": "01",
+                "respDesc": "Invalid parameter - userDefinedData4"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21125",
+        "OD": "Verify invalid parameter - userDefinedData3 error message is displayed when userDefinedData3 is invalid in request.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "Family caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily card Family caFamily cardFamily caFamily cardFamily caFamily",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1187",
+                "errorDesc": "Invalid parameter - userDefinedData3",
+                "respCode": "01",
+                "respDesc": "Invalid parameter - userDefinedData3"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21124",
+        "OD": "Verify invalid parameter - userDefinedData2 error message is displayed when userDefinedData2 is invalid in request.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "Family caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily card Family caFamily cardFamily caFamily cardFamily caFamily",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1186",
+                "errorDesc": "Invalid parameter - userDefinedData2",
+                "respCode": "01",
+                "respDesc": "Invalid parameter - userDefinedData2"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21123",
+        "OD": "Verify invalid parameter - userDefinedData1 error message is displayed when userDefinedData1 is invalid in request.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "Family caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily card Family caFamily cardFamily caFamily cardFamily caFamily",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1185",
+                "errorDesc": "Invalid parameter - userDefinedData1",
+                "respCode": "01",
+                "respDesc": "Invalid parameter - userDefinedData1"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21122",
+        "OD": "Verify invalid parameter - nickname error message is displayed when nicakname is invalid in request.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily cardFamily caFamily card Family caFamily cardFamily caFamily cardFamily caFamily",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1224",
+                "errorDesc": "Invalid parameter - nickname",
+                "respCode": "01",
+                "respDesc": "Invalid parameter - nickname"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21121",
+        "OD": "Verify invalid parameter - currency error message is displayed when verifyRequest=true and currency is invalid in request.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKDD",
+            "verifyRequest": true,
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1216",
+                "errorDesc": "Invalid parameter - currency",
+                "respCode": "01",
+                "respDesc": "Invalid parameter - currency"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21120",
+        "OD": "Verify Missing parameter - currency error message is displayed when verifyRequest=true and currency is missing in request.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1215",
+                "errorDesc": "Missing parameter - currency",
+                "respCode": "01",
+                "respDesc": "Missing parameter - currency"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21119",
+        "OD": "Verify Invalid parameter - tokenProvider error message is displayed when tokenprovider is invalid.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY1",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1179",
+                "errorDesc": "Invalid parameter - tokenProvider",
+                "respCode": "01",
+                "respDesc": "Invalid parameter - tokenProvider"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21118",
+        "OD": "Verify Invalid parameter - carddata error message is displayed when carddata is invalid.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "123",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1037",
+                "errorDesc": "Invalid parameter - carddata",
+                "respCode": "01",
+                "respDesc": "Invalid parameter - carddata"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21117",
+        "OD": "Verify Missing parameter - carddata error message is displayed when carddata is missing.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1038",
+                "errorDesc": "Missing parameter - carddata OR token",
+                "respCode": "01",
+                "respDesc": "Missing parameter - carddata OR token"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21116",
+        "OD": "Verify Invalid API credentials error message is displayed when signature is invalid.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "signature": "123",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials",
+                "respCode": "01",
+                "respDesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21115",
+        "OD": "Verify Missing parameter - signature error message is displayed when signature is missing.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": false,
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "signature": "",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1026",
+                "errorDesc": "Missing parameter - signature",
+                "respCode": "01",
+                "respDesc": "Missing parameter - signature"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21114",
+        "OD": "Verify Invalid API credentials error message is displayed when login and pass does not exist in user_master table.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "login": "NTTv1",
+            "pass": "Ntt@123v1",
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials",
+                "respCode": "01",
+                "respDesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21113",
+        "OD": "Verify Missing parameter - pass error message is displayed when pass is missing.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "pass": "",
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1013",
+                "errorDesc": "Missing parameter - pass",
+                "respCode": "01",
+                "respDesc": "Missing parameter - pass"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21112",
+        "OD": "Verify Invalid API credentials error message is displayed when login does not exist in user_master table.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "login": "NTTv1",
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials",
+                "respCode": "01",
+                "respDesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-21111",
+        "OD": "Verify Missing parameter - loginerror message is displayed when login is missing.",
+        "Skip": false,
+        "merchantId": "ntt",
+        "caseType": "postToken",
+        "testFlow": [
+            "postToken-token"
+        ],
+        "token": {
+            "headerSignature": false,
+            "bodySignature": true,
+            "login": "",
+            "carddata": "aj0eGidjs50QzdpDy+mlr/o8VNUr2iS5qwHs6wTf31pTDGxWCgX/3jb3gAo=|John Doe|CC|VISA",
+            "currency": "HKD",
+            "verifyRequest": "true",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "cardHolderName": "John Doe",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "customerDetails": {
+                "name": "john",
+                "phone": "12345",
+                "email": "abc@123.com"
+            },
+            "expectedResult": {
+                "errorCode": "NE1012",
+                "errorDesc": "Missing parameter - login",
+                "respCode": "01",
+                "respDesc": "Missing parameter - login"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "respCode",
+                "respDesc"
+            ]
+        }
+    }
+]

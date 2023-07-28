@@ -1,0 +1,794 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-11882",
+        "OD": "Verify Custom Declaration non-CNY Alipay-AlipayCN web return payTransactionId(RRN)/dutyAmount/orderAmount/transportAmount/productAmount",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "customDeclare-customDeclare",
+            "customRequery-customRequery",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsDB-cybsDB3",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLog4",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "6800",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "test",
+            "channelType": "alipay",
+            "expirydate": "CurrentTime",
+            "paymentMethod": "web",
+            "channelId": "alipaycn",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/fc508d07-540c-4b61-b58c-e81573d95a82",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "cancelUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "amt": "6800",
+                "txncurr": "HKD",
+                "respcode": "02",
+                "respdesc": "pending"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "manualCapture",
+                "paymentMethod",
+                "amt",
+                "txncurr"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"J_tLoginId\"]",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"payPasswd_rsainput\"]",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_AUTO with HKD"
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "5000",
+            "subOrderId": "S12214125",
+            "orderAmount": "6800",
+            "transportAmount": "6000",
+            "productAmount": "800",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "dutyAmount": "4261",
+                "orderAmount": "5795",
+                "productAmount": "681",
+                "respCode": "01",
+                "respDesc": "fail",
+                "transportAmount": "5114",
+                "procCode": "ILLEGAL_PARTNER"
+            },
+            "needAssert": [
+                "respCode",
+                "respDesc",
+                "dutyAmount",
+                "orderAmount",
+                "productAmount",
+                "transportAmount",
+                "procCode"
+            ]
+        },
+        "customRequery": {
+            "custom": "NINGBO",
+            "subOrderId": "S12214125",
+            "expectedResult": {
+                "respCode": "01",
+                "respDesc": "FAIL"
+            },
+            "needAssert": [
+                "respCode",
+                "respDesc"
+            ]
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Customer Declaration Requey request from NTT_AUTO to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {}
+                    ]
+                }
+            }
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "declaration_log",
+                        "columnNames": [
+                            "declaration_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "nttrefid = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "declaration_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Customer Declaration/Redeclaration request from NTT_AUTO to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Customer Declaration/Redeclaration response from NTT to NTT_AUTO with"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-11883",
+        "OD": "Verify Custom Declaration CNY Alipay-AlipayCN web return payTransactionId(RRN)/dutyAmount/orderAmount/transportAmount/productAmount",
+        "merchantId": "agodaauto",
+        "Skip": false,
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "customDeclare-customDeclare",
+            "customRequery-customRequery",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsDB-cybsDB3",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "8600",
+            "txnid": "generate",
+            "txncurr": "CNY",
+            "od": "test",
+            "channelType": "alipay",
+            "expirydate": "CurrentTime",
+            "paymentMethod": "web",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/fc508d07-540c-4b61-b58c-e81573d95a82",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "cancelUrl": "https://webhook.site/54d43238-29e0-48b8-8a9d-7be198d54ff2",
+            "expectedResult": {
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "amt": "8600",
+                "txncurr": "CNY",
+                "respcode": "02",
+                "respdesc": "pending"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "manualCapture",
+                "paymentMethod",
+                "amt",
+                "txncurr"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"J_tLoginId\"]",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"payPasswd_rsainput\"]",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPassword_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to AGODA_AUTO with CNY"
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "5000",
+            "subOrderId": "S12214125",
+            "orderAmount": "6800",
+            "transportAmount": "6000",
+            "productAmount": "800",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "dutyAmount": "5000",
+                "orderAmount": "6800",
+                "productAmount": "800",
+                "respCode": "01",
+                "respDesc": "fail",
+                "transportAmount": "6000",
+                "procCode": "ILLEGAL_PARTNER"
+            },
+            "needAssert": [
+                "respCode",
+                "respDesc",
+                "dutyAmount",
+                "orderAmount",
+                "productAmount",
+                "transportAmount",
+                "procCode"
+            ]
+        },
+        "customRequery": {
+            "custom": "NINGBO",
+            "subOrderId": "S12214125",
+            "expectedResult": {
+                "respCode": "01",
+                "respDesc": "FAIL",
+                "procCode": "ILLEGAL_PARTNER"
+            },
+            "needAssert": [
+                "respCode",
+                "respDesc",
+                "procCode"
+            ]
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Customer Declaration/Redeclaration request from AGODA_AUTO to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {}
+                    ]
+                }
+            }
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "declaration_log",
+                        "columnNames": [
+                            "declaration_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "nttrefid = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "declaration_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Customer Declaration/Redeclaration response from NTT to AGODA_AUTO"
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Redeclaration request from AGODA_AUTO to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    }
+]

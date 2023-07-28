@@ -1,0 +1,549 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-15285",
+        "OD": "Verify report response is returned when apiKey ,general key 1 and no oauth2 token is used in request.",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2reports",
+        "testFlow": [
+            "reportsV2ApiKey-report",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "report": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "reportType": "TRANSACTION",
+            "startDateTime": "2021-12-03 12:50:00",
+            "endDateTime": "2021-12-03 14:05:00",
+            "transactionCurrencies": [
+                "HKD"
+            ],
+            "transactionType": "PAYMENT",
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "callbackUrl": "https://webhook.site/12aeaa9c-aa01-418a-828e-8670cdf5f8f9",
+            "fields": [
+                "Merchant ID",
+                "Refund ID",
+                "Capture ID",
+                "Transaction Type",
+                "Transaction Status",
+                "Transaction Currency",
+                "Transaction Amount",
+                "Transaction Processed Amount",
+                "Payment Method",
+                "Partial capture",
+                "Capture Processed Amount",
+                "Partial Refund",
+                "Refunded Amount",
+                "Refund Processed Amount",
+                "Refund Date",
+                "Refund Status",
+                "Capture Status",
+                "Captured Amount",
+                "Error Message",
+                "Error Code",
+                "Remarks",
+                "User Defined Data 1",
+                "User Defined Data 2",
+                "User Defined Data 3",
+                "User Defined Data 4",
+                "User Defined Data 5",
+                "Card Number",
+                "Channel ID",
+                "Channel Type",
+                "Processor Code",
+                "Authorization Code",
+                "Order Description",
+                "Transaction Date",
+                "Status Description",
+                "Gateway Reference ID",
+                "Transaction ID",
+                "Transaction Type",
+                "Retrieval Reference Number"
+            ],
+            "expectedResult": {
+                "reportType": "TRANSACTION",
+                "responseCode": "02",
+                "responseDescription": "pending"
+            },
+            "needAssert": [
+                "reportType",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "reportId"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "report_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "id = '{reportId}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "1"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-15284",
+        "OD": "Verify report response is returned when non master merchant token and no apiKey is used in request.",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2reports",
+        "testFlow": [
+            "reportsV2ApiKey-report",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "report": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "reportType": "BINBLOCKING",
+            "startDateTime": "2021-12-03 00:00:00",
+            "endDateTime": "2021-12-03 23:00:00",
+            "callbackUrl": "https://webhook.site/eb308330-a660-4c4b-84e1-713a8cbedc2f",
+            "expectedResult": {
+                "reportType": "BINBLOCKING",
+                "responseCode": "02",
+                "responseDescription": "pending"
+            },
+            "needAssert": [
+                "reportType",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "reportId"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "report_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "id = '{reportId}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "1"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-15283",
+        "OD": "Verify report response and transaction processed amount for the transaction when apiKey,oauth2 master merchant token is used in request.",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2reports",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-auth",
+            "capturesV2ApiKey-capture",
+            "refundsV2ApiKey-refund",
+            "reportsV2ApiKey-report",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "auth": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "HKD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "paymentMethod": "card",
+            "channelType": "cybs",
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "amount": "100",
+                "channelType": "cybs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "100",
+                "responseCode": "00",
+                "responseDescription": "Transaction Authorization Succeeded",
+                "transactionCurrency": "HKD"
+            },
+            "needAssert": [
+                "amount",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "capture": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "transactionId": "",
+            "expectedResult": {
+                "amount": "50",
+                "manualCaptureStatus": "P",
+                "processorCode": "100",
+                "remainingAmount": "50",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "HKD"
+            },
+            "needAssert": [
+                "amount",
+                "manualCaptureStatus",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "refund": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "refundMode": "REFUND",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "expectedResult": {
+                "amount": "50",
+                "processorCode": "100",
+                "remainingAmount": "0",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "HKD"
+            },
+            "needAssert": [
+                "amount",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "report": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "reportType": "SETTLEMENT",
+            "startDateTime": "reuse",
+            "transactionCurrencies": [
+                "HKD"
+            ],
+            "transactionType": "ALL",
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "callbackUrl": "https://webhook.site/12aeaa9c-aa01-418a-828e-8670cdf5f8f9",
+            "fields": [
+                "Merchant ID",
+                "Refund ID",
+                "Capture ID",
+                "Transaction Type",
+                "Transaction Status",
+                "Transaction Currency",
+                "Transaction Amount",
+                "Transaction Processed Amount",
+                "Payment Method",
+                "Partial capture",
+                "Capture Processed Amount",
+                "Partial Refund",
+                "Refunded Amount",
+                "Refund Processed Amount",
+                "Refund Date",
+                "Refund Status",
+                "Capture Status",
+                "Captured Amount",
+                "Error Message",
+                "Error Code",
+                "Remarks",
+                "User Defined Data 1",
+                "User Defined Data 2",
+                "User Defined Data 3",
+                "User Defined Data 4",
+                "User Defined Data 5",
+                "Card Number",
+                "Channel ID",
+                "Channel Type",
+                "Processor Code",
+                "Authorization Code",
+                "Order Description",
+                "Transaction Date",
+                "Status Description",
+                "Gateway Reference ID",
+                "Transaction ID",
+                "Transaction Type",
+                "Retrieval Reference Number"
+            ],
+            "expectedResult": {
+                "reportType": "SETTLEMENT",
+                "responseCode": "02",
+                "responseDescription": "pending"
+            },
+            "needAssert": [
+                "reportType",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "reportId"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "report_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "id = '{reportId}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "1"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-15282",
+        "OD": "Verify report response is returned when apiKey and oauth2 non master merchant token is used in request.",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "v2reports",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "reportsV2ApiKey-report"
+        ],
+        "oauthToken": {
+            "client_id": "0c0b68a3844242d3bb3270c122954f18",
+            "client_secret": "NYC1cNbKjJkHniOqP7n8lOFXstAlVonS",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MERCHANT",
+                "client_name": "NTT",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "report": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "reportType": "TRANSACTION",
+            "startDateTime": "2021-12-01 00:00:00",
+            "endDateTime": "2021-12-02 00:00:00",
+            "transactionCurrencies": [
+                "HKD",
+                "JPY"
+            ],
+            "transactionType": "ALL",
+            "channelType": "gmo",
+            "paymentMethod": "card",
+            "callbackUrl": "https://webhook.site/12aeaa9c-aa01-418a-828e-8670cdf5f8f9",
+            "fields": [
+                "Merchant ID",
+                "Refund ID",
+                "Capture ID",
+                "Transaction Type",
+                "Transaction Status",
+                "Transaction Currency",
+                "Transaction Amount",
+                "Payment Method",
+                "Partial capture",
+                "Partial Refund",
+                "Refunded Amount",
+                "Refunded Amount",
+                "Refund Date",
+                "Refund Status",
+                "Capture Status",
+                "Captured Amount",
+                "Error Message",
+                "Error Code",
+                "Remarks",
+                "User Defined Data 1",
+                "User Defined Data 2",
+                "User Defined Data 3",
+                "User Defined Data 4",
+                "User Defined Data 5",
+                "Card Number",
+                "Channel ID",
+                "Channel Type",
+                "Processor Code",
+                "Authorization Code",
+                "Order Description",
+                "Transaction Date",
+                "Status Description",
+                "Gateway Reference ID",
+                "Transaction ID",
+                "Transaction Type",
+                "Retrieval Reference Number"
+            ],
+            "expectedResult": {
+                "reportType": "TRANSACTION",
+                "responseCode": "02",
+                "responseDescription": "pending"
+            },
+            "needAssert": [
+                "reportType",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "reportId"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "report_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "id = '{reportId}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "1"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

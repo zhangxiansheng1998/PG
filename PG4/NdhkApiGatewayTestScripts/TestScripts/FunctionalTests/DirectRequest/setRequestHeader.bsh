@@ -1,0 +1,84 @@
+import org.apache.jmeter.protocol.http.control.HeaderManager;
+import org.apache.jmeter.protocol.http.control.Header;
+import java.lang.String;
+
+try{
+        HeaderManager headerManager = sampler.getHeaderManager();
+
+        //remove old setting
+        headerManager.removeHeaderNamed("akiKey");
+        headerManager.removeHeaderNamed("signature");
+
+	String headerToken = vars.get("headerToken");
+	String headerAuthorization = vars.get("headerAuthorization");
+	String headerSignature = vars.get("headerSignature");
+	String bodySignature = vars.get("bodySignature");
+	String apikey  = vars.get("apikey");
+	log.info("get apikey before seeting http header : " + apikey);
+	log.info("get headerToken before seeting http header : " + headerToken);
+	log.info("get headerAuthorization before seeting http header : " + headerAuthorization);
+	log.info("get headerSignature before seeting http header : " + headerSignature);
+	log.info("get bodySignature before seeting http header : " + bodySignature);
+	
+	if("true".equals(headerToken)){
+		log.info("have enter headerToken=true logic");
+		var dataObj = vars.getObject("dataObj");
+		log.info("get dataObj111 " + dataObj);
+		var token = vars.get("tokenvalue");
+		bearer_token = "Bearer" + " " + token;
+		log.info("get token111 " + token);
+		log.info("get token222 " + bearer_token);
+		if(token == null || token == ""){
+		   var dataObjToken = dataObj.accessToken;
+			log.info("get dataObj.accessToken " + dataObjToken);
+		   if(dataObjToken == null){
+		       //do nothing 
+		   }else{
+		       Header hd = new Header();
+		       hd.setName("Authorization");
+		       hd.setValue(dataObjToken);
+		       //加入sample 中
+		       headerManager.add(hd);
+		   }
+		}else{
+		   Header hd = new Header();
+		   hd.setName("Authorization");
+		   //if token needs "Bearer" prefix, the following codes should be replaced as:hd.setValue(bearer_token);
+		   hd.setValue(token);
+		   //加入sample 中
+		   headerManager.add(hd);
+		}
+	}
+
+	if("true".equals(headerSignature)){
+	    log.info("headerSignature is true in setRequestHeader.bsh");
+		var signature = vars.get("headerSignatureValue");
+		log.info("headerSignatureValue during setting http header : " + vars.get("headerSignatureValue"));
+		log.info("signature during setting http header : " + vars.get("signature"));
+		if("undefined" == vars.get("signature")){
+		   log.info("signature need get from headerSignatureValue");
+		}else{
+                   log.info("signature exist in request body");
+                    signature=vars.get("signature");
+                }
+
+		Header hd = new Header();
+		hd.setName("signature");
+		hd.setValue(signature);
+                log.info("putting signature in header : "+ signature);
+		//加入sample中
+		headerManager.add(hd);
+	}
+	
+	if(apikey!=null){
+	        Header hd = new Header();
+			hd.setName("apikey");
+			hd.setValue(apikey);
+			//加入sample 中
+			headerManager.add(hd);
+	}
+	
+	
+}catch(Exception e){
+    log.info(e.getMessage());
+}

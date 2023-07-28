@@ -1,0 +1,1024 @@
+[
+    {
+        "testDataId": "requeryRequest-requery success case",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "NTT Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "refundRequestV2-refund",
+            "requeryRequest-requery",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "httpCode": 200,
+                "auth_code": "831000",
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "channelType": "cybs",
+                "captureId": true,
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "channelType",
+                "txncurr"
+            ]
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "refundRefNum": true
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "requery": {
+            "expectedResult": {
+                "auth_code": "831000",
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "accounttype": "Credit Card",
+                "channelType": "cybs",
+                "refundedAmount": "100",
+                "capturedAmount": "100",
+                "voidedAmount": "0",
+                "paymentMethod": "01",
+                "manualCapture": "N"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "channelType"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 10:07:27,986 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-6) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=90337e32ecfdc4c057359a81ac0cad897dc31bfcf377cbcb3f4ca7fae9cbfc005608fb8fed6efe18d4480f378c4057205a5e170901bfd2b122050b8427d516b3, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,075 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=161d151a1d03f6012251ab04e57b876048a337075d54ead693fd9adb1134fe571da3f6e5f3ba9af3b20cd6b71f567a8aa2c3e7972b1819ebabc7e558ab34e564, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,104 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Response@210.3.198.58: NttResponse [amt=100, txncurr=HKD, txnid=1592359279734, nttrefid=940943396, respcode=00, respdesc=success, proc_code=100, accounttype=Credit Card, date=2020-06-17 10:01:21, mobile=, signature=db99400641afa5271115500bacfac079de56ff2af6e94d9ade15c75db6949c3e7d8c48799c4793f457e0960027191d3348c7087d31f852c746acbf28890e513d, channelType=cybs, isEnableRetry=null, paymentMethod=01, captureId=99901, manualCapture=N, udf1=Test UDF 1, udf2=Test UDF 2, udf3=Test UDF 3, udf4=Test UDF 4, udf5=Test UDF 5, refundedAmount=100, capturedAmount=100, voidedAmount=0, ]"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "Refundv2_NE_NDHK-5298",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "NTT Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "refundRequestV2-refund",
+            "requeryRequest-requery",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "httpCode": 200,
+                "auth_code": "831000",
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "channelType": "cybs",
+                "captureId": true,
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "channelType",
+                "txncurr"
+            ]
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "refundRefNum": true
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "requery": {
+            "login": "",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - login",
+                "errorCode": "NE1012",
+                "errorDesc": "Missing parameter - login"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 10:07:27,986 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-6) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=90337e32ecfdc4c057359a81ac0cad897dc31bfcf377cbcb3f4ca7fae9cbfc005608fb8fed6efe18d4480f378c4057205a5e170901bfd2b122050b8427d516b3, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,075 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=161d151a1d03f6012251ab04e57b876048a337075d54ead693fd9adb1134fe571da3f6e5f3ba9af3b20cd6b71f567a8aa2c3e7972b1819ebabc7e558ab34e564, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,104 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Response@210.3.198.58: NttResponse [amt=100, txncurr=HKD, txnid=1592359279734, nttrefid=940943396, respcode=00, respdesc=success, proc_code=100, accounttype=Credit Card, date=2020-06-17 10:01:21, mobile=, signature=db99400641afa5271115500bacfac079de56ff2af6e94d9ade15c75db6949c3e7d8c48799c4793f457e0960027191d3348c7087d31f852c746acbf28890e513d, channelType=cybs, isEnableRetry=null, paymentMethod=01, captureId=99901, manualCapture=N, udf1=Test UDF 1, udf2=Test UDF 2, udf3=Test UDF 3, udf4=Test UDF 4, udf5=Test UDF 5, refundedAmount=100, capturedAmount=100, voidedAmount=0, ]"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "Refundv2_NE_NDHK-5299",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "NTT Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "refundRequestV2-refund",
+            "requeryRequest-requery",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "httpCode": 200,
+                "auth_code": "831000",
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "channelType": "cybs",
+                "captureId": true,
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "channelType",
+                "txncurr"
+            ]
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "refundRefNum": true
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "requery": {
+            "pass": "",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - pass",
+                "errorCode": "NE1013",
+                "errorDesc": "Missing parameter - pass"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 10:07:27,986 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-6) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=90337e32ecfdc4c057359a81ac0cad897dc31bfcf377cbcb3f4ca7fae9cbfc005608fb8fed6efe18d4480f378c4057205a5e170901bfd2b122050b8427d516b3, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,075 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=161d151a1d03f6012251ab04e57b876048a337075d54ead693fd9adb1134fe571da3f6e5f3ba9af3b20cd6b71f567a8aa2c3e7972b1819ebabc7e558ab34e564, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,104 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Response@210.3.198.58: NttResponse [amt=100, txncurr=HKD, txnid=1592359279734, nttrefid=940943396, respcode=00, respdesc=success, proc_code=100, accounttype=Credit Card, date=2020-06-17 10:01:21, mobile=, signature=db99400641afa5271115500bacfac079de56ff2af6e94d9ade15c75db6949c3e7d8c48799c4793f457e0960027191d3348c7087d31f852c746acbf28890e513d, channelType=cybs, isEnableRetry=null, paymentMethod=01, captureId=99901, manualCapture=N, udf1=Test UDF 1, udf2=Test UDF 2, udf3=Test UDF 3, udf4=Test UDF 4, udf5=Test UDF 5, refundedAmount=100, capturedAmount=100, voidedAmount=0, ]"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "Refundv2_NE_NDHK-5300",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "NTT Error code Test Set",
+        "testFlow": [
+            "requeryRequest-requery",
+            "frontend_cybsDB-logCheck"
+        ],
+        "requery": {
+            "nttrefid": "",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - nttrefid OR txnid",
+                "errorCode": "NE1019",
+                "errorDesc": "Missing parameter - nttrefid OR txnid"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 10:07:27,986 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-6) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=90337e32ecfdc4c057359a81ac0cad897dc31bfcf377cbcb3f4ca7fae9cbfc005608fb8fed6efe18d4480f378c4057205a5e170901bfd2b122050b8427d516b3, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,075 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=161d151a1d03f6012251ab04e57b876048a337075d54ead693fd9adb1134fe571da3f6e5f3ba9af3b20cd6b71f567a8aa2c3e7972b1819ebabc7e558ab34e564, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,104 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Response@210.3.198.58: NttResponse [amt=100, txncurr=HKD, txnid=1592359279734, nttrefid=940943396, respcode=00, respdesc=success, proc_code=100, accounttype=Credit Card, date=2020-06-17 10:01:21, mobile=, signature=db99400641afa5271115500bacfac079de56ff2af6e94d9ade15c75db6949c3e7d8c48799c4793f457e0960027191d3348c7087d31f852c746acbf28890e513d, channelType=cybs, isEnableRetry=null, paymentMethod=01, captureId=99901, manualCapture=N, udf1=Test UDF 1, udf2=Test UDF 2, udf3=Test UDF 3, udf4=Test UDF 4, udf5=Test UDF 5, refundedAmount=100, capturedAmount=100, voidedAmount=0, ]"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "Refundv2_NE_NDHK-5301",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "NTT Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "refundRequestV2-refund",
+            "requeryRequest-requery",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "httpCode": 200,
+                "auth_code": "831000",
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "channelType": "cybs",
+                "captureId": true,
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "channelType",
+                "txncurr"
+            ]
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "refundRefNum": true
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "requery": {
+            "login": "NTT1",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Invalid API credentials",
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 10:07:27,986 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-6) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=90337e32ecfdc4c057359a81ac0cad897dc31bfcf377cbcb3f4ca7fae9cbfc005608fb8fed6efe18d4480f378c4057205a5e170901bfd2b122050b8427d516b3, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,075 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=161d151a1d03f6012251ab04e57b876048a337075d54ead693fd9adb1134fe571da3f6e5f3ba9af3b20cd6b71f567a8aa2c3e7972b1819ebabc7e558ab34e564, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,104 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Response@210.3.198.58: NttResponse [amt=100, txncurr=HKD, txnid=1592359279734, nttrefid=940943396, respcode=00, respdesc=success, proc_code=100, accounttype=Credit Card, date=2020-06-17 10:01:21, mobile=, signature=db99400641afa5271115500bacfac079de56ff2af6e94d9ade15c75db6949c3e7d8c48799c4793f457e0960027191d3348c7087d31f852c746acbf28890e513d, channelType=cybs, isEnableRetry=null, paymentMethod=01, captureId=99901, manualCapture=N, udf1=Test UDF 1, udf2=Test UDF 2, udf3=Test UDF 3, udf4=Test UDF 4, udf5=Test UDF 5, refundedAmount=100, capturedAmount=100, voidedAmount=0, ]"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "Refundv2_NE_NDHK-5302",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "NTT Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "refundRequestV2-refund",
+            "requeryRequest-requery",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "httpCode": 200,
+                "auth_code": "831000",
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "channelType": "cybs",
+                "captureId": true,
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "channelType",
+                "txncurr"
+            ]
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "refundRefNum": true
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "requery": {
+            "pass": "NTT1",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Invalid API credentials",
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 10:07:27,986 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-6) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=90337e32ecfdc4c057359a81ac0cad897dc31bfcf377cbcb3f4ca7fae9cbfc005608fb8fed6efe18d4480f378c4057205a5e170901bfd2b122050b8427d516b3, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,075 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=161d151a1d03f6012251ab04e57b876048a337075d54ead693fd9adb1134fe571da3f6e5f3ba9af3b20cd6b71f567a8aa2c3e7972b1819ebabc7e558ab34e564, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,104 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Response@210.3.198.58: NttResponse [amt=100, txncurr=HKD, txnid=1592359279734, nttrefid=940943396, respcode=00, respdesc=success, proc_code=100, accounttype=Credit Card, date=2020-06-17 10:01:21, mobile=, signature=db99400641afa5271115500bacfac079de56ff2af6e94d9ade15c75db6949c3e7d8c48799c4793f457e0960027191d3348c7087d31f852c746acbf28890e513d, channelType=cybs, isEnableRetry=null, paymentMethod=01, captureId=99901, manualCapture=N, udf1=Test UDF 1, udf2=Test UDF 2, udf3=Test UDF 3, udf4=Test UDF 4, udf5=Test UDF 5, refundedAmount=100, capturedAmount=100, voidedAmount=0, ]"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "Refundv2_NE_NDHK-5303",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "NTT Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "refundRequestV2-refund",
+            "requeryRequest-requery",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "httpCode": 200,
+                "auth_code": "831000",
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "channelType": "cybs",
+                "captureId": true,
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "channelType",
+                "txncurr"
+            ]
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "refundRefNum": true
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "requery": {
+            "nttrefid": "ABC",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Related transaction not found",
+                "errorCode": "NE3022",
+                "errorDesc": "Related transaction not found"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 10:07:27,986 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-6) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=90337e32ecfdc4c057359a81ac0cad897dc31bfcf377cbcb3f4ca7fae9cbfc005608fb8fed6efe18d4480f378c4057205a5e170901bfd2b122050b8427d516b3, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,075 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=161d151a1d03f6012251ab04e57b876048a337075d54ead693fd9adb1134fe571da3f6e5f3ba9af3b20cd6b71f567a8aa2c3e7972b1819ebabc7e558ab34e564, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,104 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Response@210.3.198.58: NttResponse [amt=100, txncurr=HKD, txnid=1592359279734, nttrefid=940943396, respcode=00, respdesc=success, proc_code=100, accounttype=Credit Card, date=2020-06-17 10:01:21, mobile=, signature=db99400641afa5271115500bacfac079de56ff2af6e94d9ade15c75db6949c3e7d8c48799c4793f457e0960027191d3348c7087d31f852c746acbf28890e513d, channelType=cybs, isEnableRetry=null, paymentMethod=01, captureId=99901, manualCapture=N, udf1=Test UDF 1, udf2=Test UDF 2, udf3=Test UDF 3, udf4=Test UDF 4, udf5=Test UDF 5, refundedAmount=100, capturedAmount=100, voidedAmount=0, ]"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "Refundv2_NE_NDHK-5304",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "NTT Error code Test Set",
+        "testFlow": [
+            "requeryRequest-requery",
+            "frontend_cybsDB-logCheck"
+        ],
+        "requery": {
+            "txnid": "Refundv2_NE_NDHK-5304",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Related transaction not found",
+                "errorCode": "NE3022",
+                "errorDesc": "Related transaction not found"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 10:07:27,986 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-6) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=90337e32ecfdc4c057359a81ac0cad897dc31bfcf377cbcb3f4ca7fae9cbfc005608fb8fed6efe18d4480f378c4057205a5e170901bfd2b122050b8427d516b3, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,075 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=161d151a1d03f6012251ab04e57b876048a337075d54ead693fd9adb1134fe571da3f6e5f3ba9af3b20cd6b71f567a8aa2c3e7972b1819ebabc7e558ab34e564, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,104 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Response@210.3.198.58: NttResponse [amt=100, txncurr=HKD, txnid=1592359279734, nttrefid=940943396, respcode=00, respdesc=success, proc_code=100, accounttype=Credit Card, date=2020-06-17 10:01:21, mobile=, signature=db99400641afa5271115500bacfac079de56ff2af6e94d9ade15c75db6949c3e7d8c48799c4793f457e0960027191d3348c7087d31f852c746acbf28890e513d, channelType=cybs, isEnableRetry=null, paymentMethod=01, captureId=99901, manualCapture=N, udf1=Test UDF 1, udf2=Test UDF 2, udf3=Test UDF 3, udf4=Test UDF 4, udf5=Test UDF 5, refundedAmount=100, capturedAmount=100, voidedAmount=0, ]"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "Refundv2_NE_NDHK-5306",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "NTT Error code Test Set",
+        "testFlow": [
+            "paymentRequest-payment",
+            "refundRequestV2-refund",
+            "requeryRequest-requery",
+            "frontend_cybsDB-logCheck"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "paymentMethod": "credit",
+            "expectedResult": {
+                "httpCode": 200,
+                "auth_code": "831000",
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "channelType": "cybs",
+                "captureId": true,
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "udf1": "udf1 - uat",
+                "udf2": "udf2 - uat",
+                "udf3": "udf3 - uat",
+                "udf4": "udf4 - uat",
+                "udf5": "udf5 - uat"
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "channelType",
+                "txncurr"
+            ]
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100",
+                "refundRefNum": true
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "requery": {
+            "bodyIncorrectFormat": true,
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Invalid Request Format",
+                "errorCode": "NE1011",
+                "errorDesc": "Invalid Request Format"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "logCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "sg-uat-application",
+                        "logStream": "ip-172-20-42-187.ap-southeast-1.compute.internal/server.log",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "nttrefid",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        {
+                            "raw": "2020-06-17 10:07:27,986 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-6) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=90337e32ecfdc4c057359a81ac0cad897dc31bfcf377cbcb3f4ca7fae9cbfc005608fb8fed6efe18d4480f378c4057205a5e170901bfd2b122050b8427d516b3, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,075 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Request@210.3.198.58: NttRequest [login=NTT, pass=XXX, nttrefid=940943396, signature=161d151a1d03f6012251ab04e57b876048a337075d54ead693fd9adb1134fe571da3f6e5f3ba9af3b20cd6b71f567a8aa2c3e7972b1819ebabc7e558ab34e564, isEnableRetry=false, isEnrollRecurring=false, ]]"
+                        },
+                        {
+                            "raw": "2020-06-17 10:07:46,104 INFO  [com.nttdata.hk.api.controller.RequeryController] (default task-11) Response@210.3.198.58: NttResponse [amt=100, txncurr=HKD, txnid=1592359279734, nttrefid=940943396, respcode=00, respdesc=success, proc_code=100, accounttype=Credit Card, date=2020-06-17 10:01:21, mobile=, signature=db99400641afa5271115500bacfac079de56ff2af6e94d9ade15c75db6949c3e7d8c48799c4793f457e0960027191d3348c7087d31f852c746acbf28890e513d, channelType=cybs, isEnableRetry=null, paymentMethod=01, captureId=99901, manualCapture=N, udf1=Test UDF 1, udf2=Test UDF 2, udf3=Test UDF 3, udf4=Test UDF 4, udf5=Test UDF 5, refundedAmount=100, capturedAmount=100, voidedAmount=0, ]"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

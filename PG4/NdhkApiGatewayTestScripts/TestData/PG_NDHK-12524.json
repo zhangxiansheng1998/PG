@@ -1,0 +1,1468 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-12820_1",
+        "OD": "Verify wallet payment success default payment result page displays correctly",
+        "Skip": false,
+        "merchantId": "peachauto",
+        "caseType": "paypay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybs3DS-payPage"
+        ],
+        "payment": {
+            "amt": "11",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "txncurr": "JPY",
+            "channelType": "paypay",
+            "paymentMethod": "paypay",
+            "manualCapture": "N",
+            "expirydate": "CurrentTime",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "0800000000"
+            },
+            "expectedResult": {
+                "amt": "11",
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "channelType": "paypay",
+                "date": "2022-01-11 14:38:25",
+                "login": "PEACH_AUTO",
+                "manualCapture": "N",
+                "nttrefid": "942331301",
+                "paymentMethod": "paypay",
+                "proc_code": "08100001",
+                "redirect_url": "https://stg-www.paypay-corp.co.jp/app/cashier?code=https%3A%2F%2Fqr-stg.paypay-corp.co.jp%2F28180104qhClfttyuD5u9tDI",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "signature": "93a4fe4345367a0e1d3fc78908623a7cbe480b4a2648d28c52a174cbebc1aa5dacd58374c537df5d6bc5c1267774e0a100d5f1b76f0297be4e6e52d05e09e41b",
+                "txncurr": "JPY",
+                "txnid": "1641883058486",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "udf1",
+                "respdesc",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "username",
+                    "value": "090-1236-5479",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "password",
+                    "value": "Ntt123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "classname",
+                    "byValue": "submit-button",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "name",
+                    "byValue": "otp_input",
+                    "value": "1234",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "classname",
+                    "byValue": "submit-button-wrap",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "amount-key",
+                    "byValue": "//*[@id=\"resultPage-amount-key\"]"
+                },
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "amount-key": "Amount:",
+                "transactionId-key": "Transaction ID:",
+                "refId-key": "Gateway Reference Number:",
+                "date-key": "Date:",
+                "Txn": "Payment Successful",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12820_2",
+        "OD": "Verify wallet payment success default payment result page displays correctly",
+        "Skip": false,
+        "merchantId": "peachauto",
+        "caseType": "paypay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybs3DS-payPage"
+        ],
+        "payment": {
+            "amt": "12",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "txncurr": "JPY",
+            "channelType": "paypay",
+            "paymentMethod": "paypay",
+            "manualCapture": "N",
+            "expirydate": "CurrentTime",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "0800000000"
+            },
+            "expectedResult": {
+                "amt": "12",
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "channelType": "paypay",
+                "date": "2022-01-11 14:38:25",
+                "login": "PEACH_AUTO",
+                "manualCapture": "N",
+                "nttrefid": "942331301",
+                "paymentMethod": "paypay",
+                "proc_code": "08100001",
+                "redirect_url": "https://stg-www.paypay-corp.co.jp/app/cashier?code=https%3A%2F%2Fqr-stg.paypay-corp.co.jp%2F28180104qhClfttyuD5u9tDI",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "signature": "93a4fe4345367a0e1d3fc78908623a7cbe480b4a2648d28c52a174cbebc1aa5dacd58374c537df5d6bc5c1267774e0a100d5f1b76f0297be4e6e52d05e09e41b",
+                "txncurr": "JPY",
+                "txnid": "1641883058486",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "udf1",
+                "respdesc",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "username",
+                    "value": "090-1236-5479",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "password",
+                    "value": "Ntt123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "classname",
+                    "byValue": "submit-button",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "name",
+                    "byValue": "otp_input",
+                    "value": "1234",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "classname",
+                    "byValue": "submit-button-wrap",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"langLabel\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ja-jp\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "amount-key",
+                    "byValue": "//*[@id=\"resultPage-amount-key\"]"
+                },
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "amount-key": "金額：",
+                "transactionId-key": "取引ID：",
+                "refId-key": "参照番号：",
+                "date-key": "日付：",
+                "Txn": "お支払い完了",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12820_3",
+        "OD": "Verify wallet payment success default payment result page displays correctly",
+        "Skip": false,
+        "merchantId": "peachauto",
+        "caseType": "paypay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybs3DS-payPage"
+        ],
+        "payment": {
+            "amt": "13",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "txncurr": "JPY",
+            "channelType": "paypay",
+            "paymentMethod": "paypay",
+            "manualCapture": "N",
+            "expirydate": "CurrentTime",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "0800000000"
+            },
+            "expectedResult": {
+                "amt": "13",
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "channelType": "paypay",
+                "date": "2022-01-11 14:38:25",
+                "login": "PEACH_AUTO",
+                "manualCapture": "N",
+                "nttrefid": "942331301",
+                "paymentMethod": "paypay",
+                "proc_code": "08100001",
+                "redirect_url": "https://stg-www.paypay-corp.co.jp/app/cashier?code=https%3A%2F%2Fqr-stg.paypay-corp.co.jp%2F28180104qhClfttyuD5u9tDI",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/payment-page",
+                "signature": "93a4fe4345367a0e1d3fc78908623a7cbe480b4a2648d28c52a174cbebc1aa5dacd58374c537df5d6bc5c1267774e0a100d5f1b76f0297be4e6e52d05e09e41b",
+                "txncurr": "JPY",
+                "txnid": "1641883058486",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "udf1",
+                "respdesc",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "username",
+                    "value": "090-1236-5479",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "password",
+                    "value": "Ntt123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "classname",
+                    "byValue": "submit-button",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "name",
+                    "byValue": "otp_input",
+                    "value": "1234",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "classname",
+                    "byValue": "submit-button-wrap",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"langLabel\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ko-kr\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "amount-key",
+                    "byValue": "//*[@id=\"resultPage-amount-key\"]"
+                },
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "amount-key": "금액:",
+                "transactionId-key": "거래 번호:",
+                "refId-key": "게이트웨이 참조 번호:",
+                "date-key": "데이트:",
+                "Txn": "결제 성공",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12820_4",
+        "OD": "Verify wallet payment success default payment result page displays correctly",
+        "Skip": false,
+        "merchantId": "peachauto",
+        "caseType": "paypay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybs3DS-payPage"
+        ],
+        "payment": {
+            "amt": "14",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "txncurr": "JPY",
+            "channelType": "paypay",
+            "paymentMethod": "paypay",
+            "manualCapture": "N",
+            "expirydate": "CurrentTime",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "0800000000"
+            },
+            "expectedResult": {
+                "amt": "14",
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "channelType": "paypay",
+                "date": "2022-01-11 14:38:25",
+                "login": "PEACH_AUTO",
+                "manualCapture": "N",
+                "nttrefid": "942331301",
+                "paymentMethod": "paypay",
+                "proc_code": "08100001",
+                "redirect_url": "https://stg-www.paypay-corp.co.jp/app/cashier?code=https%3A%2F%2Fqr-stg.paypay-corp.co.jp%2F28180104qhClfttyuD5u9tDI",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/payment-page",
+                "signature": "93a4fe4345367a0e1d3fc78908623a7cbe480b4a2648d28c52a174cbebc1aa5dacd58374c537df5d6bc5c1267774e0a100d5f1b76f0297be4e6e52d05e09e41b",
+                "txncurr": "JPY",
+                "txnid": "1641883058486",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "udf1",
+                "respdesc",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "username",
+                    "value": "090-1236-5479",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "password",
+                    "value": "Ntt123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "classname",
+                    "byValue": "submit-button",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "name",
+                    "byValue": "otp_input",
+                    "value": "1234",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "classname",
+                    "byValue": "submit-button-wrap",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"langLabel\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"th-th\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "amount-key",
+                    "byValue": "//*[@id=\"resultPage-amount-key\"]"
+                },
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "amount-key": "จำนวนเงิน:",
+                "transactionId-key": "รหัสธุรกรรม:",
+                "refId-key": "หมายเลขอ้างอิง:",
+                "date-key": "วันที่:",
+                "Txn": "การชำระเงินสำเร็จ",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12823_1",
+        "OD": "PayPay Test Set",
+        "Skip": false,
+        "merchantId": "peachauto",
+        "caseType": "paypay",
+        "testFlow": [
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "16",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "od": "Testing - Liujie",
+            "selectedMethod": "paypay",
+            "isAllowSelection": true,
+            "useLimit": "1",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Liujie",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-https"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[4]/div/div[3]/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"leave-page-button\"]",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-cancelled\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "transactionId-key": "Transaction ID:",
+                "refId-key": "Gateway Reference Number:",
+                "date-key": "Date:",
+                "result": "Payment Cancelled",
+                "date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12823_2",
+        "OD": "PayPay Test Set",
+        "Skip": false,
+        "merchantId": "peachauto",
+        "caseType": "paypay",
+        "testFlow": [
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "16",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "od": "Testing - Liujie",
+            "selectedMethod": "paypay",
+            "isAllowSelection": true,
+            "useLimit": "1",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Liujie",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-https"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[4]/div/div[3]/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"leave-page-button\"]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"langLabel\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ja-jp\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-cancelled\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "transactionId-key": "取引ID：",
+                "refId-key": "参照番号：",
+                "date-key": "日付：",
+                "result": "お支払いがキャンセルされました",
+                "date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12823_3",
+        "OD": "PayPay Test Set",
+        "Skip": false,
+        "merchantId": "peachauto",
+        "caseType": "paypay",
+        "testFlow": [
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "16",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "od": "Testing - Liujie",
+            "selectedMethod": "paypay",
+            "isAllowSelection": true,
+            "useLimit": "1",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Liujie",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-https"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[4]/div/div[3]/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"leave-page-button\"]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"langLabel\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ko-kr\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-cancelled\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "transactionId-key": "거래 번호:",
+                "refId-key": "게이트웨이 참조 번호:",
+                "date-key": "데이트:",
+                "result": "결제가 취소되었습니다",
+                "date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12823_4",
+        "OD": "PayPay Test Set",
+        "Skip": false,
+        "merchantId": "peachauto",
+        "caseType": "paypay",
+        "testFlow": [
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "16",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "od": "Testing - Liujie",
+            "selectedMethod": "paypay",
+            "isAllowSelection": true,
+            "useLimit": "1",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Liujie",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-https"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[4]/div/div[3]/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"leave-page-button\"]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"langLabel\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"th-th\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-cancelled\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "transactionId-key": "รหัสธุรกรรม:",
+                "refId-key": "หมายเลขอ้างอิง:",
+                "date-key": "วันที่:",
+                "result": "การชำระเงินถูกยกเลิก",
+                "date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12824_1",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "merchantId": "nttm3auto",
+        "caseType": "paypal",
+        "testFlow": [
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "1",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "Testing - Donald",
+            "cancelUrl": "https://uat.ndhkpay.com/payment-page",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Donald",
+            "selectedMethod": "paypal",
+            "isAllowSelection": true,
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[4]/div/div[3]/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"leave-page-button\"]",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-cancelled\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "transactionId-key": "Transaction ID:",
+                "refId-key": "Gateway Reference Number:",
+                "date-key": "Date:",
+                "result": "Payment Cancelled",
+                "date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12824_2",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "merchantId": "nttm3auto",
+        "caseType": "paypal",
+        "testFlow": [
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "1",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "Testing - Donald",
+            "cancelUrl": "https://uat.ndhkpay.com/payment-page",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Donald",
+            "selectedMethod": "paypal",
+            "isAllowSelection": true,
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[4]/div/div[3]/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"leave-page-button\"]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"langLabel\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ja-jp\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-cancelled\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "transactionId-key": "取引ID：",
+                "refId-key": "参照番号：",
+                "date-key": "日付：",
+                "result": "お支払いがキャンセルされました",
+                "date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12824_3",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "merchantId": "nttm3auto",
+        "caseType": "paypal",
+        "testFlow": [
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "1",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "Testing - Donald",
+            "cancelUrl": "https://uat.ndhkpay.com/payment-page",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Donald",
+            "selectedMethod": "paypal",
+            "isAllowSelection": true,
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[4]/div/div[3]/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"leave-page-button\"]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"langLabel\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ko-kr\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-cancelled\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "transactionId-key": "거래 번호:",
+                "refId-key": "게이트웨이 참조 번호:",
+                "date-key": "데이트:",
+                "result": "결제가 취소되었습니다",
+                "date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12824_4",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "merchantId": "nttm3auto",
+        "caseType": "paypal",
+        "testFlow": [
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "1",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "od": "Testing - Donald",
+            "cancelUrl": "https://uat.ndhkpay.com/payment-page",
+            "ru": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Donald",
+            "selectedMethod": "paypal",
+            "isAllowSelection": true,
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[4]/div/div[3]/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"leave-page-button\"]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"langLabel\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"th-th\"]",
+                    "value": null,
+                    "waitingTime": "5000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "transactionId-key",
+                    "byValue": "//*[@id=\"resultPage-transactionId-key\"]"
+                },
+                {
+                    "elementName": "refId-key",
+                    "byValue": "//*[@id=\"resultPage-refId-key\"]"
+                },
+                {
+                    "elementName": "date-key",
+                    "byValue": "//*[@id=\"resultPage-date-key\"]"
+                },
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-cancelled\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "transactionId-key": "รหัสธุรกรรม:",
+                "refId-key": "หมายเลขอ้างอิง:",
+                "date-key": "วันที่:",
+                "result": "การชำระเงินถูกยกเลิก",
+                "date": "#Contains-202"
+            }
+        }
+    }
+]

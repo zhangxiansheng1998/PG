@@ -1,0 +1,438 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-14362",
+        "OD": "For GET/v2/tokens/{token}, verify that the parameter apiKey in the header request is updated to apikey",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2token",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonV2TokenApiKey-token",
+            "getV2TokenApiKey-getToken"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "token": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4E1+v+u6VOaxXo8RCr6GPV9DNlmetJ+zzCkjlYWWs3D8=|John Doe|CC|MASTERCARD|hase",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "cardBrand": "MASTERCARD",
+                "cardHolderName": "John Doe",
+                "cardIssuer": "hase",
+                "expiryMonth": "12",
+                "expiryYear": "2033",
+                "maskedCardNumber": "512345XXXXXX2346",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "cardIssuer",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "getToken": {
+            "headerToken": true,
+            "apikey": "pL5UOrswOI067pfmQj6Y",
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "cardBrand": "MASTERCARD",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "12",
+                "expiryYear": "2033",
+                "maskedCardNumber": "512345XXXXXX2346",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-14365",
+        "OD": "For GET/v2/tokens/{token}, if no token is found in the token table, then return NE3021",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2token",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "getV2TokenApiKey-getToken"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = 'RandomToken'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "getToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "token": "RandomToken",
+            "expectedResult": {
+                "httpCode": 200,
+                "errorCode": "NE3021",
+                "errorDescription": "Provided token not found",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-14372",
+        "OD": "For GET/v2/tokens/{token}, if token is found in the token table and source is NDHK , the token service provider config exist, then send GET/v2/tokens request, if respCode is '00', return success",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2token",
+        "testFlow": [
+            "jsonV2TokenApiKey-token",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2",
+            "getV2TokenApiKey-getToken"
+        ],
+        "token": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4E1+v+u6VOaxXo8RCr6GPV9DNlmetJ+zzCkjlYWWs3D8=|John Doe|CC|MASTERCARD|hase",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "cardBrand": "MASTERCARD",
+                "cardHolderName": "John Doe",
+                "cardIssuer": "hase",
+                "expiryMonth": "12",
+                "expiryYear": "2033",
+                "maskedCardNumber": "512345XXXXXX2346",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "cardIssuer",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "source"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "source": "NDHK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_config",
+                        "columnNames": [
+                            "token_service_config"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id = 'NTT_V2_AUTO' and provider = 'NDHK'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "token_service_config": "#Contains-pass"
+                        }
+                    ]
+                }
+            }
+        },
+        "getToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "cardBrand": "MASTERCARD",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "12",
+                "expiryYear": "2033",
+                "maskedCardNumber": "512345XXXXXX2346",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-14366 (only for UAT)",
+        "OD": "For GET/v2/tokens/{token}, if token is found in the token table but source isn't NDHK , then look for ndhk_token from the token_mapping table, if can't find, return NE0017",
+        "merchantId": "ntt",
+        "Skip": true,
+        "caseType": "v2token",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2",
+            "getV2TokenApiKey-getToken"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "source"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '000899e3-f788-40cb-9544-187d7dd16526'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "source": "NTT"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_mapping",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "tokenex_token = '000899e3-f788-40cb-9544-187d7dd16526'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "getToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "token": "000899e3-f788-40cb-9544-187d7dd16526",
+            "expectedResult": {
+                "errorCode": "NE0017",
+                "errorDescription": "Unable to query card token",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "cardIssuer",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        }
+    }
+]

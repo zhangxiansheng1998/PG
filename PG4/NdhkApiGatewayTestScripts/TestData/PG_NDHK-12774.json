@@ -1,0 +1,814 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-21421",
+        "OD": "For v2/3ds, send cybs 3ds2.0 request, if API format is wrong, return NE1011",
+        "merchantId": "nttv2",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "3dsV2ApiKey-request"
+        ],
+        "request": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "bodyIncorrectFormat": true,
+            "expectedResult": {
+                "httpCode": "400",
+                "errorCode": "NE1011",
+                "errorDescription": "Invalid Request Format",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-21422",
+        "OD": "For v2/3ds, send cybs 3ds2.0 request, if miss parameter 3dsVersion, return NE1163",
+        "merchantId": "nttv2",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "3dsV2ApiKey-request",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "request": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "channelType": "cybs",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "cardData": "XZ13aC5625frSmc4kL03fEcOnUhgwGeNkXrTn+Dj29syaKnYAvblzO34tJ0=|John Doe|CC|VISA",
+            "amount": "1",
+            "currency": "USD",
+            "customerDetails": {
+                "city": "Hong Kong",
+                "country": "HK",
+                "email": "qwe@qwe.com",
+                "firstName": "JOHN",
+                "lastName": "WONG",
+                "postCode": "234234",
+                "address": "aaa bbb ccc, ddd street"
+            },
+            "expectedResult": {
+                "httpCode": "400",
+                "errorCode": "NE1163",
+                "errorDescription": "Missing parameter - 3dsVersion",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds request from NTT_V2 to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "3ds request from NTT_V2 to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "errorCode=NE1163"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "responseCode=01, responseDescription=fail, errorDescription=Missing parameter - 3dsVersion"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-21423",
+        "OD": "For v2/3ds, send cybs 3ds2.0 request, if parameter 3dsVersion is wrong, return NE1164",
+        "merchantId": "nttv2",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "3dsV2ApiKey-request",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "request": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "3dsVersion": "ds",
+            "channelType": "cybs",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "cardData": "XZ13aC5625frSmc4kL03fEcOnUhgwGeNkXrTn+Dj29syaKnYAvblzO34tJ0=|John Doe|CC|VISA",
+            "amount": "1",
+            "currency": "USD",
+            "customerDetails": {
+                "city": "Hong Kong",
+                "country": "HK",
+                "email": "qwe@qwe.com",
+                "firstName": "JOHN",
+                "lastName": "WONG",
+                "postCode": "234234",
+                "address": "aaa bbb ccc, ddd street"
+            },
+            "expectedResult": {
+                "httpCode": "400",
+                "errorCode": "NE1164",
+                "errorDescription": "Invalid parameter - 3dsVersion",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds request from NTT_V2 to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "3ds request from NTT_V2 to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "errorCode=NE1164"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "responseCode=01, responseDescription=fail, errorDescription=Invalid parameter - 3dsVersion"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-21424",
+        "OD": "For v2/3ds, send cybs 3ds2.0 request, if miss parameter amount, return NE1183",
+        "merchantId": "nttv2",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "3dsV2ApiKey-request",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "request": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "3dsVersion": "2",
+            "channelType": "cybs",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "cardData": "XZ13aC5625frSmc4kL03fEcOnUhgwGeNkXrTn+Dj29syaKnYAvblzO34tJ0=|John Doe|CC|VISA",
+            "currency": "USD",
+            "customerDetails": {
+                "city": "Hong Kong",
+                "country": "HK",
+                "email": "qwe@qwe.com",
+                "firstName": "JOHN",
+                "lastName": "WONG",
+                "postCode": "234234",
+                "address": "aaa bbb ccc, ddd street"
+            },
+            "expectedResult": {
+                "httpCode": "400",
+                "errorCode": "NE1183",
+                "errorDescription": "Missing parameter - amount",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds request from NTT_V2 to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "3ds request from NTT_V2 to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "errorCode=NE1183"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "responseCode=01, responseDescription=fail, errorDescription=Missing parameter - amount"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-21426",
+        "OD": "For v2/3ds, send cybs 3ds2.0 request, if parameter amount is wrong, return NE1184",
+        "merchantId": "nttv2",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "3dsV2ApiKey-request",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "request": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "3dsVersion": "2",
+            "channelType": "cybs",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "cardData": "XZ13aC5625frSmc4kL03fEcOnUhgwGeNkXrTn+Dj29syaKnYAvblzO34tJ0=|John Doe|CC|VISA",
+            "amount": "dsa",
+            "currency": "HKD",
+            "customerDetails": {
+                "city": "Hong Kong",
+                "country": "HK",
+                "email": "qwe@qwe.com",
+                "firstName": "JOHN",
+                "lastName": "WONG",
+                "postCode": "234234",
+                "address": "aaa bbb ccc, ddd street"
+            },
+            "expectedResult": {
+                "httpCode": "400",
+                "errorCode": "NE1184",
+                "errorDescription": "Invalid parameter - amount",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds request from NTT_V2 to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "3ds request from NTT_V2 to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "errorCode=NE1184"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "responseCode=01, responseDescription=fail, errorDescription=Invalid parameter - amount"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-21427",
+        "OD": "For v2/3ds, send cybs 3ds2.0 request, if miss parameter currency, return NE1215",
+        "merchantId": "nttv2",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "3dsV2ApiKey-request",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "request": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "3dsVersion": "2",
+            "channelType": "cybs",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "cardData": "XZ13aC5625frSmc4kL03fEcOnUhgwGeNkXrTn+Dj29syaKnYAvblzO34tJ0=|John Doe|CC|VISA",
+            "amount": "1",
+            "customerDetails": {
+                "city": "Hong Kong",
+                "country": "HK",
+                "email": "qwe@qwe.com",
+                "firstName": "JOHN",
+                "lastName": "WONG",
+                "postCode": "234234",
+                "address": "aaa bbb ccc, ddd street"
+            },
+            "expectedResult": {
+                "httpCode": "400",
+                "errorCode": "NE1215",
+                "errorDescription": "Missing parameter - currency",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds request from NTT_V2 to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "3ds request from NTT_V2 to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "errorCode=NE1215"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "responseCode=01, responseDescription=fail, errorDescription=Missing parameter - currency"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-21428",
+        "OD": "For v2/3ds, send cybs 3ds2.0 request, if parameter currency is wrong, return NE1216",
+        "merchantId": "nttv2",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "3dsV2ApiKey-request",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "request": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "3dsVersion": "2",
+            "channelType": "cybs",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "cardData": "XZ13aC5625frSmc4kL03fEcOnUhgwGeNkXrTn+Dj29syaKnYAvblzO34tJ0=|John Doe|CC|VISA",
+            "amount": "1",
+            "currency": "dasdasd",
+            "customerDetails": {
+                "city": "Hong Kong",
+                "country": "HK",
+                "email": "qwe@qwe.com",
+                "firstName": "JOHN",
+                "lastName": "WONG",
+                "postCode": "234234",
+                "address": "aaa bbb ccc, ddd street"
+            },
+            "expectedResult": {
+                "httpCode": "400",
+                "errorCode": "NE1216",
+                "errorDescription": "Invalid parameter - currency",
+                "responseCode": "01",
+                "responseDescription": "Invalid parameter-currency"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds request from NTT_V2 to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "3ds request from NTT_V2 to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "errorCode=NE1216"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "3ds response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "responseCode=01, responseDescription=Invalid parameter-currency, errorDescription=Invalid parameter - currency"
+                    ]
+                }
+            }
+        }
+    }
+]

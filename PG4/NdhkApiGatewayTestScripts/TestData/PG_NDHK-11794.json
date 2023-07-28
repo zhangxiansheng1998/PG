@@ -1,0 +1,1254 @@
+[
+    {
+        "testDataId": "NDHK-11770",
+        "OD": "Test Standardize mpgs card- when currency,origin,paymentMethod and channelId have the correct value in processors_config table, then do non-3ds purchase payment successfully",
+        "merchantId": "nttm4auto",
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-DBCheck",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "TWD",
+            "od": "Test",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "carddata": "wqXeaInSu2/V8A9WLjaXq19xWE6Zk9W973//AosP2/Q=|CardHolder|CC|MASTER",
+            "authentication": "N",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "100",
+                "channelType": "mpgs",
+                "date": "2021-11-30 11:06:17",
+                "login": "NTT_M_4_AUTO",
+                "manualCapture": "N",
+                "nttrefid": "#Contains-1",
+                "paymentMethod": "card",
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "TWD",
+                "txnid": "ym202005061340",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "login",
+                "manualCapture",
+                "nttrefid",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "DBCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "signature"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "RRN",
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "REFUND",
+                            "RRN": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-11771",
+        "OD": "Test Standardize mpgs card- when currency,origin,paymentMethod and channelId have the correct value in processors_config table, then do non-3ds auth payment successfully",
+        "merchantId": "nttm4auto",
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-DBCheck",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "TWD",
+            "od": "Test",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "carddata": "wqXeaInSu2/V8A9WLjaXq19xWE6Zk9W973//AosP2/Q=|CardHolder|CC|MASTER",
+            "authentication": "N",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "Y",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "100",
+                "channelType": "mpgs",
+                "date": "2021-11-30 11:06:17",
+                "login": "NTT_M_4_AUTO",
+                "manualCapture": "Y",
+                "nttrefid": "#Contains-1",
+                "paymentMethod": "card",
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "TWD",
+                "txnid": "ym202005061340",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "login",
+                "manualCapture",
+                "nttrefid",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "DBCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "signature"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "RRN",
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "VOID",
+                            "RRN": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-11772",
+        "OD": "Test Standardize mpgs card- when currency,origin,paymentMethod and channelId have the correct value in processors_config table, then do non-3ds auth payment successfully",
+        "merchantId": "nttm4auto",
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-DBCheck",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "TWD",
+            "od": "Test",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "carddata": "umsElT+JxkX49UnU+jSpxkShzcTLMWvtL198X+eNsuE=|John Doe|CC|VISA",
+            "authentication": "Y",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "channelType": "mpgs",
+                "date": "2021-11-30 15:38:13",
+                "login": "NTT_M_4_AUTO",
+                "maskcardnumber": "345678XXXXX4564",
+                "nttrefid": "#Contains-1",
+                "redirect_url": "https://uat.ndhkpay.com/Ndhk_Api/redirect/processor/redirectForm?transactionId=942315409&signature=592513913527af691c147a26eaed27cf4d66437bbc58fbce020bdada266b605c9271645c17c714b8409541699f4da89b49f44ad27ade66519aee4cae5604ba9b",
+                "respcode": "02",
+                "respdesc": "pending",
+                "signature": "592513913527af691c147a26eaed27cf4d66437bbc58fbce020bdada266b605c9271645c17c714b8409541699f4da89b49f44ad27ade66519aee4cae5604ba9b",
+                "txncurr": "TWD",
+                "txnid": "1638257898033",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "channelType",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ContainerContent\"]/center/form/table/tbody/tr[13]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Txnid": "#Contains-1",
+                "Nttrefid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "DBCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "signature"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "RRN",
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "REFUND",
+                            "RRN": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-11799",
+        "OD": "Test Standardize mpgs googlepay amex - when currency,origin,paymentMethod and channelId have the correct value in processors_config table, then do purchase payment",
+        "merchantId": "nttm4auto",
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-DBCheck",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "ym202005061340",
+            "txncurr": "TWD",
+            "od": "Test",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "carddata": "wqXeaInSu2/V8A9WLjaXq19xWE6Zk9W973//AosP2/Q=|CardHolder|CC|MASTER",
+            "authentication": "N",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "100",
+                "auth_code": "001372",
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "channelType": "mpgs",
+                "login": "NTT_M_4_AUTO",
+                "manualCapture": "N",
+                "nttrefid": "#Contains-1",
+                "paymentMethod": "card",
+                "channelId": "amex",
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "TWD",
+                "txnid": "ym202005061340",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "login",
+                "manualCapture",
+                "nttrefid",
+                "paymentMethod",
+                "channelId",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "DBCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "signature"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "RRN",
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "REFUND",
+                            "RRN": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-11800",
+        "OD": "Test Standardize mpgs googlepay amex - when currency,origin,paymentMethod and channelId have the correct value in processors_config table, then do purchase payment",
+        "merchantId": "nttm4auto",
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-DBCheck",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "ym202005061340",
+            "txncurr": "TWD",
+            "od": "Test",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "carddata": "wqXeaInSu2/V8A9WLjaXq19xWE6Zk9W973//AosP2/Q=|CardHolder|CC|MASTER",
+            "authentication": "N",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "Y",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "100",
+                "auth_code": "001372",
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "channelType": "mpgs",
+                "login": "NTT_M_4_AUTO",
+                "manualCapture": "Y",
+                "nttrefid": "#Contains-1",
+                "paymentMethod": "card",
+                "channelId": "amex",
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "TWD",
+                "txnid": "ym202005061340",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "login",
+                "manualCapture",
+                "nttrefid",
+                "paymentMethod",
+                "channelId",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "DBCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "signature"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "RRN",
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "VOID",
+                            "RRN": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-11801",
+        "OD": "Test Standardize mpgs card amex- when currency,origin,paymentMethod and channelId have the correct value in processors_config table, then do 3ds auth payment successfully",
+        "merchantId": "nttm4auto",
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-DBCheck",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "TWD",
+            "od": "Test",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "carddata": "umsElT+JxkX49UnU+jSpxkShzcTLMWvtL198X+eNsuE=|John Doe|CC|VISA",
+            "authentication": "Y",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "Y",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "channelType": "mpgs",
+                "date": "2021-11-30 15:38:13",
+                "login": "NTT_M_4_AUTO",
+                "maskcardnumber": "345678XXXXX4564",
+                "nttrefid": "#Contains-1",
+                "redirect_url": "https://uat.ndhkpay.com/Ndhk_Api/redirect/processor/redirectForm?transactionId=942315409&signature=592513913527af691c147a26eaed27cf4d66437bbc58fbce020bdada266b605c9271645c17c714b8409541699f4da89b49f44ad27ade66519aee4cae5604ba9b",
+                "respcode": "02",
+                "respdesc": "pending",
+                "signature": "592513913527af691c147a26eaed27cf4d66437bbc58fbce020bdada266b605c9271645c17c714b8409541699f4da89b49f44ad27ade66519aee4cae5604ba9b",
+                "txncurr": "TWD",
+                "txnid": "1638257898033",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "channelType",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ContainerContent\"]/center/form/table/tbody/tr[13]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Txnid": "#Contains-1",
+                "Nttrefid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "DBCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "signature"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "RRN",
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "VOID",
+                            "RRN": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-11808",
+        "OD": "Test Standardize mpgs card- when currency,origin,paymentMethod and channelId have the correct value in processors_config table, then do 3ds purchase payment successfully",
+        "merchantId": "nttm4auto",
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-DBCheck",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "TWD",
+            "od": "Test",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "carddata": "umsElT+JxkX49UnU+jSpxkShzcTLMWvtL198X+eNsuE=|John Doe|CC|VISA",
+            "authentication": "Y",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "channelType": "mpgs",
+                "date": "2021-11-30 15:38:13",
+                "login": "NTT_M_4_AUTO",
+                "maskcardnumber": "345678XXXXX4564",
+                "nttrefid": "#Contains-1",
+                "redirect_url": "https://uat.ndhkpay.com/Ndhk_Api/redirect/processor/redirectForm?transactionId=942315409&signature=592513913527af691c147a26eaed27cf4d66437bbc58fbce020bdada266b605c9271645c17c714b8409541699f4da89b49f44ad27ade66519aee4cae5604ba9b",
+                "respcode": "02",
+                "respdesc": "pending",
+                "signature": "592513913527af691c147a26eaed27cf4d66437bbc58fbce020bdada266b605c9271645c17c714b8409541699f4da89b49f44ad27ade66519aee4cae5604ba9b",
+                "txncurr": "TWD",
+                "txnid": "1638257898033",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "channelType",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ContainerContent\"]/center/form/table/tbody/tr[13]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Txnid": "#Contains-1",
+                "Nttrefid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "DBCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "signature"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "RRN",
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "REFUND",
+                            "RRN": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-11809",
+        "OD": "Test Standardize mpgs card amex- when currency,origin,paymentMethod and channelId have the correct value in processors_config table, then do 3ds purchase payment successfully",
+        "merchantId": "nttm4auto",
+        "caseType": "mpgs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-DBCheck",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "TWD",
+            "od": "Test",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "carddata": "umsElT+JxkX49UnU+jSpxkShzcTLMWvtL198X+eNsuE=|John Doe|CC|VISA",
+            "authentication": "Y",
+            "isStorePaymentMethod": "N",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "channelType": "mpgs",
+                "date": "2021-11-30 15:38:13",
+                "login": "NTT_M_4_AUTO",
+                "maskcardnumber": "345678XXXXX4564",
+                "nttrefid": "#Contains-1",
+                "redirect_url": "https://uat.ndhkpay.com/Ndhk_Api/redirect/processor/redirectForm?transactionId=942315409&signature=592513913527af691c147a26eaed27cf4d66437bbc58fbce020bdada266b605c9271645c17c714b8409541699f4da89b49f44ad27ade66519aee4cae5604ba9b",
+                "respcode": "02",
+                "respdesc": "pending",
+                "signature": "592513913527af691c147a26eaed27cf4d66437bbc58fbce020bdada266b605c9271645c17c714b8409541699f4da89b49f44ad27ade66519aee4cae5604ba9b",
+                "txncurr": "TWD",
+                "txnid": "1638257898033",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "channelType",
+                "login",
+                "nttrefid",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"ContainerContent\"]/center/form/table/tbody/tr[13]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Txnid": "#Contains-1",
+                "Nttrefid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "DBCheck": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "100",
+            "expectedResult": {
+                "proc_code": "000",
+                "respcode": "00",
+                "respdesc": "success",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "signature"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "RRN",
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "REFUND",
+                            "RRN": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

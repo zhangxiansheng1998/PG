@@ -1,0 +1,339 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-14944",
+        "OD": "For DELETE /v2/tokens, if have no token, then return NE1119",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2token",
+        "testFlow": [
+            "deleteV2TokenApiKey-deleteToken"
+        ],
+        "deleteToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "token": "",
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1119",
+                "errorDescription": "Missing parameter - token",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-14945",
+        "OD": "For DELETE /v2/tokens, if have token is not exist, then return NE3021",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2token",
+        "testFlow": [
+            "deleteV2TokenApiKey-deleteToken"
+        ],
+        "deleteToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "token": "RandomToken",
+            "expectedResult": {
+                "httpCode": 404,
+                "errorCode": "NE3021",
+                "errorDescription": "Provided token not found",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-14952",
+        "OD": "For DELETE /v2/tokens, if has no socketTimeoutException in API (DELETE /v1/token) token service, if respCode = 00 in DELETE /v1/token response and update tokenization record successfully then delete token success",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2token",
+        "testFlow": [
+            "jsonV2TokenApiKey-token",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2",
+            "deleteV2TokenApiKey-deleteToken",
+            "frontend_cybsDB-cybsDB3"
+        ],
+        "token": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4E1+v+u6VOaxXo8RCr6GPV9DNlmetJ+zzCkjlYWWs3D8=|John Doe|CC|MASTERCARD|hase",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "cardBrand": "MASTERCARD",
+                "cardHolderName": "John Doe",
+                "cardIssuer": "hase",
+                "expiryMonth": "12",
+                "expiryYear": "2033",
+                "maskedCardNumber": "512345XXXXXX2346",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "cardIssuer",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "source"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "source": "NDHK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_config",
+                        "columnNames": [
+                            "token_service_config"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id = 'NTT_V2_AUTO' and provider = 'NDHK'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "token_service_config": "#Contains-pass"
+                        }
+                    ]
+                }
+            }
+        },
+        "deleteToken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "alias",
+                            "merchantid",
+                            "status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "alias": "512345XXXXXX2346",
+                            "merchantid": "NTT_V2_AUTO",
+                            "status": "DELETED"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-14953",
+        "OD": "For DELETE /v2/tokens, if use apiKey in header, miss apikey value then return NE1171",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2token",
+        "testFlow": [
+            "jsonV2TokenApiKey-token",
+            "frontend_cybsDB-cybsDB1",
+            "deleteV2TokenApiKey-deleteToken"
+        ],
+        "token": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4E1+v+u6VOaxXo8RCr6GPV9DNlmetJ+zzCkjlYWWs3D8=|John Doe|CC|MASTERCARD|hase",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "cardBrand": "MASTERCARD",
+                "cardHolderName": "John Doe",
+                "cardIssuer": "hase",
+                "expiryMonth": "12",
+                "expiryYear": "2033",
+                "maskedCardNumber": "512345XXXXXX2346",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "cardIssuer",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "source"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "source": "NDHK"
+                        }
+                    ]
+                }
+            }
+        },
+        "deleteToken": {
+            "apikey": "",
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "httpCode": 401,
+                "errorCode": "NE1171",
+                "errorDescription": "Missing parameter - apikey",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    }
+]

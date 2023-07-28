@@ -1,0 +1,61 @@
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import org.apache.jmeter.protocol.http.control.HeaderManager;
+
+public static byte[] encodeWithHMACSHA2(String text, String keyString)
+		throws NoSuchAlgorithmException, java.security.InvalidKeyException {
+	if(text == null){
+		return null;
+	}
+	Key sk = new SecretKeySpec(keyString.getBytes(StandardCharsets.UTF_8), "HMACSHA512");
+	Mac mac = Mac.getInstance(sk.getAlgorithm());
+	mac.init(sk);
+	return mac.doFinal(text.getBytes(StandardCharsets.UTF_8));
+}
+
+public static String byteToHexString(byte[] byData) {
+	if(byData == null){
+		return null;
+	}
+	StringBuilder sb = new StringBuilder(byData.length * 2);
+
+	for (int i = 0; i < byData.length; i++) {
+		int v = byData[i] & 0xff;
+		if (v < 16){
+			sb.append('0');
+		}
+		sb.append(Integer.toHexString(v));
+	}
+	return sb.toString();
+}
+
+String reponseSignature = vars.get("reponseSignature");
+log.info("see value ------------reponseSignature3----->"+reponseSignature);
+String requestLogin = vars.get("requestLogin");
+String reponsesignatureKey = null;
+if(requestLogin.equals("AGODA")){
+  reponsesignatureKey = props.get("agodaSignatureKey");
+}else if(requestLogin.equals("NTT")){
+  reponsesignatureKey = props.get("nttSignatureKey");
+}else{
+  reponsesignatureKey = vars.get("signatureKey");
+}
+String encryptedResult = byteToHexString(encodeWithHMACSHA2(reponseSignature, reponsesignatureKey));
+log.info("see value ------------signatureReponse----->"+encryptedResult);
+vars.put("signatureReponse", encryptedResult);
+
+vars.remove("headerToken");
+vars.remove("headerAuthorization");
+vars.remove("headerSignature");
+vars.remove("bodySignature");
+
+HeaderManager headerManager = ctx.getCurrentSampler().getHeaderManager();
+headerManager.removeHeaderNamed("Authorization");
+headerManager.removeHeaderNamed("signature");

@@ -1,0 +1,136 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-11768",
+        "OD": "Verify cybs purchase payment is successful with v2cardverification and with isStorToken:true.",
+        "merchantId": "nttauto",
+        "Skip": true,
+        "caseType": "cybs",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "cardVerificationV2-cardVerificationV2"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signMix": [
+                    "channel_type"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_config",
+                        "columnNames": [
+                            "payment_model",
+                            "currency",
+                            "amount"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "channel_type='cybs' and payment_model='PURCHASE'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "payment_model": "PURCHASE",
+                            "currency": "USD",
+                            "amount": "1.00"
+                        }
+                    ]
+                }
+            }
+        },
+        "cardVerificationV2": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "carddata": "32ETnH2hkapEtJnGFUVQH3xP/fk0kZ3qAzzBiBQriwvboKN+oy2uQrE9jMw=|John Doe|CC|VISA",
+            "transactionCurrency": "USD",
+            "isStoreToken": true,
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "expectedResult": {
+                "transactionCurrency": "USD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100"
+            },
+            "needAssert": [
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-11767",
+        "OD": "Verify cybs auth payment is successful with v2cardverification  and the request sent to cybs and data saved in DB by changing the amount to 0.00",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "cardVerificationV2-cardVerificationV2"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signMix": [
+                    "channel_type"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_config",
+                        "columnNames": [
+                            "payment_model",
+                            "currency",
+                            "amount"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "channel_type='cybs' and payment_model='AUTH'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "payment_model": "AUTH",
+                            "currency": "HKD",
+                            "amount": "1.00"
+                        }
+                    ]
+                }
+            }
+        },
+        "cardVerificationV2": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "carddata": "XZ13aC5625frSmc4f6ytag4+MQ+BbOMZDQIVTovrRc2puCKnjbaq+J0IFBs=|John Doe|CC|VISA",
+            "transactionCurrency": "HKD",
+            "isStoreToken": true,
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "expectedResult": {
+                "transactionCurrency": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100"
+            },
+            "needAssert": [
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        }
+    }
+]

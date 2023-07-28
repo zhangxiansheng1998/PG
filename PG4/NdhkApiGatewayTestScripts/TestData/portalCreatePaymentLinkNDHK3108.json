@@ -1,0 +1,3668 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-3087",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txncurr": "USD",
+            "txnid": "generate",
+            "od": "Test order",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbyXlHgeRv8cP35CV-5LciE5dZpUlW3wUPSpOlRz6sGR3ytViG8/exec",
+            "udf1": "test Again",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "customerDetails": {
+                "name": "John"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "visa",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "341134113411347",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[16]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a7703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "payment_link",
+                        "columnNames": [
+                            "use_limit",
+                            "transaction_id",
+                            "merchantid",
+                            "expiry_date"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "use_limit": null,
+                            "transaction_id": "#Contains-1",
+                            "merchantid": "NTT_AUTO",
+                            "expiry_date": "#Contains-201"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Purchase  request from NTT to orbital"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Purchase  response from orbital to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_AUTO"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-3088",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txncurr": "HKD",
+            "txnid": "generate",
+            "useLimit": "2",
+            "od": "Testing - Pengfei",
+            "selectedMethod": "unionpay.merchanthosted",
+            "isAllowSelection": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Donald",
+            "customerDetails": {
+                "name": "Alex",
+                "flName": "Alex",
+                "phone": "86-1312341234"
+            },
+            "flightDetails": {
+                "passengerName": "Pengfei",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "6250947000000014",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "1",
+            "expectedResult": {
+                "respdesc": "success",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "respcode"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_msg"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_msg": "SUCCESS"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2687",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "USD",
+            "od": "Calculate the length of your string of text or numbers.",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "customerDetails": {
+                "name": "Tom jerry",
+                "email1": "ZZZ@hotmail.com",
+                "phone1": "123456789"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "visa",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Value",
+                    "byValue": "//*[@id=\"name\"]"
+                }
+            ],
+            "expectedResult": {
+                "Value": "Tom jerry"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2689",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers.",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "customerDetails": {
+                "email1": "ZZZ@hotmail.com",
+                "phone": "852 123456789"
+            },
+            "expectedResult": {
+                "respdesc": "fail",
+                "result": "Invalid parameter - customerDetails.phone",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2708",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Calculate the length of your string of text or numbers.",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "flightDetails": {
+                "passengerName": "Priyam ^",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid format of flightDetails.passengerName"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2321",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Testing - Priyam",
+            "ru": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2025-12-25 12:12:12",
+            "selectedMethod": "unionpay.qr",
+            "isAllowSelection": true,
+            "useLimit": 1,
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Name",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div[3]/div/div/div/div[1]/div/div[2]/div/div/div[3]/div[2]/div/div[1]"
+                }
+            ],
+            "expectedResult": {
+                "Name": "Press pay to get QR code"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "host_page_config",
+                        "columnNames": [
+                            "payment_method"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchantid = 'ntt'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "payment_method": "#Contains-unionpay.qr"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2329",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Testing - Priyam",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "lang": "en-us",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Name",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div[3]/div/div/div/div[1]/div/div[1]/div/h3"
+                }
+            ],
+            "expectedResult": {
+                "Name": "Payment Method"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2330",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Testing - Priyam",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "lang": "zh-tw",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Name",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div[3]/div/div/div/div[1]/div/div[1]/div/h3"
+                }
+            ],
+            "expectedResult": {
+                "Name": "支付方式"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2661",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "USD",
+            "od": "Calculate the length of your string of text or numbers to check the number of characters it contains! Using our online character counting tool is quick and easy! This tool is great for computer programmers,webdevelopers,writers,andotherprogrammers.",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "udf2": "Testing - Priyam",
+            "udf3": "Testing - Priyam",
+            "udf4": "Testing - Priyam",
+            "udf5": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "name": "John",
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2029-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2029-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "visa",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "341134113411347",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[6]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "411",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "TestOrder",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "user_data_23",
+                            "user_data_27",
+                            "user_data_28",
+                            "user_data_29",
+                            "user_data_30"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "user_data_23": "Testing - Priyam",
+                            "user_data_27": "Testing - Priyam",
+                            "user_data_28": "Testing - Priyam",
+                            "user_data_29": "Testing - Priyam",
+                            "user_data_30": "Testing - Priyam"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2666",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "peachauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Calculate the length of your string of text or numbers",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "unionpay.merchanthosted",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "react-tabs-2",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "6250947000000014",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"react-tabs-3\"]/div/div[2]/div[2]/div/div[1]/div/div",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"react-tabs-3\"]/div/div[2]/div[2]/div/div[1]/div/div[2]/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "mobile-number",
+                    "value": "11112222",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "TestOrder",
+                "Date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2667",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "peachauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "portalCreatePaymentLink-paymentLink1"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Calculate the length of your string of text or numbers",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "isAllowSelection": "false",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "selectedMethod is missing"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        },
+        "paymentLink1": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Calculate the length of your string of text or numbers",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "isAllowSelection": "true",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2669",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "peachauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Calculate the length of your string of text or numbers",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "isAllowSelection": "false",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "selectedMethod is missing"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2673",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "PG_Release",
+            "txncurr": "USD",
+            "od": "UATTest_12052020",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "cancelUrl": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "selectedMethod": "alipay",
+            "udf1": "Test UDF 1",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "alipay",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "classname",
+                    "byValue": "btn-primary",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Name",
+                    "byValue": "//*[@id=\"order\"]/div[1]/div[2]/span[1]"
+                }
+            ],
+            "expectedResult": {
+                "Name": "UATTest_12052020"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2677",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "peachauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Calculate the length of your string of text or numbers",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "useLimit": "A",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid parameter - useLimit"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2681",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "peachauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Calculate the length of your string of text or numbers",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "displayLang": "ABC",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2688",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "peachauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Calculate the length of your string of text or numbers.",
+            "selectedMethod": "unionpay.merchanthosted",
+            "isAllowSelection": false,
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "customerDetails": {
+                "email1": "ZZZ@hotmail.com",
+                "phone": "852-123456789"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Value",
+                    "byValue": "//*[@id=\"mobile-number\"]"
+                }
+            ],
+            "expectedResult": {
+                "Value": "123456789"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2694",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers.",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "customerDetails": {
+                "email1": "ZZZ@hotmail.com",
+                "phone": "852-12345 678@"
+            },
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid parameter - customerDetails.phone"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2698",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers.",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "customerDetails": {
+                "email": "person@example.com.",
+                "phone1": "852-12345 678@"
+            },
+            "expectedResult": {
+                "respdesc": "success",
+                "result": "#Contains-https",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2699",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers.",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Missing parameter - txnid"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2726",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "PG_Release",
+            "txncurr": "USD",
+            "od": "UATTest_12052020",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "cancelUrl": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "selectedMethod1": "alipay",
+            "udf1": "Test UDF 1",
+            "flightDetails": {
+                "passengerName": "Priyam",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "Q1",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid format of flightDetails.flightCarrierCode"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2736",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Calculate the length of your string of text or numbers",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Priyam",
+            "flightDetails": {
+                "passengerName": "Priyam",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber1": "AA A",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|aa",
+                "flightCarrierCode1": "ANN",
+                "flightClassCode": "A3DW",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid format of flightDetails.flightClassCode"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2739",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expirydate": "2020-01-02 18:15:60",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid parameter - expirydate"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2747",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expirydate": "2020-09 12:18:60",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid parameter - expirydate"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2748",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "login": "",
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Authentication fail"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2749",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "login": "NTT123",
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid UserID / Password"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2750",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2751",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "pass": "ntt@123",
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2752",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2753",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expirydate": "2020-12-01 : 02:00:00",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid parameter - expirydate"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2310",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "KRW",
+            "od": "Testing - Priyam",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "cafis-gg-kr",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbyXlHgeRv8cP35CV-5LciE5dZpUlW3wUPSpOlRz6sGR3ytViG8/exec",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2324",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Testing - Priyam",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2024-12-25 12:12:12",
+            "selectedMethod": "unionpay.merchantHosted",
+            "isAllowSelection": true,
+            "useLimit": 1,
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Not supported selectedMethod"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2327",
+        "OD": "payment link general validations",
+        "merchantId": "peachauto",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "paymentLink": {
+            "amt": "10",
+            "txncurr": "HKD",
+            "txnid": "generate",
+            "od": "Test order",
+            "selectedMethod": "unionpay.merchanthosted",
+            "useLimit": "1",
+            "isAllowSelection": false,
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbyXlHgeRv8cP35CV-5LciE5dZpUlW3wUPSpOlRz6sGR3ytViG8/exec",
+            "customerDetails": {
+                "name": "Priyam",
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Value",
+                    "byValue": "//*[@id=\"name\"]"
+                }
+            ],
+            "expectedResult": {
+                "Value": "Priyam"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "payment_link",
+                        "columnNames": [
+                            "data"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "data": "#Contains-customerDetails"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2325",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsLog-cybsLog"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txncurr": "HKD",
+            "txnid": "generate",
+            "od": "UATTest_12052020",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "cancelUrl": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "udf1": "Test UDF 1",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "/html/body/div/div/div/div/div/div[4]/div/div[3]/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "warning",
+                    "byValue": "//*[@id=\"leave-page-warning-title\"]"
+                }
+            ],
+            "expectedResult": {
+                "warning": "Leave this page?"
+            }
+        },
+        "cybsLog": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "portalCreatePaymentLink"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2326",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsLog-cybsLog1"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txncurr": "HKD",
+            "txnid": "generate",
+            "od": "UATTest_12052020",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Test UDF 1",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "/html/body/div/div/div/div/div/div[4]/div/div[3]/a",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "warning",
+                    "byValue": "//*[@id=\"leave-page-warning-title\"]"
+                }
+            ],
+            "expectedResult": {
+                "warning": "Leave this page?"
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "portalCreatePaymentLink"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2328",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txncurr": "USD",
+            "txnid": "generate",
+            "od": "Test order",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbyXlHgeRv8cP35CV-5LciE5dZpUlW3wUPSpOlRz6sGR3ytViG8/exec",
+            "udf1": "test Again",
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "customerDetails": {
+                "name": "John"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "visa",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "341134113411347",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[6]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "411",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "payment_link",
+                        "columnNames": [
+                            "data"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "data": "#Contains-flightDetails"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2331",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Testing - Priyam",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "lang": "zh-cn",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Name",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div[3]/div/div/div/div[1]/div/div[1]/div/h3"
+                }
+            ],
+            "expectedResult": {
+                "Name": "支付方式"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2332",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Testing - Priyam",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "lang": "ja-jp",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Name",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div[3]/div/div/div/div[1]/div/div[1]/div/h3"
+                }
+            ],
+            "expectedResult": {
+                "Name": "支払い方法"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2333",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Testing - Priyam",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "lang": "ko-kr",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "Name",
+                    "byValue": "/html/body/div/div/div/div/div/div[3]/div[3]/div/div/div/div[1]/div/div[1]/div/h3"
+                }
+            ],
+            "expectedResult": {
+                "Name": "결제 수단"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2645",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "-1000",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Testing - Priyam",
+            "ru": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid parameter - amt"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2646",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Testing - Priyam",
+            "ru": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Missing parameter - amt"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2647",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "0",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Testing - Priyam",
+            "ru": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "fail",
+                "result": "Invalid parameter - amt"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2648",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "ABC",
+            "od": "Testing - Priyam",
+            "ru": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Internal error. Please contact NTT support"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2649",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "od": "Testing - Priyam",
+            "ru": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respdesc": "fail",
+                "result": "Missing parameter - txncurr",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2650",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "ru": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respdesc": "fail",
+                "result": "Missing parameter - od",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2651",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "signature": "skip",
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "MYR",
+            "od": "Calculate the length of your string",
+            "ru": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respdesc": "fail",
+                "result": "Missing parameter - signature",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2652",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "MYR",
+            "od": "Calculate the length of your string of text or numbers to check the number of characters it contains! Using our online character counting tool is quick and easy! This tool is great for computer programmers,webdevelopers,writers,andotherprogrammers.",
+            "ru": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2653",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "signature": "signatureIsNull",
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers to check the number of characters it contains! Using our online character counting tool is quick and easy! This tool is great for computer programmers,webdevelopers,writers,andotherprogrammers.",
+            "ru": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respdesc": "fail",
+                "result": "Missing parameter - signature",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2654",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers to check the number of characters it contains! Using our online character counting tool is quick and easy! This tool is great for computer programmers,webdevelopers,writers,andotherprogrammers.",
+            "callbackUrl": "https: //webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2655",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers to check the number of characters it contains! Using our online character counting tool is quick and easy! This tool is great for computer programmers,webdevelopers,writers,andotherprogrammers.",
+            "callbackUrl": "https: //webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2656",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "PHP",
+            "od": "Calculate the length of your string of text or numbers to check the number of characters it contains! Using our online character counting tool is quick and easy! This tool is great for computer programmers,webdevelopers,writers,andotherprogrammers.",
+            "ru": "https: //webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "callbackUrl": "https://webhook.site/60fe5db9-4a32-4a0a-8cfb-655d2059e244",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "selectedMethod": "ipay88",
+            "isAllowSelection": false,
+            "useLimit": 1,
+            "lang": "ko-kr",
+            "customerDetails": {
+                "email": "ZZZ@hotmail.com",
+                "phone": "123456789"
+            },
+            "flightDetails": {
+                "passengerName": "Priyam SR",
+                "transactionType": "01",
+                "documentType": "11",
+                "flightNumber": "KAP 1234A|KAP 1345A",
+                "flightCarrierCode": "AS|sa",
+                "flightClassCode": "0",
+                "flightDepartureTime": "2019-11-26 00:00|2019-11-26 00:00",
+                "flightArrivalTime": "2019-11-26 00:00",
+                "flightAirportCode": "abf,tga|ggg,jjj"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2658",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txncurr": "HKD",
+            "txnid": "PG_Release",
+            "od": "UATTest_12052020",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "udf1": "Test UDF 1",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "customerDetails": {
+                "name": "John"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "visa",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4111111111111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[16]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "PG_Release",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "user_data_16"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "user_data_16": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2659",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "peachauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txnid": "TestOrder",
+            "txncurr": "HKD",
+            "od": "Calculate the length of your string of text or numbers",
+            "callback_url": "https://script.google.com/macros/s/AKfycbx833dveCOg25wGdOsrD-n3DmwYQ5xZBbxCV3gqsIhTlk6w_Xw/exec",
+            "udf1": "Testing - Priyam",
+            "urlExpiryDate": "2029-12-25 12:12:12",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "result": "#Contains-ndhkpay.com/ntt-payment-page"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "result"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "unionpay.merchanthosted",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "react-tabs-2",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "6250947000000014",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"react-tabs-3\"]/div/div[2]/div[2]/div/div[1]/div/div",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"react-tabs-3\"]/div/div[2]/div[2]/div/div[1]/div/div[2]/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "mobile-number",
+                    "value": "11112222",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "TestOrder",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to PEACH_AUTO"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2660",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "portalCreatePaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txncurr": "HKD",
+            "txnid": "PG_Release",
+            "od": "UATTest_12052020",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "udf1": "Test UDF 1",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "customerDetails": {
+                "name": "John"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ],
+            "if_02_redirect_url": "true"
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "name",
+                    "byValue": "visa",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4111111111111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationMonth",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "expirationYear",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[16]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "PG_Release",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "merchant_config",
+                        "columnNames": [
+                            "callback_url"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id = 'NTT_AUTO'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "callback_url": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "user_data_16"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "user_data_16": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-2124",
+        "OD": "payment request general validations",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "merchantId": "nttauto",
+        "testFlow": [
+            "paymentRequest-payment",
+            "paymentRequest-payment1",
+            "paymentRequest-payment2",
+            "paymentRequest-payment3",
+            "paymentRequest-payment4"
+        ],
+        "payment": {
+            "login": "AGODA1",
+            "amt": "100",
+            "txnid": "test3",
+            "txncurr": "HKD",
+            "carddata": "CYmV40Cc75nZuikjC/FLLxALHe9uhoHmgsIZRbjeG0M=|CardHolder|CC|MASTER",
+            "customerDetails": {
+                "name": "Test-User",
+                "phone": "1234567890",
+                "email": "test@nttdata.com"
+            },
+            "channelType": "cybs",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "nttuattesting",
+            "od": "od-migs",
+            "paymentMethod": "credit",
+            "udf1": "HIVE",
+            "udf2": "PIG",
+            "udf3": "SPARK",
+            "udf4": "MAP-REDUCE",
+            "udf5": "YARN",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "txnid": "test3",
+                "respcode": "01",
+                "respdesc": "Invalid API credentials",
+                "login": "AGODA1",
+                "udf1": "HIVE",
+                "udf2": "PIG",
+                "udf3": "SPARK",
+                "udf4": "MAP-REDUCE",
+                "udf5": "YARN",
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "txnid",
+                "respcode",
+                "respdesc",
+                "login",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "payment1": {
+            "pass": "agoda@1234",
+            "amt": "100",
+            "txnid": "test3",
+            "txncurr": "HKD",
+            "carddata": "CYmV40Cc75nZuikjC/FLLxALHe9uhoHmgsIZRbjeG0M=|CardHolder|CC|MASTER",
+            "customerDetails": {
+                "name": "Test-User",
+                "phone": "1234567890",
+                "email": "test@nttdata.com"
+            },
+            "channelType": "cybs",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "nttuattesting",
+            "od": "od-migs",
+            "paymentMethod": "credit",
+            "udf1": "HIVE",
+            "udf2": "PIG",
+            "udf3": "SPARK",
+            "udf4": "MAP-REDUCE",
+            "udf5": "YARN",
+            "expectedResult": {
+                "errorDesc": "Invalid API credentials",
+                "udf5": "YARN",
+                "amt": "100",
+                "txncurr": "HKD",
+                "errorCode": "NE0100",
+                "udf3": "SPARK",
+                "udf4": "MAP-REDUCE",
+                "respcode": "01",
+                "login": "NTT_AUTO",
+                "udf1": "HIVE",
+                "udf2": "PIG",
+                "respdesc": "Invalid API credentials",
+                "txnid": "test3"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "txnid",
+                "respcode",
+                "respdesc",
+                "login",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "payment2": {
+            "amt": "-100",
+            "txnid": "test3",
+            "txncurr": "HKD",
+            "carddata": "CYmV40Cc75nZuikjC/FLLxALHe9uhoHmgsIZRbjeG0M=|CardHolder|CC|MASTER",
+            "customerDetails": {
+                "name": "Test-User",
+                "phone": "1234567890",
+                "email": "test@nttdata.com"
+            },
+            "channelType": "cybs",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "nttuattesting",
+            "od": "od-migs",
+            "paymentMethod": "credit",
+            "udf1": "HIVE",
+            "udf2": "PIG",
+            "udf3": "SPARK",
+            "udf4": "MAP-REDUCE",
+            "udf5": "YARN",
+            "expectedResult": {
+                "udf5": "YARN",
+                "amt": "-100",
+                "txncurr": "HKD",
+                "udf3": "SPARK",
+                "udf4": "MAP-REDUCE",
+                "respcode": "01",
+                "login": "NTT_AUTO",
+                "udf1": "HIVE",
+                "udf2": "PIG",
+                "errorCode": "NE1023",
+                "errorDesc": "Invalid parameter - amt",
+                "respdesc": "Invalid parameter - amt",
+                "txnid": "test3"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "txnid",
+                "respcode",
+                "respdesc",
+                "login",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "payment3": {
+            "amt": "100",
+            "txnid": "test3",
+            "txncurr": "",
+            "carddata": "CYmV40Cc75nZuikjC/FLLxALHe9uhoHmgsIZRbjeG0M=|CardHolder|CC|MASTER",
+            "customerDetails": {
+                "name": "Test-User",
+                "phone": "1234567890",
+                "email": "test@nttdata.com"
+            },
+            "channelType": "cybs",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "nttuattesting",
+            "od": "od-migs",
+            "paymentMethod": "credit",
+            "udf1": "HIVE",
+            "udf2": "PIG",
+            "udf3": "SPARK",
+            "udf4": "MAP-REDUCE",
+            "udf5": "YARN",
+            "expectedResult": {
+                "udf5": "YARN",
+                "amt": "100",
+                "udf3": "SPARK",
+                "udf4": "MAP-REDUCE",
+                "respcode": "01",
+                "login": "NTT_AUTO",
+                "udf1": "HIVE",
+                "udf2": "PIG",
+                "errorCode": "NE1014",
+                "errorDesc": "Missing parameter - txncurr",
+                "respdesc": "Missing parameter - txncurr",
+                "txnid": "test3"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "txnid",
+                "respcode",
+                "respdesc",
+                "login",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "payment4": {
+            "amt": "100",
+            "txnid": "",
+            "txncurr": "HKD",
+            "carddata": "CYmV40Cc75nZuikjC/FLLxALHe9uhoHmgsIZRbjeG0M=|CardHolder|CC|MASTER",
+            "customerDetails": {
+                "name": "Test-User",
+                "phone": "1234567890",
+                "email": "test@nttdata.com"
+            },
+            "channelType": "cybs",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "nttuattesting",
+            "od": "od-migs",
+            "paymentMethod": "credit",
+            "udf1": "HIVE",
+            "udf2": "PIG",
+            "udf3": "SPARK",
+            "udf4": "MAP-REDUCE",
+            "udf5": "YARN",
+            "expectedResult": {
+                "udf5": "YARN",
+                "amt": "100",
+                "txncurr": "HKD",
+                "udf3": "SPARK",
+                "udf4": "MAP-REDUCE",
+                "respcode": "01",
+                "login": "NTT_AUTO",
+                "udf1": "HIVE",
+                "udf2": "PIG",
+                "errorCode": "NE1016",
+                "errorDesc": "Missing parameter - txnid",
+                "respdesc": "Missing parameter - txnid"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "txnid",
+                "respcode",
+                "respdesc",
+                "login",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5",
+                "errorCode",
+                "errorDesc"
+            ]
+        }
+    }
+]

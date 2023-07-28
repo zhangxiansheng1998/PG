@@ -1,0 +1,85 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-8099",
+        "OD": "DB Schema support utf-8",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "Nicepay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "payment": {
+            "txnid": "generate",
+            "amt": "100",
+            "txncurr": "KRW",
+            "od": "NTT-Testing",
+            "channelType": "nicepay",
+            "paymentMethod": "web",
+            "channelId": "kakaopay",
+            "customerDetails": {
+                "name": "简体中文",
+                "email": "แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช@nttdata.com"
+            },
+            "ru": "https://webhook.site/35279f93-1cb0-4ffe-b6d2-3e6687a1b24a",
+            "callbackUrl": "https://webhook.site/35279f93-1cb0-4ffe-b6d2-3e6687a1b24a",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "100",
+                "txncurr": "KRW",
+                "channelType": "nicepay",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "respdesc": "pending",
+                "paymentMethod": "web",
+                "channelId": "kakaopay",
+                "redirect_url": "#Contains-http"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "paymentMethod",
+                "channelId",
+                "redirect_url"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "1"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

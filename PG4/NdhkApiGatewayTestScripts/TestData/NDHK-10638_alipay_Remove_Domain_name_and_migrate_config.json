@@ -1,0 +1,178 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-8682",
+        "OD": "Test CHINA - Customs Declaration for Alipay，validateMerchantCustomNumber - missing merchantCustomNumber, it will return NE1121",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "alipay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "customDeclare-customDeclare"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txncurr": "CNY",
+            "txnid": "generate",
+            "od": "NTT Test",
+            "channelType": "alipay",
+            "paymentMethod": "web",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "86-1325464558"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "alipaycn",
+                "channelType": "alipay",
+                "date": "2021-12-07 19:06:11",
+                "login": "NTT_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "web",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "CNY",
+                "txnid": "#Contains-1",
+                "udf1": "Merchant Defined Field 1 Testing"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "txnid",
+                "udf1"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "J_tLoginId",
+                    "value": "cnbuyer_1182@alitest.com",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "payPasswd_rsainput",
+                    "value": "111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_newBtn",
+                    "value": null,
+                    "waitingTime": "5000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "J_authSubmit",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "customDeclare": {
+            "custom": "NINGBO",
+            "merchantCustomNumber1": "12345",
+            "merchantCustomName": "jwyhanguo_card",
+            "dutyAmount": "10",
+            "subOrderId": "S12214125",
+            "orderAmount": "200",
+            "transportAmount": "200",
+            "productAmount": "100",
+            "certType": "01",
+            "certNo": "341126197709218366",
+            "certName": "Internet",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+            "expectedResult": {
+                "errorCode": "NE1121",
+                "errorDesc": "Missing parameter - merchantCustomNumber",
+                "login": "NTT_AUTO",
+                "nttrefid": "942320215",
+                "respcode": "01",
+                "respdesc": "Missing parameter - merchantCustomNumber"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc"
+            ]
+        }
+    }
+]

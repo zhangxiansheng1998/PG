@@ -1,0 +1,489 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-8534",
+        "OD": "For GMO-Card,ifwithoutcvvinpaymentrequestincarddata,andpaymentMethodiscardinrequest,thendopayment",
+        "Skip": false,
+        "merchantId": "nttauto",
+        "caseType": "gmo card",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "refundRequestV2-refund",
+            "frontend_cybsLog-cybsLog1"
+        ],
+        "payment": {
+            "amt": "210",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "od": "NTT Test",
+            "channelType": "gmo",
+            "paymentMethod": "card",
+            "channelId": "card",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5k8ZjXOFP3ixSofZt6hDJWE=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "210",
+                "txncurr": "JPY",
+                "channelType": "gmo",
+                "respcode": "00",
+                "login": "NTT_AUTO",
+                "udf1": "Merchant Defined Field 1 Testing",
+                "respdesc": "success",
+                "proc_code": "success",
+                "paymentMethod": "card",
+                "channelId": "card"
+            },
+            "needAssert": [
+                "manualCaptureStatus",
+                "respcode",
+                "respdesc",
+                "amt",
+                "txncurr",
+                "udf1",
+                "channelType",
+                "login",
+                "proc_code",
+                "manualCapture",
+                "channelId"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "210",
+            "expectedResult": {
+                "respdesc": "success",
+                "proc_code": "success",
+                "amt": "210",
+                "respcode": "00",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "amt",
+                "respdesc",
+                "proc_code",
+                "respcode",
+                "signature"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Cvv removal : FL - No CVV found"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8536",
+        "OD": "For GMO,ifwithoutcvvinpaymentrequestincarddata,andpaymentMethodiscreditinrequest,thendopayment",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "gmo card",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsLog-cybsLog1"
+        ],
+        "payment": {
+            "amt": "210",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5k8ZjXOFP3ixSofZt6hDJWE=|John Doe|CC|VISA",
+            "customerDetails": {
+                "name": "Test-User",
+                "phone": "123-0123456785",
+                "email": "test@nttdata.com"
+            },
+            "channelType": "gmo",
+            "paymentMethod": "credit",
+            "manualCapture": "N",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "nttuattesting",
+            "od": "od-migs",
+            "udf1": "HIVE",
+            "udf2": "PIG",
+            "udf3": "SPARK",
+            "udf4": "MAP-REDUCE",
+            "udf5": "YARN",
+            "expectedResult": {
+                "amt": "210",
+                "errorDesc": "Invalid parameter - paymentMethod",
+                "errorCode": "NE1032",
+                "txncurr": "JPY",
+                "respcode": "01",
+                "respdesc": "fail",
+                "udf1": "HIVE",
+                "udf2": "PIG",
+                "udf3": "SPARK",
+                "udf4": "MAP-REDUCE",
+                "udf5": "YARN"
+            },
+            "needAssert": [
+                "amt",
+                "errorDesc",
+                "errorCode",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Cvv removal : FL - No CVV found"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8538",
+        "OD": "For GMO,ifwithoutcvvinpaymentrequestincarddata,andpaymentMethodnotprovidedinrequest,thendopayment",
+        "merchantId": "nttauto",
+        "Skip": true,
+        "caseType": "gmo card",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsLog-cybsLog1"
+        ],
+        "payment": {
+            "amt": "210",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5k8ZjXOFP3ixSofZt6hDJWE=|John Doe|CC|VISA",
+            "customerDetails": {
+                "name": "Test-User",
+                "phone": "123-0123456785",
+                "email": "test@nttdata.com"
+            },
+            "channelType": "gmo",
+            "manualCapture": "N",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "nttuattesting",
+            "od": "od-migs",
+            "udf1": "HIVE",
+            "udf2": "PIG",
+            "udf3": "SPARK",
+            "udf4": "MAP-REDUCE",
+            "udf5": "YARN",
+            "expectedResult": {
+                "amt": "210",
+                "errorDesc": "Missing parameter - paymentMethod",
+                "errorCode": "NE1031",
+                "txncurr": "JPY",
+                "respcode": "01",
+                "respdesc": "fail",
+                "udf1": "HIVE",
+                "udf2": "PIG",
+                "udf3": "SPARK",
+                "udf4": "MAP-REDUCE",
+                "udf5": "YARN"
+            },
+            "needAssert": [
+                "amt",
+                "errorDesc",
+                "errorCode",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Cvv removal : FL - No CVV found"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8540",
+        "OD": "For GMO,ifwithoutcvvinpaymentrequestincarddata,andpaymentMethodisemptyinrequest,thendopayment",
+        "merchantId": "nttauto",
+        "Skip": true,
+        "caseType": "gmo card",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsLog-cybsLog1"
+        ],
+        "payment": {
+            "amt": "210",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5k8ZjXOFP3ixSofZt6hDJWE=|John Doe|CC|VISA",
+            "customerDetails": {
+                "name": "Test-User",
+                "phone": "123-0123456785",
+                "email": "test@nttdata.com"
+            },
+            "channelType": "gmo",
+            "paymentMethod": "",
+            "manualCapture": "N",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "nttuattesting",
+            "od": "od-migs",
+            "udf1": "HIVE",
+            "udf2": "PIG",
+            "udf3": "SPARK",
+            "udf4": "MAP-REDUCE",
+            "udf5": "YARN",
+            "expectedResult": {
+                "amt": "210",
+                "errorDesc": "Missing parameter - paymentMethod",
+                "errorCode": "NE1031",
+                "txncurr": "JPY",
+                "respcode": "01",
+                "respdesc": "fail",
+                "udf1": "HIVE",
+                "udf2": "PIG",
+                "udf3": "SPARK",
+                "udf4": "MAP-REDUCE",
+                "udf5": "YARN"
+            },
+            "needAssert": [
+                "amt",
+                "errorDesc",
+                "errorCode",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Cvv removal : FL - No CVV found"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8542",
+        "OD": "For GMO,ifwithoutcvvinpaymentrequestincarddata,andpaymentMethodisnullinrequest,thendopayment",
+        "merchantId": "nttauto",
+        "Skip": true,
+        "caseType": "gmo card",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsLog-cybsLog1"
+        ],
+        "payment": {
+            "amt": "210",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5k8ZjXOFP3ixSofZt6hDJWE=|John Doe|CC|VISA",
+            "customerDetails": {
+                "name": "Test-User",
+                "phone": "123-0123456785",
+                "email": "test@nttdata.com"
+            },
+            "channelType": "gmo",
+            "paymentMethod": null,
+            "manualCapture": "N",
+            "authentication": "N",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "nttuattesting",
+            "od": "od-migs",
+            "udf1": "HIVE",
+            "udf2": "PIG",
+            "udf3": "SPARK",
+            "udf4": "MAP-REDUCE",
+            "udf5": "YARN",
+            "expectedResult": {
+                "amt": "210",
+                "errorDesc": "Missing parameter - paymentMethod",
+                "errorCode": "NE1031",
+                "txncurr": "JPY",
+                "respcode": "01",
+                "respdesc": "fail",
+                "udf1": "HIVE",
+                "udf2": "PIG",
+                "udf3": "SPARK",
+                "udf4": "MAP-REDUCE",
+                "udf5": "YARN"
+            },
+            "needAssert": [
+                "amt",
+                "errorDesc",
+                "errorCode",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Cvv removal : FL - No CVV found"
+                    ]
+                }
+            }
+        }
+    }
+    
+]

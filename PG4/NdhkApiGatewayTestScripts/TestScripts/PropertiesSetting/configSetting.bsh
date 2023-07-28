@@ -1,0 +1,103 @@
+import org.apache.jmeter.util.JMeterUtils;
+import org.apache.commons.io.FilenameUtils;
+import javax.swing.JFileChooser;
+import org.apache.jmeter.gui.util.FileDialoger;
+
+String envirnoment = props.get("env") != null? props.get("env"): props.get("cmd_environmentPropertiesPath");
+//String testFileName = props.get("testFileName") != null? props.get("testFileName"): props.get("cmd_testDataJSONPath");
+String testFileName = props.get("cmd_testDataJSONPath") != null? props.get("cmd_testDataJSONPath"): props.get("testFileName");
+String homeDirectory = props.get("homeDirectory");
+
+String testDataPath = props.get("homeDirectory")+"TestData" + File.separator + "PaymentGateWayTestData.csv";
+String specialPath = props.get("homeDirectory")+"TestData" + File.separator + "PaymentGateWaySpecialTestData.csv";
+File testDatafile=new File(testDataPath);
+File specialFile=new File(specialPath);
+        try {
+            FileWriter fileWriter =new FileWriter(testDatafile);
+            fileWriter.write("");
+            fileWriter.flush();
+            fileWriter.close();
+	    fileWriter =new FileWriter(specialFile);
+            fileWriter.write("");
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+System.out.println("testFileName:"+testFileName);
+log.info("user.dir----------------->"+System.getProperty("user.dir"));
+log.info("homeDirectory------------>"+homeDirectory);
+log.info("envirnoment-------------->"+envirnoment);
+log.info("testFileName------------->"+testFileName);
+
+public String getTestDataFilePath(){
+	//return homeDirectory + "TestData" + File.separator + testFileName;
+        return homeDirectory + "TestData" + File.separator + "PaymentGateWayTestData";
+
+}
+
+public String getSpecialTestDataFilePath(){
+        return homeDirectory + "TestData" + File.separator + "PaymentGateWaySpecialTestData";
+}
+
+public String getCommonUtilsJsPath(){
+	return homeDirectory + "TestScripts" + File.separator + "FunctionalTests" + File.separator + "commonUtils.js";
+}
+
+public String getCommonUtilsJsContent(){
+	String jsPath = getCommonUtilsJsPath();
+	try{
+		BufferedReader br = new BufferedReader(new FileReader(jsPath));
+		StringBuilder content = new StringBuilder();
+		while ((thisLine = br.readLine()) != null) {
+            content.append(thisLine);
+         }
+         return content.toString();
+	}catch(FileNotFoundException e){
+		log.error("Cant find commonUtils file");	
+	}
+	return null;
+}
+
+public String getTestDataJsonFilePath(){
+	String[] testDataArray = testFileName.split(",");        //json文件名，去掉逗号，作成数组
+	StringBuffer strbfr = new StringBuffer();       // new 个 StringBuffer
+	for(String str : testDataArray){   //循环数组
+             if(!str.contains(props.get("special"))){
+		String jsonPath = homeDirectory + "TestData" + File.separator + str + ".json" + ","; //创建完整的json路径
+		strbfr.append(jsonPath);   //放入StringBuffer
+		}
+     }
+	return strbfr.toString();
+}
+
+public String getSpecialTestDataJsonFilePath(){
+	String[] testDataArray = testFileName.split(",");
+	StringBuffer strbfr = new StringBuffer();
+	for(String str : testDataArray){
+             if(str.contains(props.get("special"))){
+		String jsonPath = homeDirectory + "TestData" + File.separator + str + ".json" + ",";
+		strbfr.append(jsonPath);
+		}
+     }
+	return strbfr.toString();
+}
+
+
+//start paypay test
+String  testPath1 = homeDirectory + "TestData" + File.separator + "cybs_loadTest_v2_9000requests";
+//String  testPath2 = homeDirectory + "TestData" + File.separator + "PaymentGateWayTestData2";
+JMeterUtils.setProperty("testDataCSVPath1", testPath1 + ".csv");
+//JMeterUtils.setProperty("testDataCSVPath2", testPath2 + ".csv");
+//end paypay test
+
+
+JMeterUtils.setProperty("envirnoment", envirnoment);
+JMeterUtils.setProperty("homeDirectory", homeDirectory);
+JMeterUtils.setProperty("testDataCSVPath", getTestDataFilePath() + ".csv");
+JMeterUtils.setProperty("specialTestDataCSVPath", getSpecialTestDataFilePath() + ".csv");
+//JMeterUtils.setProperty("testDataJSONPath", getTestDataFilePath() + ".json");
+JMeterUtils.setProperty("testDataJSONPath", getTestDataJsonFilePath());
+JMeterUtils.setProperty("specialTestDataJSONPath", getSpecialTestDataJsonFilePath());
+JMeterUtils.setProperty("commonUtilsJsContent", getCommonUtilsJsContent());
+vars.put("commonUtilsJsContent", getCommonUtilsJsContent());

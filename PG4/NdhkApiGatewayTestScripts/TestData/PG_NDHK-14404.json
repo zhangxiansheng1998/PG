@@ -1,0 +1,373 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-14412",
+        "OD": "For v2/portalPaymentLinks,have \"language\":\"zh-cn\" in request body but display_lang:null in host_page_config table",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "portalCreatePaymentLinkV2ApiKey-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybs3DS-payPage1"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "host_page_config",
+                        "columnNames": [
+                            "display_lang"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchantid = 'NTT_V2_AUTO'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "display_lang": null
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "merchantId": "NTT_V2_AUTO",
+            "amount": "100",
+            "transactionId": "generate",
+            "transactionCurrency": "HKD",
+            "orderDescription": "NTT Test",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "selectedMethod": "visa",
+            "isAllowSelection": true,
+            "customerDetails": {
+                "name": "John",
+                "email": "john@hotmail.com",
+                "phone": "123456789",
+                "fraudControl": "N"
+            },
+            "language": "zh-cn",
+            "expectedResult": {
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "status",
+                    "byValue": "//*[@id=\"progress-bar-status\"]"
+                },
+                {
+                    "elementName": "cardNumber",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div[2]/div/div/div/div[1]/div/div[2]/div/div/div[2]/div[2]/div[1]/div[1]/label"
+                },
+                {
+                    "elementName": "expiryDate",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div[2]/div/div/div/div[1]/div/div[2]/div/div/div[2]/div[2]/div[1]/div[2]/label[1]"
+                },
+                {
+                    "elementName": "name",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div[2]/div/div/div/div[1]/div/div[2]/div/div/div[2]/div[2]/div[2]/div[2]/label[1]"
+                },
+                {
+                    "elementName": "payButton",
+                    "byValue": "//*[@id=\"pay-btn\"]"
+                }
+            ],
+            "expectedResult": {
+                "status": "选择付款方式",
+                "cardNumber": "信用卡号码",
+                "expiryDate": "有效期限",
+                "name": "姓名",
+                "payButton": "付款"
+            }
+        },
+        "payPage1": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4111111111111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div/div[2]/span",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div/div[2]/span",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "amount",
+                    "byValue": "//*[@id=\"resultPage-amount-value\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "result": "付款成功",
+                "amount": "HKD 1.00",
+                "Txnid": "#Contains-1",
+                "Nttrefid": "#Contains-1",
+                "date": "#Contains-202"
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-14413",
+        "OD": "For v2/portalPaymentLinks,have no parmater \"language\" in request body but display_lang:null in host_page_config_table,default show english",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "portalCreatePaymentLink",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "portalCreatePaymentLinkV2ApiKey-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybs3DS-payPage1"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "host_page_config",
+                        "columnNames": [
+                            "display_lang"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchantid = 'NTT_V2_AUTO'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "display_lang": null
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "merchantId": "NTT_V2_AUTO",
+            "amount": "100",
+            "transactionId": "generate",
+            "transactionCurrency": "HKD",
+            "orderDescription": "NTT Test",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "selectedMethod": "visa",
+            "isAllowSelection": true,
+            "customerDetails": {
+                "name": "John",
+                "email": "john@hotmail.com",
+                "phone": "123456789",
+                "fraudControl": "N"
+            },
+            "expectedResult": {
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "payPage": {
+            "steps": [],
+            "element": [
+                {
+                    "elementName": "status",
+                    "byValue": "//*[@id=\"progress-bar-status\"]"
+                },
+                {
+                    "elementName": "cardNumber",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div[2]/div/div/div/div[1]/div/div[2]/div/div/div[2]/div[2]/div[1]/div[1]/label"
+                },
+                {
+                    "elementName": "expiryDate",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div[2]/div/div/div/div[1]/div/div[2]/div/div/div[2]/div[2]/div[1]/div[2]/label[1]"
+                },
+                {
+                    "elementName": "name",
+                    "byValue": "//*[@id=\"root\"]/div/div/div/div/div[3]/div[2]/div/div/div/div[1]/div/div[2]/div/div/div[2]/div[2]/div[2]/div[2]/label[1]"
+                },
+                {
+                    "elementName": "payButton",
+                    "byValue": "//*[@id=\"pay-btn\"]"
+                }
+            ],
+            "expectedResult": {
+                "status": "Select Payment Method",
+                "cardNumber": "Card Number",
+                "expiryDate": "Expiration",
+                "name": "Name",
+                "payButton": "Pay"
+            }
+        },
+        "payPage1": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4111111111111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div/div[2]/span",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div/div[2]/span",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[12]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "result",
+                    "byValue": "//*[@id=\"resultpage-success\"]"
+                },
+                {
+                    "elementName": "amount",
+                    "byValue": "//*[@id=\"resultPage-amount-value\"]"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"resultPage-transactionId-value\"]"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"resultPage-refId-value\"]"
+                },
+                {
+                    "elementName": "date",
+                    "byValue": "//*[@id=\"resultPage-date-value\"]"
+                }
+            ],
+            "expectedResult": {
+                "result": "Payment Successful",
+                "amount": "HKD 1.00",
+                "Txnid": "#Contains-1",
+                "Nttrefid": "#Contains-1",
+                "date": "#Contains-202"
+            }
+        }
+    }
+]

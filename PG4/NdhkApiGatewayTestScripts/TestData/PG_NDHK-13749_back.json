@@ -1,0 +1,1452 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-15181",
+        "OD": "Verify AUTH cybs cardVerficaton success with apikey ,signature , Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "transactionCurrency": "HKD",
+            "isStoreToken": true,
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "processorCode": "100",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenization": {
+                    "cardBrand": "VISA",
+                    "cardHolderName": "John Doe",
+                    "expiryMonth": "12",
+                    "expiryYear": "2033",
+                    "maskedCardNumber": "401200XXXXXX7777",
+                    "responseCode": "00",
+                    "tokenProvider": "GATEWAY"
+                },
+                "transactionCurrency": "HKD"
+            },
+            "needAssert": [
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "tokenization",
+                "transactionCurrency"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "merchant_id",
+                            "processor",
+                            "payment_model",
+                            "currency",
+                            "amount",
+                            "card_number",
+                            "txn_status",
+                            "proc_code",
+                            "rrn",
+                            "authentication"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchant_id": "NTT_V2_AUTO",
+                            "processor": "cybs",
+                            "payment_model": "AUTH",
+                            "currency": "HKD",
+                            "amount": "1.00",
+                            "card_number": "401200XXXXXX7777",
+                            "txn_status": "OK",
+                            "proc_code": "100",
+                            "rrn": "IsNotNull",
+                            "authentication": "NOAUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "refund_mode",
+                            "refund_amt",
+                            "refund_status",
+                            "proc_code",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "VOID",
+                            "refund_amt": "1.00",
+                            "refund_status": "OK",
+                            "proc_code": "00",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15185",
+        "OD": "Verify CARDVERIFICATION gmo cardVerficaton success with apikey ,signature, Content-Type(json).",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4PNdJ3MMF9GDH8VIWb7HCS5IYBqEAwaFkL0DMXRq6GuY=|John Doe|CC|VISA",
+            "transactionCurrency": "JPY",
+            "isStoreToken": false,
+            "channelType": "gmo",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "processorCode": "success",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "JPY"
+            },
+            "needAssert": [
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "merchant_id",
+                            "processor",
+                            "payment_model",
+                            "currency",
+                            "amount",
+                            "card_number",
+                            "txn_status",
+                            "proc_code",
+                            "rrn",
+                            "authentication"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchant_id": "NTT_V2_AUTO",
+                            "processor": "gmo",
+                            "payment_model": "CARDVERIFICATION",
+                            "currency": "JPY",
+                            "amount": "0.00",
+                            "card_number": "471676XXXXXX1185",
+                            "txn_status": "OK",
+                            "proc_code": "success",
+                            "rrn": "IsNotNull",
+                            "authentication": "NOAUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15187",
+        "OD": "Verify AUTH mpgs cardVerficaton success with apikey ,signature , Content-Type(json).",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "transactionCurrency": "TWD",
+            "isStoreToken": false,
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD"
+            },
+            "needAssert": [
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "merchant_id",
+                            "processor",
+                            "payment_model",
+                            "currency",
+                            "amount",
+                            "card_number",
+                            "txn_status",
+                            "proc_code",
+                            "rrn",
+                            "authentication"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchant_id": "NTT_V2_AUTO",
+                            "processor": "mpgs",
+                            "payment_model": "AUTH",
+                            "currency": "TWD",
+                            "amount": "1.00",
+                            "card_number": "345678XXXXX4564",
+                            "txn_status": "OK",
+                            "proc_code": "000",
+                            "rrn": "IsNotNull",
+                            "authentication": "NOAUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "refund_mode",
+                            "refund_amt",
+                            "refund_status",
+                            "proc_code",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "VOID",
+                            "refund_amt": "1.00",
+                            "refund_status": "OK",
+                            "proc_code": "000",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15188",
+        "OD": "Verify AUTH unionpay cardVerficaton success with apikey ,signature , Content-Type(json).",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4Ncl5EbJje3Cplahgip6pmuzZjeUAtHwwBp8WVwmnlA4=|John Doe|CC|UNIONPAY",
+            "transactionCurrency": "CNY",
+            "isStoreToken": false,
+            "channelType": "unionpay",
+            "paymentMethod": "expresspay",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "processorCode": "00",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "CNY"
+            },
+            "needAssert": [
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "merchant_id",
+                            "processor",
+                            "payment_model",
+                            "currency",
+                            "amount",
+                            "card_number",
+                            "txn_status",
+                            "proc_code",
+                            "rrn",
+                            "authentication"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchant_id": "NTT_V2_AUTO",
+                            "processor": "unionpay",
+                            "payment_model": "AUTH",
+                            "currency": "CNY",
+                            "amount": "1.00",
+                            "card_number": "625094XXXXXX0014",
+                            "txn_status": "OK",
+                            "proc_code": "00",
+                            "rrn": "IsNotNull",
+                            "authentication": "NOAUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "refund_mode",
+                            "refund_amt",
+                            "refund_status",
+                            "proc_code",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "refund_mode": "VOID",
+                            "refund_amt": "1.00",
+                            "refund_status": "OK",
+                            "proc_code": "00",
+                            "rrn": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15190",
+        "OD": "Verfy if the signature does not match, return error NE0100 - Invalid API credential.",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "signature": "RandomSignature",
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "transactionCurrency": "HKD",
+            "isStoreToken": true,
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "httpCode": 403,
+                "errorCode": "NE0100",
+                "errorDescription": "Invalid API credentials",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15191",
+        "OD": "Verfy if miss cardData, return error NE1177 - Missing parameter - cardData.",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "transactionCurrency": "HKD",
+            "isStoreToken": true,
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1177",
+                "errorDescription": "Missing parameter - cardData",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15192",
+        "OD": "Verfy if invalid card data, return error NE1206 - Invalid parameter - cardData .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "RandomCardData",
+            "transactionCurrency": "HKD",
+            "isStoreToken": true,
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1206",
+                "errorDescription": "Invalid parameter - cardData",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15193",
+        "OD": "Verfy if miss transactionCurrency, return error NE1192 - Missing parameter - transactionCurrency.",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "isStoreToken": true,
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1192",
+                "errorDescription": "Missing parameter - transactionCurrency",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15194",
+        "OD": "Verfy if invalid transactionCurrency, return error NE1207 - Invalid parameter - transactionCurrency .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "transactionCurrency": "RandomCurrency",
+            "isStoreToken": true,
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1207",
+                "errorDescription": "Invalid parameter - transactionCurrency",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15195",
+        "OD": "Verfy if unavailable isStoreToken, return error NE1011 - Invalid request format",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "transactionCurrency": "HKD",
+            "isStoreToken": "1",
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1011",
+                "errorDescription": "Invalid Request Format",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15196",
+        "OD": "Verfy if invalid configured channelType, return error NE0101 - Unauthorized Request",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "transactionCurrency": "HKD",
+            "isStoreToken": true,
+            "channelType": "RandomChannelType",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "httpCode": 401,
+                "errorCode": "NE0101",
+                "errorDescription": "Unauthorized request",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15197",
+        "OD": "Verfy if invalid configured paymentMethod, return error NE0101 - Unauthorized Request",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "transactionCurrency": "HKD",
+            "isStoreToken": true,
+            "channelType": "cybs",
+            "paymentMethod": "RandomPaymentMethod",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "httpCode": 401,
+                "errorCode": "NE0101",
+                "errorDescription": "Unauthorized request",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15198",
+        "OD": "Verfy if invalid configured channelId, return error NE0101 - Unauthorized Request",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "cardv2Verification",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "transactionCurrency": "HKD",
+            "isStoreToken": true,
+            "channelType": "cybs",
+            "paymentMethod": "card",
+            "channelId":"RandomChannelId",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "expectedResult": {
+                "httpCode": 401,
+                "errorCode": "NE0101",
+                "errorDescription": "Unauthorized request",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_transaction_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_verification_refund_log",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

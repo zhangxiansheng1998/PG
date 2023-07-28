@@ -1,0 +1,944 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-22815",
+        "OD": "Register token by V2/tokens then delete Toke",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "GMO Account Updater",
+        "testFlow": [
+            "jsonV2TokenApiKey-token",
+            "deleteV2TokenApiKey-deltoken",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "token": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4KVww5bQHCw41tOgBCq5RZ7+yjCK/yOu/DQ4dgoBPxGA=|John Doe|CC|VISA",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "currency": "JPY",
+            "expectedResult": {
+                "accountUpdater": "success-regist",
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "05",
+                "expiryYear": "2032",
+                "maskedCardNumber": "411111XXXXXX1111",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "accountUpdater",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "deltoken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "accountUpdater":"success-delete",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "accountUpdater",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "status": "DELETED"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "start account updater delete for GMO",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "start account updater delete for GMO"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE request from NTT to gmo",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE response from gmo to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE response from gmo to NTT"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-22816",
+        "OD": "Register token by V2/transactions then delete Token",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "GMO Account Updater",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-payment",
+            "deleteV2TokenApiKey-deltoken",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "payment": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "language": "en-us",
+            "isStoreToken": true,
+            "amount": "1000",
+            "transactionId": "generate",
+            "transactionCurrency": "JPY",
+            "orderDescription": "test gmo",
+            "channelType": "gmo",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "cardData": "XZ13aC5625frSmc4KVww5bQHCw41tOgBCq5RZ6xJ3TNL0JC/m45HdPOTboo=|John Doe|CC|VISA",
+            "paymentMode": "AUTH",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "returnUrl": "https://sit-paymentsvcs.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "accountUpdater": "success-regist",
+                "amount": "1000",
+                "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+                "channelType": "gmo",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "success",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenization": {
+                    "cardBrand": "VISA",
+                    "cardHolderName": "John Doe",
+                    "expiryMonth": "12",
+                    "expiryYear": "2022",
+                    "maskedCardNumber": "411111XXXXXX1111",
+                    "responseCode": "00",
+                    "tokenProvider": "GATEWAY"
+                },
+                "transactionCurrency": "JPY",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "accountUpdater",
+                "amount",
+                "callbackUrl",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "tokenization",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "deltoken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "accountUpdater": "success-delete",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "accountUpdater",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "status": "DELETED"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "start account updater delete for GMO",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "start account updater delete for GMO"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE request from NTT to gmo",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE response from gmo to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE response from gmo to NTT"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-22817",
+        "OD": "Register token by V2/cardVerification then delete Token",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "GMO Account Updater",
+        "testFlow": [
+            "cardVerificationV2ApiKey-cardVerification",
+            "deleteV2TokenApiKey-deltoken",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "cardVerification": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4KVww5bQHCw41tOgBCq5RZ+4L59k3lZbzbkuOPPpmEw0=|John Doe|CC|Hyundai Card",
+            "transactionCurrency": "JPY",
+            "isStoreToken": true,
+            "channelType": "gmo",
+            "paymentMethod": "card",
+            "isAuthentication": false,
+            "returnUrl": "https://sit-paymentsvcs.ndhkpay.com/payment-page",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "customerDetails": {
+                "firstName": "Joe",
+                "lastName": "Dee",
+                "phone": "852-94717223",
+                "email": "sample@gmail.com",
+                "country": "US",
+                "state": "NY",
+                "city": "NewYork",
+                "streetNumber": "100",
+                "address": "flat A, 15/f, 1063 Kings Road",
+                "postCode": "00000",
+                "taxNumber": "880808"
+            },
+            "cardPin": "11",
+            "expectedResult": {
+                "accountUpdater": "success-regist",
+                "processorCode": "success",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenization": {
+                    "cardBrand": "VISA",
+                    "cardHolderName": "John Doe",
+                    "expiryMonth": "11",
+                    "expiryYear": "2022",
+                    "maskedCardNumber": "411111XXXXXX1111",
+                    "responseCode": "00",
+                    "tokenProvider": "GATEWAY"
+                },
+                "transactionCurrency": "JPY"
+            },
+            "needAssert": [
+                "accountUpdater",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "tokenization",
+                "transactionCurrency"
+            ]
+        },
+        "deltoken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "accountUpdater": "success-delete",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "accountUpdater",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "status": "DELETED"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "start account updater delete for GMO",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "start account updater delete for GMO"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE request from NTT to gmo",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE response from gmo to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE response from gmo to NTT"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-22818",
+        "OD": "Register token by post & put/v2/accountUpdates then delete Token",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "GMO Account Updater",
+        "testFlow": [
+            "postAccountV2UpdatesApiKey-register",
+            "putAccountV2UpdatesApiKey-update",
+            "deleteAccountV2UpdatesApiKey-delete",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "register": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "channelType": "gmo",
+            "cardData": "XZ13aC5625frSmc4KVww5bQHCw41tOgBCq5RZ+4L59k3lZbzbkuOPPpmEw0=|John Doe|CC|VISA",
+            "memberId": "generate",
+            "expectedResult": {
+                "processorCode": "success",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "processorCode",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "update": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "channelType": "gmo",
+            "cardData": "XZ13aC5625frSmc46kFlY7pvX7ICVL+iE6PAASZqvh/psdNoaw6LwehVQ6k=|John Doe|CC|VISA",
+            "memberId": "reuse",
+            "expectedResult": {
+                "processorCode": "success",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "processorCode",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "delete": {
+            "headerToken": false,
+            "headerSignature": true,
+            "bodySignature": false,
+            "channelType": "gmo",
+            "memberId": "reuse",
+            "expectedResult": {
+                "processorCode": "success",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "processorCode",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE request from NTT to gmo",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE response from gmo to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE response from gmo to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE response from NTT to NTT_JPMC",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE response from NTT to NTT_JPMC"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-22819",
+        "OD": "DELETE /v2/tokens for token don't has registered account updater",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "GMO Account Updater",
+        "testFlow": [
+            "jsonV2TokenApiKey-token",
+            "deleteV2TokenApiKey-deltoken",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "token": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "cardData": "XZ13aC5625frSmc4KVww5bQHCw41tOgBCq5RZ1rCSJ+IryYmGsAz10fy0QY=|John Doe|CC|VISA",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2", 
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "currency": "HKD",
+            "expectedResult": {
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "12",
+                "expiryYear": "2032",
+                "maskedCardNumber": "411111XXXXXX1111",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "deltoken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "expectedResult": {
+                "accountUpdater":"success-delete",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "accountUpdater",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "status": "DELETED"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "start account updater delete for GMO",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "start account updater delete for GMO"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE request from NTT to gmo",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE request from NTT to gmo"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Account Updater DELETE response from gmo to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Account Updater DELETE response from gmo to NTT"
+                    ]
+                }
+            }
+        }
+    }
+]

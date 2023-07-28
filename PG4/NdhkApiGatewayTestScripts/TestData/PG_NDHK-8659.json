@@ -1,0 +1,1399 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-8711",
+        "OD": "verify plicateTransactionCheck.conditions.transactionStatuses is not defined",
+        "merchantId": "ntta1auto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "paymentRequest-payment2",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "manualCapture": "N",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+                "captureId": "100011553",
+                "channelType": "paygent",
+                "date": "2021-12-16 16:32:54",
+                "login": "NTT_a1_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "card",
+                "proc_code": "0",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "signature": "ab7287e7e07d4510d407b3e421aa8de59289816105dbb804564cfbd4be19309c6a83c01ad3a3e4417a075552c497369ef2498e402aa3d6881858faae3a679cff",
+                "txncurr": "JPY",
+                "txnid": "1639643581155"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn",
+                            "stage",
+                            "user_data_10"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "rrn": "IsNotNull",
+                            "stage": "Transaction Completed",
+                            "user_data_10": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment2": {
+            "amt": "1000",
+            "txnid": "reuse",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "manualCapture": "N",
+            "authentication": "N",
+            "paymentMethod": "credit",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "date": "2021-12-16 16:40:12",
+                "errorCode": "NE3035",
+                "errorDesc": "Duplicated Transaction",
+                "login": "NTT_a1_AUTO",
+                "respcode": "01",
+                "respdesc": "fail",
+                "signature": "c6eebc9be1437b9c1b7682478a61cdcb4a8c359dac79e9f7642943c5cdde8194d36c8706c212f7234beb206a2600a67c9d41da902b8ae03b9460fa8edbe6784c",
+                "txncurr": "JPY",
+                "txnid": "1639644014235"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8713",
+        "OD": "verify Duplicate Transaction Check - Multiple Merchant - NTT false & AGODA true",
+        "merchantId": "ntta1auto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "paymentRequest-payment2",
+            "frontend_cybsDB-cybsDB2",
+            "paymentRequest-payment3",
+            "frontend_cybsDB-cybsDB3",
+            "paymentRequest-payment4",
+            "frontend_cybsDB-cybsDB4"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "manualCapture": "N",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+                "captureId": "100011553",
+                "channelType": "paygent",
+                "date": "2021-12-16 16:32:54",
+                "login": "NTT_a1_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "card",
+                "proc_code": "0",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+                "signature": "ab7287e7e07d4510d407b3e421aa8de59289816105dbb804564cfbd4be19309c6a83c01ad3a3e4417a075552c497369ef2498e402aa3d6881858faae3a679cff",
+                "txncurr": "JPY",
+                "txnid": "1639643581155"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn",
+                            "stage",
+                            "user_data_10"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "rrn": "IsNotNull",
+                            "stage": "Transaction Completed",
+                            "user_data_10": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment2": {
+            "amt": "1000",
+            "txnid": "reuse",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "manualCapture": "N",
+            "authentication": "N",
+            "paymentMethod": "credit",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "date": "2021-12-16 16:40:12",
+                "errorCode": "NE3035",
+                "errorDesc": "Duplicated Transaction",
+                "login": "NTT_a1_AUTO",
+                "respcode": "01",
+                "respdesc": "fail",
+                "signature": "c6eebc9be1437b9c1b7682478a61cdcb4a8c359dac79e9f7642943c5cdde8194d36c8706c212f7234beb206a2600a67c9d41da902b8ae03b9460fa8edbe6784c",
+                "txncurr": "JPY",
+                "txnid": "1639644014235"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment3": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "channelId": "Family Mart",
+            "od": "testing",
+            "manualCapture": "Y",
+            "paymentMethod": "cvs",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "Family Mart",
+                "channelType": "paygent",
+                "date": "2021-12-27 15:47:27",
+                "expirydate": "2022-01-03 15:47:27",
+                "login": "NTT_AUTO",
+                "manualCapture": "Y",
+                "paymentMethod": "cvs",
+                "paymentcode": "20020-911550164728",
+                "paymentcodetype": "number",
+                "proc_code": "0",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "JPY",
+                "txnid": "1640591247278"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment4": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "channelId": "Family Mart",
+            "od": "testing",
+            "manualCapture": "Y",
+            "paymentMethod": "cvs",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "channelId": "Family Mart",
+                "channelType": "paygent",
+                "date": "2021-12-27 15:47:27",
+                "expirydate": "2022-01-03 15:47:27",
+                "login": "NTT_AUTO",
+                "manualCapture": "Y",
+                "paymentMethod": "cvs",
+                "paymentcode": "20020-911550164728",
+                "paymentcodetype": "number",
+                "proc_code": "0",
+                "respcode": "02",
+                "respdesc": "pending",
+                "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+                "txncurr": "JPY",
+                "txnid": "1640591247278"
+            },
+            "needAssert": [
+                "amt",
+                "channelId",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8714",
+        "OD": "verify Duplicate Transaction Check - cybs",
+        "merchantId": "ntta1auto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "paymentRequest-payment2",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/fc508d07-540c-4b61-b58c-e81573d95a82",
+            "channelType": "cybs",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "customerDetails": {
+                "lastName": "lastname",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "auth_code": "831000",
+                "callbackUrl": "https://webhook.site/fc508d07-540c-4b61-b58c-e81573d95a82",
+                "channelType": "cybs",
+                "date": "2021-12-27 16:08:01",
+                "login": "NTT_a1_AUTO",
+                "manualCapture": "N",
+                "paymentMethod": "card",
+                "proc_code": "100",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+                "signature": "9a01786f5aa3c68bd15b1428dfb522035479571e2ecab2e35490b58fa973c7696d9fc9815a866091be0c526fcdc8bb54d6fbc5f7bb846880b8d8d7ba839b8c6e",
+                "txncurr": "JPY",
+                "txnid": "1640592481325"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn",
+                            "stage",
+                            "user_data_10"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "rrn": "IsNotNull",
+                            "stage": "Transaction Completed",
+                            "user_data_10": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment2": {
+            "amt": "1000",
+            "txnid": "reuse",
+            "txncurr": "JPY",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/fc508d07-540c-4b61-b58c-e81573d95a82",
+            "channelType": "cybs",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "customerDetails": {
+                "lastName": "lastname",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "date": "2021-12-16 16:40:12",
+                "errorCode": "NE3035",
+                "errorDesc": "Duplicated Transaction",
+                "login": "NTT_a1_AUTO",
+                "respcode": "01",
+                "respdesc": "fail",
+                "signature": "c6eebc9be1437b9c1b7682478a61cdcb4a8c359dac79e9f7642943c5cdde8194d36c8706c212f7234beb206a2600a67c9d41da902b8ae03b9460fa8edbe6784c",
+                "txncurr": "JPY",
+                "txnid": "1639644014235"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8715",
+        "OD": "verify Duplicate Transaction Check - /hostPage/requestPayment enabled: true",
+        "merchantId": "ntta1auto",
+        "caseType": "Nicepay",
+        "testFlow": [
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "createPaymentLink-paymentLink2",
+            "frontend_cybs3DS-payPage1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txncurr": "HKD",
+            "txnid": "generate",
+            "od": "TestPaymentLink",
+            "udf1": "trytry",
+            "callbackUrl": "https://webhook.site/fc508d07-540c-4b61-b58c-e81573d95a82",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "remarks",
+            "selectedMethodl": "nicepay.credit",
+            "isAllowSelection": true,
+            "useLimit": 1,
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "0800000000"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4111111111111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[2]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn",
+                            "stage",
+                            "user_data_10"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}' order by txn_datetime desc"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "rrn": "IsNotNull",
+                            "stage": "Transaction Completed",
+                            "user_data_10": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink2": {
+            "amt": "100",
+            "txncurr": "HKD",
+            "txnid": "reuse",
+            "od": "TestPaymentLink",
+            "udf1": "trytry",
+            "callbackUrl": "https://webhook.site/fc508d07-540c-4b61-b58c-e81573d95a82",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "remarks",
+            "selectedMethodl": "nicepay.credit",
+            "isAllowSelection": true,
+            "useLimit": 1,
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "0800000000"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "payPage1": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4111111111111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[2]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "errorMsg",
+                    "byValue": "//*[@id=\"error-message\"]"
+                },
+                {
+                    "elementName": "errorTitle",
+                    "byValue": "/html/body/div[2]/div[2]/div/div/div[1]/h4"
+                }
+            ],
+            "expectedResult": {
+                "errorMsg": "The merchant disallow duplicated payment on the same order ID, please check with the merchant to confirm the transaction status.",
+                "errorTitle": "Duplicated Payment Detected"
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}' order by txn_datetime desc"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8757",
+        "OD": "verify Duplicate Transaction Check - /hostPage/requestPayment enabled: false-all the transaction should be succssful",
+        "merchantId": "nttauto",
+        "caseType": "Nicepay",
+        "testFlow": [
+            "createPaymentLink-paymentLink",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB",
+            "createPaymentLink-paymentLink2",
+            "frontend_cybs3DS-payPage1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "paymentLink": {
+            "amt": "100",
+            "txncurr": "HKD",
+            "txnid": "generate",
+            "od": "TestPaymentLink",
+            "udf1": "trytry",
+            "callbackUrl": "https://webhook.site/fc508d07-540c-4b61-b58c-e81573d95a82",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "remarks",
+            "selectedMethodl": "nicepay.credit",
+            "isAllowSelection": true,
+            "useLimit": 1,
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "0800000000"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4111111111111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[2]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn",
+                            "stage",
+                            "user_data_10"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}' order by txn_datetime desc"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "rrn": "IsNotNull",
+                            "stage": "Transaction Completed",
+                            "user_data_10": "IsNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "paymentLink2": {
+            "amt": "100",
+            "txncurr": "HKD",
+            "txnid": "reuse",
+            "od": "TestPaymentLink",
+            "udf1": "trytry",
+            "callbackUrl": "https://webhook.site/fc508d07-540c-4b61-b58c-e81573d95a82",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "remarks": "remarks",
+            "selectedMethodl": "nicepay.credit",
+            "isAllowSelection": true,
+            "useLimit": 1,
+            "customerDetails": {
+                "name": "Alex",
+                "email": "test@123.com",
+                "address": "5645",
+                "phone": "0800000000"
+            },
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "payPage1": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "credit-card-number",
+                    "value": "4111111111111111",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationMonth\"]/div/div[2]/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div/div[1]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"expirationYear\"]/div/div[2]/div[2]",
+                    "value": null,
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "set",
+                    "byType": "id",
+                    "byValue": "cvv",
+                    "value": "123",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "id",
+                    "byValue": "pay-btn",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}' order by txn_datetime desc"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8804",
+        "OD": "refund data dont take part  Duplicate Transaction Check",
+        "merchantId": "ntta1auto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "amt": "1000",
+                "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+                "channelType": "paygent",
+                "date": "2021-12-27 17:37:36",
+                "login": "NTT_a1_AUTO",
+                "manualCapture": "Y",
+                "paymentMethod": "card",
+                "proc_code": "0",
+                "respcode": "00",
+                "respdesc": "success",
+                "ru": "https://sit.ndhkpay.com/NTT_Pages/return",
+                "signature": "7a7321a806f6418af2e71bf9ea58efcf9e34e61dc321e379472135106bb8fce06cf99fa691fee35a28793dca877192f6cb019ab51013b513155209cd9d2c4181",
+                "txncurr": "JPY",
+                "txnid": "1640597855856"
+            },
+            "needAssert": [
+                "amt",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "capture": {
+            "amt": "1000",
+            "txnid": "",
+            "expectedResult": {
+                "signature": "{{ResponseSignature}}",
+                "amt": "1000",
+                "captureId": "101129982",
+                "login": "NTT_a1_AUTO",
+                "manualCaptureStatus": "F",
+                "nttrefid": "975571480",
+                "proc_code": "0",
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "JPY",
+                "txnid": "1640597855856"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "signature",
+                "amt",
+                "txncurr",
+                "respcode",
+                "login"
+            ]
+        },
+        "refund": {
+            "txnid": "reuse",
+            "refundMode": "REFUND",
+            "amt": "1000",
+            "expectedResult": {
+                "amt": "1000",
+                "nttrefid": "975571480",
+                "proc_code": "0",
+                "refundRefNum": "975571480195",
+                "respcode": "00",
+                "respdesc": "success",
+                "signature": "ab465bea8590c04084152c0317bab247833d0c1cf0acfb147f95118e8d89bc99c633a7f6ed7f9e76cf23ac851e2c6fd1b8d9e4a204dec45da7e30f4b47052b7b",
+                "txncurr": "JPY",
+                "txnid": "1640597855856"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

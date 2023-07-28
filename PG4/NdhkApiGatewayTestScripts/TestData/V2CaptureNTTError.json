@@ -1,0 +1,3951 @@
+[
+    {
+        "testDataId": "NDHK-7523_1./v2/captureRequest - verify the capture with errorCode NE3020 with Captured amount exceeded uncaptured amount",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "200",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Capture amount exceeded the uncaptured amount",
+                "errorCode": "NE3020",
+                "errorDesc": "Capture amount exceeded the uncaptured amount"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "HKD",
+                            "capture_amt": "2.0000",
+                            "txn_amt": "1.00",
+                            "error_code": "NE3020",
+                            "error_desc": "Capture amount exceeded the uncaptured amount"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7521_2./v2/captureRequest - verify the capture with errorCode NE3017 with Reached maximum number of capture",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "orbital",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "captureRequestV2-capture152",
+            "captureRequestV2-capture153",
+            "captureRequestV2-capture154",
+            "captureRequestV2-capture155",
+            "captureRequestV2-capture156",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "USD",
+            "carddata": "JaunFXN9CwupggdIO4C4VrA2iqru/HAH8eYdgnMToGk=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "orbital",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "fraudControl": "N",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "00",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "10",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "amt": "10",
+                "txncurr": "USD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "00"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture152": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "10",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "amt": "10",
+                "txncurr": "USD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "00"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture153": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "10",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "amt": "10",
+                "txncurr": "USD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "00"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture154": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "10",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "amt": "10",
+                "txncurr": "USD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "00"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture155": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "10",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "amt": "10",
+                "txncurr": "USD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "00"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture156": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "10",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Reached maximum number of capture",
+                "errorCode": "NE3017",
+                "errorDesc": "Reached maximum number of capture"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_amt": "1.00",
+                            "capture_amt": "0.1000",
+                            "error_desc": null,
+                            "resp_code": "00",
+                            "currency": "USD",
+                            "error_code": null,
+                            "resp_msg": "OK"
+                        },
+                        {
+                            "txn_amt": "1.00",
+                            "capture_amt": "0.1000",
+                            "error_desc": null,
+                            "resp_code": "00",
+                            "currency": "USD",
+                            "error_code": null,
+                            "resp_msg": "OK"
+                        },
+                        {
+                            "txn_amt": "1.00",
+                            "capture_amt": "0.1000",
+                            "error_desc": null,
+                            "resp_code": "00",
+                            "currency": "USD",
+                            "error_code": null,
+                            "resp_msg": "OK"
+                        },
+                        {
+                            "txn_amt": "1.00",
+                            "capture_amt": "0.1000",
+                            "error_desc": null,
+                            "resp_code": "00",
+                            "currency": "USD",
+                            "error_code": null,
+                            "resp_msg": "OK"
+                        },
+                        {
+                            "txn_amt": "1.00",
+                            "capture_amt": "0.1000",
+                            "error_desc": null,
+                            "resp_code": "00",
+                            "currency": "USD",
+                            "error_code": null,
+                            "resp_msg": "OK"
+                        },
+                        {
+                            "txn_amt": "1.00",
+                            "capture_amt": "0.1000",
+                            "error_desc": "Reached maximum number of capture",
+                            "resp_code": null,
+                            "currency": "USD",
+                            "error_code": "NE3017",
+                            "resp_msg": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7520_3./v2/captureRequest - verify the capture with errorCode NE4014 with Uncapturable transaction status - voided transaction",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "refundRequest-void",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-refund",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "void": {
+            "amt": "100",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Uncapturable transaction status - voided transaction",
+                "errorCode": "NE4014",
+                "errorDesc": "Uncapturable transaction status - voided transaction"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_msg",
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "refund_mode": "VOID",
+                            "resp_msg": "SUCCESS"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "HKD",
+                            "capture_amt": "1.0000",
+                            "txn_amt": "1.00",
+                            "error_code": "NE4014",
+                            "error_desc": "Uncapturable transaction status - voided transaction"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7518_4./v2/captureRequest - verify the capture with errorCode NE4013 with Uncapturable trasaction status - captured transaction",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "orbital",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "USD",
+            "carddata": "JaunFXN9CwupggdIO4C4VrA2iqru/HAH8eYdgnMToGk=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "N",
+            "channelType": "orbital",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "fraudControl": "N",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "00",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Uncapturable transaction status - captured transaction",
+                "errorCode": "NE4013",
+                "errorDesc": "Uncapturable transaction status - captured transaction"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "DIRECT",
+                            "user_data_45": "PURCHASE"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "USD",
+                            "capture_amt": "1.0000",
+                            "txn_amt": "1.00",
+                            "error_code": "NE4013",
+                            "error_desc": "Uncapturable transaction status - captured transaction"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7517_5./v2/captureRequest - verify the capture with errorCode NE4013 with Uncapturable trasaction status - captured transaction",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "captureRequestV2-capture152",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "amt": "100",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture152": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Uncapturable transaction status - captured transaction",
+                "errorCode": "NE4013",
+                "errorDesc": "Uncapturable transaction status - captured transaction"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_amt": "1.00",
+                            "capture_amt": "1.0000",
+                            "error_desc": null,
+                            "resp_code": "100",
+                            "currency": "HKD",
+                            "error_code": null,
+                            "resp_msg": "OK"
+                        },
+                        {
+                            "txn_amt": "1.00",
+                            "capture_amt": "1.0000",
+                            "error_desc": "Uncapturable transaction status - captured transaction",
+                            "resp_code": null,
+                            "currency": "HKD",
+                            "error_code": "NE4013",
+                            "resp_msg": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7514_6./v2/captureRequest - verify the capture with errorCode NE4011 with Uncapturable transaction status - pending transaction",
+        "OD": "QA_Automation",
+        "merchantId": "peachauto",
+        "Skip": false,
+        "caseType": "linepay",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "JPY",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "paymentMethod": "web",
+            "channelType": "linepay",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "items": [
+                {
+                    "quantity": "1",
+                    "amt": 1000,
+                    "itemUrl": "https://sandbox.ndhkpay.com/libs/image/peach-440x136.png",
+                    "itemName": "Peach Order",
+                    "itemId": "1"
+                }
+            ],
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "02",
+                "respdesc": "pending",
+                "proc_code": "0000",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "1000",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "PEACH_AUTO",
+            "amt": "1000",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Uncapturable transaction status - pending transaction",
+                "errorCode": "NE4011",
+                "errorDesc": "Uncapturable transaction status - pending transaction"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "JPY",
+                            "capture_amt": "1000.0000",
+                            "txn_amt": "1000",
+                            "error_code": "NE4011",
+                            "error_desc": "Uncapturable transaction status - pending transaction"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7524_7./v2/captureRequest - verify the capture with processors!=omise with capture amt<transaction amt",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "10",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "amt": "10",
+                "txncurr": "HKD",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "100"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_amt": "1.00",
+                            "capture_amt": "0.1000",
+                            "error_desc": null,
+                            "resp_code": "100",
+                            "currency": "HKD",
+                            "error_code": null,
+                            "resp_msg": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7512_8./v2/captureRequest - verify the capture with errorCode NE1026 with Missing parameter - signature",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "amt": "100",
+            "signature": "skip",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - signature",
+                "errorCode": "NE1026",
+                "errorDesc": "Missing parameter - signature"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_amt": "1.00",
+                            "capture_amt": "1.0000",
+                            "error_desc": "Missing parameter - signature",
+                            "resp_code": null,
+                            "currency": "HKD",
+                            "error_code": "NE1026",
+                            "resp_msg": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7504_9./v2/captureRequest - verify the capture with errorCode NE3022 with Related transaction not found",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "amt": "100",
+            "nttrefid": "",
+            "txnid": "12gffd363REER",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Related transaction not found",
+                "errorCode": "NE3022",
+                "errorDesc": "Related transaction not found"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "booking_id"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "booking_id = '{booking_id}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7522_10./v2/captureRequest - verify the capture with errorCode NE3015 with Patrial capture is not available for the payment processor",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "omise",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "2000",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "THB",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|CardHolder|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "omise",
+            "paymentMethod": "card",
+            "remarks": "remarks",
+            "od": "testomise",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "pending",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "2000",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "amt": "1000",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Partial capture is not available for the payment processor",
+                "errorCode": "NE3015",
+                "errorDesc": "Partial capture is not available for the payment processor"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "THB",
+                            "capture_amt": "10.0000",
+                            "txn_amt": "20.00",
+                            "error_code": "NE3015",
+                            "error_desc": "Partial capture is not available for the payment processor"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7497_11./v2/captureRequest - verify the capture with errorCode NE1012 with Missing parameter - login",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - login",
+                "errorCode": "NE1012",
+                "errorDesc": "Missing parameter - login"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "HKD",
+                            "capture_amt": "1.0000",
+                            "txn_amt": "1.00",
+                            "error_code": "NE1012",
+                            "error_desc": "Missing parameter - login"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "NDHK-7499_12./v2/captureRequest - verify the capture with errorCode NE1013 with missing parameter - pass",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "",
+            "amt": "100",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - pass",
+                "errorCode": "NE1013",
+                "errorDesc": "Missing parameter - pass"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "HKD",
+                            "capture_amt": "1.0000",
+                            "txn_amt": "1.00",
+                            "error_code": "NE1013",
+                            "error_desc": "Missing parameter - pass"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "13./v2/captureRequest - verify the capture with errorCode NE1019 with missing param nttrefi OR txnid",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "captureRequestV2-capture151"
+        ],
+        "capture151": {
+            "amt": "100",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - nttrefid OR txnid",
+                "errorCode": "NE1019",
+                "errorDesc": "Missing parameter - nttrefid OR txnid"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        }
+    },
+    {
+        "testDataId": "14./v2/captureRequest - verify the capture with errorCode NE3022 with Related transaction not found",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "nttrefid": "12399879112",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Related transaction not found",
+                "errorCode": "NE3022",
+                "errorDesc": "Related transaction not found"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid} order by created_at desc"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": null,
+                            "capture_amt": "100.0000",
+                            "txn_amt": "0.0000",
+                            "error_code": "NE3022",
+                            "error_desc": "Related transaction not found"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "15./v2/captureRequest - verify the capture with errorCode NE1022 with Missing parameter - amt",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - amt",
+                "errorCode": "NE1022",
+                "errorDesc": "Missing parameter - amt"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "HKD",
+                            "capture_amt": "0.0000",
+                            "txn_amt": "1.00",
+                            "error_code": "NE1022",
+                            "error_desc": "Missing parameter - amt"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "16./v2/captureRequest - verify the capture with errorCode NE1023 with Invalid parameter - amt",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "-1",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Invalid parameter - amt",
+                "errorCode": "NE1023",
+                "errorDesc": "Invalid parameter - amt"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "HKD",
+                            "capture_amt": "0.0000",
+                            "txn_amt": "1.00",
+                            "error_code": "NE1023",
+                            "error_desc": "Invalid parameter - amt"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "17./v2/captureRequest - verify the capture with errorCode NE1024 with requested amt is not in accepted range",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "9999999999999999999999",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Requested amt is not in acceptable range",
+                "errorCode": "NE1024",
+                "errorDesc": "Requested amt is not in acceptable range"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "HKD",
+                            "capture_amt": "999999999999999999.9900",
+                            "txn_amt": "1.00",
+                            "error_code": "NE1024",
+                            "error_desc": "Requested amt is not in acceptable range"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "18./v2/captureRequest - verify the capture with errorCode NE0100 with invalid API credentials",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "abc",
+            "amt": "100",
+            "callbackUrl": "https://webhook.site/d1e4b0c7-6058-43cb-99dc-a2a7814434b6",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Invalid API credentials",
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "HKD",
+                            "capture_amt": "1.0000",
+                            "txn_amt": "1.00",
+                            "error_code": "NE0100",
+                            "error_desc": "Invalid API credentials"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "19./v2/captureRequest - verify the capture with errorCode NE0100 with Invalid API credentials-pass is invalid",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT1",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Invalid API credentials",
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "HKD",
+                            "capture_amt": "1.0000",
+                            "txn_amt": "1.00",
+                            "error_code": "NE0100",
+                            "error_desc": "Invalid API credentials"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "20./v2/captureRequest - verify the capture with errorCode NE0100 with Invalid API credentials-signature is invalid",
+        "OD": "QA_Automation",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture151",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "auth-capture-refund-01",
+            "txncurr": "HKD",
+            "carddata": "Sm6H/a13s+pi028W5nWa5y5Zyhr0F4RX2PIFgyDdgHM=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "channelType": "cybs",
+            "remarks": "remarks",
+            "od": "od - uat testing",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "httpCode": 200,
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded",
+                "proc_code": "100",
+                "manualCapture": "N",
+                "manualCaptureStatus": "F",
+                "auth_code": "831000",
+                "amt": "100",
+                "captureId": true
+            },
+            "needAssert": [
+                "amt",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "capture151": {
+            "login": "NTT_AUTO",
+            "pass": "Ntt@123",
+            "amt": "100",
+            "signature": "123",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Invalid API credentials",
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorcode",
+                "errordesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "txn_type",
+                            "user_data_45"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "txn_type": "AUTH",
+                            "user_data_45": "AUTH"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_code",
+                            "resp_msg",
+                            "currency",
+                            "capture_amt",
+                            "txn_amt",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "aaded6743cdd206e264cf49272fbb6488d38cf37782a7a728703e14cf0a54595ba02144006620a2f5e9f412b06dc143585d5239af26c3ace660341e3448a6f9a",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_code": null,
+                            "resp_msg": "FL",
+                            "currency": "HKD",
+                            "capture_amt": "1.0000",
+                            "txn_amt": "1.00",
+                            "error_code": "NE0100",
+                            "error_desc": "Invalid API credentials"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-7503",
+        "OD": "For cybs. do Auth payment successful. if txnid is missing in capture request. It will return errorCode='NE1019' and errorDesc='Missing parameter - nttrefid OR txnid'",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-paymentRequest",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "captureRequestV2-capture",
+            "frontend_cybsLog-cybsLogCallback"
+        ],
+        "paymentRequest": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "HKD",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|John Doe|CC|VISA",
+            "od": "od - uat testing",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "channelType": "cybs",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "remarks": "remarks",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorization request from NTT to cybs with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorization response from cybs to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_AUTO with HKD"
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "amt": "100",
+            "nttrefid": "",
+            "txnid": "",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Missing parameter - nttrefid OR txnid",
+                "errorCode": "NE1019",
+                "errorDesc": "Missing parameter - nttrefid OR txnid"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsLogCallback": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-7506",
+        "OD": "For orbital.do Auth payment successful.In capture,txnidisexistnttrefid.ItwillreturnerrorCode='NE3022'anderrorDesc='Relatedtransactionnotfound'",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "orbital",
+        "testFlow": [
+            "paymentRequest-paymentRequest",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog4",
+            "frontend_cybsLog-cybsLogCallback"
+        ],
+        "paymentRequest": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "USD",
+            "od": "NTT Test",
+            "channelType": "orbital",
+            "carddata": "y59AX5M6RVPqXt9wpzkOYRALHe9uhoHmJBuqCGi327Y=|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "fraudControl": "N",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorize  request from NTT to orbital with currency USD"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorize  response from orbital to NTT with currency USD"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_AUTO with USD"
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "login": "AGODA_AUTO",
+            "pass": "Agoda@123",
+            "amt": "100",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Related transaction not found",
+                "errorCode": "NE3022",
+                "errorDesc": "Related transaction not found"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_msg",
+                            "error_code",
+                            "error_desc"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_msg": "FL",
+                            "error_code": "NE3022",
+                            "error_desc": "Related transaction not found"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "CaptureV2 request from AGODA_AUTO to NTT with null"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-7507",
+        "OD": "For cybs.do Auth payment successful.In capture,txnidhavemultipletransactionrecords.ItwillreturnerrorCode='NE3025'",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "cybs",
+        "testFlow": [
+            "paymentRequest-paymentRequest",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "paymentRequest-paymentRequest1",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog4",
+            "frontend_cybsLog-cybsLog5",
+            "frontend_cybsLog-cybsLog6",
+            "captureRequestV2-capture",
+            "frontend_cybsLog-cybsLogCallback"
+        ],
+        "paymentRequest": {
+            "amt": "100",
+            "txnid": "testmultipletxnid",
+            "txncurr": "HKD",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|John Doe|CC|VISA",
+            "od": "od - uat testing",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "channelType": "cybs",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "remarks": "remarks",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorization request from NTT to cybs with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorization response from cybs to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_AUTO with HKD"
+                    ]
+                }
+            }
+        },
+        "paymentRequest1": {
+            "amt": "100",
+            "txnid": "testmultipletxnid",
+            "txncurr": "HKD",
+            "nttrefid": "",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmJBuqCGi327Y=|John Doe|CC|VISA",
+            "od": "od - uat testing111",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "channelType": "cybs",
+            "udf1": "udf1 - uat",
+            "udf2": "udf2 - uat",
+            "udf3": "udf3 - uat",
+            "udf4": "udf4 - uat",
+            "udf5": "udf5 - uat",
+            "remarks": "remarks111",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "Transaction Authorization Succeeded"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorization request from NTT to cybs with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorization response from cybs to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_AUTO with HKD"
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "amt": "100",
+            "nttrefid": "",
+            "txnid": "testmultipletxnid",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Multiple transaction records found for the same txnid, please query by nttrefid again.",
+                "errorCode": "NE3025",
+                "errorDesc": "Multiple transaction records found for the same txnid, please query by nttrefid again."
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsLogCallback": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-7515",
+        "OD": "For orbital.do Auth payment but status is failed.then do capture.It will return errorCode='NE4012' and errorDesc='Uncapturable trasaction status-failed transaction'.",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "orbital",
+        "testFlow": [
+            "paymentRequest-paymentRequest",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "captureRequestV2-capture",
+            "frontend_cybsLog-cybsLogCallback"
+        ],
+        "paymentRequest": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "USD",
+            "od": "NTT Test",
+            "channelType": "orbital",
+            "carddata": "y59AX5M6RVPqXt9wpzkOYRALHe9uhoHmJBuqCGi327Y|John Doe|CC|VISA",
+            "authentication": "N",
+            "manualCapture": "Y",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "fraudControl": "N",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Invalid parameter - carddata"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_AUTO with USD"
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "amt": "100",
+            "txnid": "",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "respcode": "01",
+                "respdesc": "Uncapturable transaction status - failed transaction",
+                "errorCode": "NE4012",
+                "errorDesc": "Uncapturable transaction status - failed transaction"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorCode",
+                "errorDesc"
+            ]
+        },
+        "cybsLogCallback": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    }
+]

@@ -1,0 +1,156 @@
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import com.nttdata.demo.NdhkSeleniumUtil;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
+
+log.info("the broswer we will use : "+vars.get("browsers")); 
+String browserNames = vars.get("browsers");
+//String[] browserNameList = browserNames.split("-");
+boolean headless = false;
+String browserPaths = "";
+if("chrome".equals(browserNames)){
+   browserPaths = props.get("chromeDriver");
+}else{
+   browserPaths = vars.get("geckoDriver");
+}
+log.info("broswer path : "+browserPaths); 
+//for(String browserName :browserNameList) {
+String environment = vars.get("environment");
+if("0".equals(environment)){
+  log.info("UI test in local environment");
+}
+else{
+  log.info("UI test in remote environment");
+  log.info("remote environment: "+remoteUrl);
+}
+String remoteUrl = vars.get("remoteUrl");
+
+//DateFormat 
+SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+log.info("the date time before WebDriver create: "+df.format(new Date()));
+WebDriver driver = NdhkSeleniumUtil.createDriver(browserNames,headless,browserPaths,environment,remoteUrl);
+log.info("the date time after WebDriver create:"+df.format(new Date()));
+try {
+	String wechats = null;
+    String paypals = null;
+	String redirectUrl =  vars.get("redirect_url");
+
+    log.info("the date time before opening redirect url: "+df.format(new Date()));
+        //driver.manage().timeouts().pageLoadTimeout(120, TimeUnit.SECONDS);
+		driver.get(redirectUrl);
+	driver.manage().window().maximize();
+
+
+	log.info("the date time after opening redirect url: "+df.format(new Date()));
+	WebDriverWait wait = new WebDriverWait(driver, 45, 500);
+	JSONObject jsonObject = JSONObject.fromObject(vars.getObject("dataPay"));
+	JSONArray jan = (JSONArray) jsonObject.get("steps");
+	
+	log.info("WebDriver opened successfully");
+	log.info("step size is "+jan.size());
+	for(int i=0;i<jan.size();i++){ 
+		JSONObject jo = JSONObject.fromObject(jan.get(i)); 
+		String actionName = jo.getString("actionName");
+		String byType = jo.getString("byType");
+		String byValue = jo.getString("byValue");
+		String value = jo.getString("value");
+		if(byValue.equals("paypal")){
+	          paypals = byValue;
+		}
+                        	if(value.equals("search_refid")){
+                         driver.get("https://portal.sit.ndhkpay.com/transactions/transactionlist");
+	            value = vars.get("gatewayReferenceId");
+                         log.info("xqy77"+value);
+		}
+                   
+		log.info("the date time before Operation element[element type:"+byType+",element Value:"+byValue+"]: "+df.format(new Date()));
+		NdhkSeleniumUtil.executeStep(wait,driver,actionName,byType,byValue,value);
+		log.info("the date time after Operation element[ "+actionName+"]: "+df.format(new Date()));
+		String waitingTime = jo.getString("waitingTime");
+		int times = Integer.parseInt(waitingTime);
+		Thread.sleep(times);
+	  }
+
+        //if("paypal".equals(paypals)){
+	//Thread.sleep(3000);
+	//	String current_url = driver.getCurrentUrl();
+	//	String[] url = current_url.split("&");
+ 	//	String newUrl = "https://www.sandbox.paypal.com/webapps/xoonboarding?" + url[1] +"&country.x=HK&locale.x=zh_HK&locale.x=zh_HK&country.x=HK#/checkout/guest";
+	//	log.info("yuanli test 3521----"+newUrl); 
+	//	driver.get(newUrl);
+	//	Thread.sleep(2000);
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"set","id","cc","4111111111111111");
+	//	Thread.sleep(2000);
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"set","id","expiry_value","12/25");
+	//	Thread.sleep(2000);
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"set","id","cvv","123");
+	//	Thread.sleep(1000);
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"set","id","lastName","��");
+	//	Thread.sleep(1000);
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"set","id","firstName","��");
+	//	Thread.sleep(1000);
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"set","id","billingLine1","1");
+	//	Thread.sleep(1000);
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"set","id","telephone","87232433");
+	//	Thread.sleep(1000);
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"set","id","email","778899@NTTDATA.com");
+	//	Thread.sleep(1000);
+	//        log.info("yuanli test 3523----"); 
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"click","xpath","//*[@id=\"signupContainer\"]/fieldset/div[3]/label",null);
+	//	Thread.sleep(1000);
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"click","xpath","//*[@id=\"signupContainer\"]/fieldset/xo-guest-options/div/div/div/div[2]/span/label",null);
+	//	Thread.sleep(1000);
+	//	NdhkSeleniumUtil.executeStep(wait,driver,"click","id","guestSubmit",null);
+	//	Thread.sleep(10000);
+	//}
+
+	//String title = driver.getTitle();
+	JSONObject jsonOj = new JSONObject();
+	//Thread.sleep(2000);
+	
+	log.info("the date time before get page result: "+df.format(new Date()));
+	JSONArray jan1 = (JSONArray) jsonObject.get("element");
+      	 if(jan1.size()!=0){
+	    for(int i=0;i<jan1.size();i++){
+		JSONObject joobj = JSONObject.fromObject(jan1.get(i)); 
+		String elementName = joobj.getString("elementName");
+		String byValue = joobj.getString("byValue");
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(byValue)));
+		if(elementName.equals("Value")){
+		jsonOj.accumulate(elementName,driver.findElement(By.xpath(byValue)).getAttribute("value"));
+		}else{
+                jsonOj.accumulate(elementName,driver.findElement(By.xpath(byValue)).getText());
+		}
+	      }
+	Thread.sleep(1000);
+	}
+	log.info("the date time after get page result: "+df.format(new Date()));
+	vars.put("resultJson", jsonOj.toString());
+	log.info("resultJson : "+jsonOj.toString());
+ 
+}catch(Exception e) {
+	log.info(e.getMessage());
+    //throw e;
+}finally {
+	driver.quit();
+}
+//}
+
+
+
+
+	
+		
+

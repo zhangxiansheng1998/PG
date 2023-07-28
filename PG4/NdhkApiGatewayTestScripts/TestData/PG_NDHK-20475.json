@@ -1,0 +1,3034 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-22575",
+        "OD": "For PUT /v2/tokens, when not set carddata in request body, will return NE1177, Missing parameter - cardData",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2"
+        ],
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "token": "2209091163373644",
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1177",
+                "errorDescription": "Missing parameter - cardData",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '2209091163373644'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT_JPMC",
+                            "alias":"949022XXXXXX9217",
+                            "status": "CREATED",
+                            "source":"KCP",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "created_date",
+                            "updated_date"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '2209091163373644'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "created_date":"2022-09-09 14:10:56",
+                            "updated_date":"2022-09-09 14:10:56"
+                        }
+                    ]
+                }
+            }
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT_JPMC to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT_JPMC"
+                    ]
+                }
+            }
+        }
+    },
+	{
+        "testDataId": "PaymentGateway_NDHK-22576",
+        "OD": "For PUT /v2/tokens, when set invalid carddata in request body, will return NE1206, Invalid parameter - cardData",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2"
+        ],
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "token": "2208091162807944",
+            "cardData": "XZ13aC5625frSmc4KVww5bQHCw41tOgBCq5RZ293RUHQOSfBHCa+UE9wMiU=123|John Doe|CC|VISA",
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1206",
+                "errorDescription": "Invalid parameter - cardData",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '2209091163373644'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT_JPMC",
+                            "alias":"949022XXXXXX9217",
+                            "status": "CREATED",
+                            "source":"KCP",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "created_date",
+                            "updated_date"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '2209091163373644'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "created_date":"2022-09-09 14:10:56",
+                            "updated_date":"2022-09-09 14:10:56"
+                        }
+                    ]
+                }
+            }
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT_JPMC to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT_JPMC"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-22577",
+        "OD": "For PUT /v2/tokens, when card is in card_iin_mapping for provider is kcp and Issuer is CCUF, will return success",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "jsonV2TokenApiKey-generateToken",
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2"
+        ],
+        "generateToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData": "XZ13aC5625frSmc4j7aHSyWDbGP8QOLnVjzjBg/Uol1Abkw5Uj2ByHcEyrc=|JJoh|CC|MASTER",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "currency":"KRW",
+            "cardPin":"11",
+            "customerDetails":{
+                "taxNumber":"880808"
+            },
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "MASTERCARD",
+                "cardHolderName": "JJoh",
+                "expiryMonth": "03",
+                "expiryYear": "2025",
+                "maskedCardNumber": "511111XXXXXX1111",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider"
+            ]
+        },
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData": "XZ13aC5625frSmc4yqxXnt8P/4M/t0O337067LZXTmQCkAW2mJWUZOT385g=|John Doe|CC|VISA",
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "01",
+                "expiryYear": "2026",
+                "maskedCardNumber": "439225XXXXXX4322",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT",
+                            "alias":"439225XXXXXX4322",
+                            "status": "MODIFIED",
+                            "source":"NDHK",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-22580",
+        "OD": "For PUT /v2/tokens, when card is in card_iin_mapping for provider is kcp and Issuer is CAMF, will return success",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "jsonV2TokenApiKey-generateToken",
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2"
+        ],
+        "generateToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData": "XZ13aC5625frSmc4j7aHSyWDbGP8QOLnVjzjBg/Uol1Abkw5Uj2ByHcEyrc=|JJoh|CC|MASTER",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "currency":"KRW",
+            "cardPin":"11",
+            "customerDetails":{
+                "taxNumber":"880808"
+            },
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "MASTERCARD",
+                "cardHolderName": "JJoh",
+                "expiryMonth": "03",
+                "expiryYear": "2025",
+                "maskedCardNumber": "511111XXXXXX1111",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider"
+            ]
+        },
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData": "XZ13aC5625frSmc4t+nhk68OfA+Zm9z4LjVMwOf9L3fZXJUAR8+QZT3WheA=|John Doe|CC|VISA",
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "VISA",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "01",
+                "expiryYear": "2026",
+                "maskedCardNumber": "740000XXXXXX4322",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT",
+                            "alias":"740000XXXXXX4322",
+                            "status": "MODIFIED",
+                            "source":"NDHK",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-22581",
+        "OD": "For PUT /v2/tokens, when not set token in request body, will return NE1119, Missing parameter - token",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2"
+        ],
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData":"XZ13aC5625frSmc4oQG4Ncqodn4BQw0E+A+ox+9dvaTX4C5HC3KSAvp/KRs=|John Doe|CC|VISA",
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1119",
+                "errorDescription": "Missing parameter - token",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT"
+                    ]
+                }
+            }
+        }
+    },
+{
+        "testDataId": "PaymentGateway_NDHK-22582",
+        "OD": "For PUT /v2/tokens, when set token in request body but not in token table, will return NE3021, Provided token not found",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2"
+        ],
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "token": "97c49659-164a-4a9f-aa27-228f638aa082",
+            "cardData": "XZ13aC5625frSmc4oQG4Ncqodn4BQw0E+A+ox+9dvaTX4C5HC3KSAvp/KRs=|John Doe|CC|VISA",
+            "expectedResult": {
+                "httpCode": 404,
+                "errorCode": "NE3021",
+                "errorDescription": "Provided token not found",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-22583",
+        "OD": "For PUT /v2/tokens, when set token in request body, token in token table and source isn't NDHK but not have ndhk_token in token_mapping table, will return NE0021, Unable to update card token",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2"
+        ],
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "token": "2209091163373644",
+            "cardData": "XZ13aC5625frSmc4oQG4Ncqodn4BQw0E+A+ox+9dvaTX4C5HC3KSAvp/KRs=|John Doe|CC|VISA",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "NE0021",
+                "errorDescription": "Unable to update card token",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '2209091163373644'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT_JPMC",
+                            "alias":"949022XXXXXX9217",
+                            "status": "CREATED",
+                            "source":"KCP",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "created_date",
+                            "updated_date"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '2209091163373644'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "created_date":"2022-09-09 14:10:56",
+                            "updated_date":"2022-09-09 14:10:56"
+                        }
+                    ]
+                }
+            }
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT_JPMC to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT_JPMC"
+                    ]
+                }
+            }
+        }
+    },
+{
+        "testDataId": "PaymentGateway_NDHK-22590",
+        "OD": "For PUT /v2/tokens, when update card from international card to local card fail, will return NE1206, Invalid parameter - cardData",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "jsonV2TokenApiKey-generateToken",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsLog-Log3",
+            "frontend_cybsLog-Log4",
+            "frontend_cybsDB-DB3",
+            "frontend_cybsDB-DB4",
+            "deleteV2TokenApiKey-delectToken",
+            "frontend_cybsLog-Log5",
+            "frontend_cybsLog-Log6",
+            "frontend_cybsDB-DB5",
+            "frontend_cybsDB-DB6"
+        ],
+        "generateToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData":"XZ13aC5625frSmc4oQG4Ncqodn4BQw0E+A+ox7Emgj0Vl3G2s9HXcpDcKe8=|JJoh|CC|VISA",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "currency":"KRW",
+            "cardPin":"11",
+            "customerDetails":{
+                "taxNumber":"880808"
+            },
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "VISA",
+                "cardHolderName": "JJoh",
+                "expiryMonth": "03",
+                "expiryYear": "2025",
+                "maskedCardNumber": "411111XXXXXX1111",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider"
+            ]
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT",
+                            "alias":"411111XXXXXX1111",
+                            "status": "CREATED",
+                            "source":"NDHK",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData": "XZ13aC5625frSmc4s4A/vgV7lNEyVhUQi+C9DrNmNI4nU5Bf3mtYLwC1xuw=|John Doe|CC|Hyundai Card",
+            "tokenProvider": "GATEWAY-KCP",
+            "expectedResult": {
+                "httpCode": 400,
+                "errorCode": "NE1206",
+                "errorDescription": "Invalid parameter - cardData",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "Log3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "Log4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "DB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT",
+                            "alias":"411111XXXXXX1111",
+                            "status": "CREATED",
+                            "source":"NDHK",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "delectToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "expectedResult": {
+                "httpCode": 400,
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+
+        "Log5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "Log6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "DB5": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT",
+                            "alias":"411111XXXXXX1111",
+                            "status": "DELETED",
+                            "source":"NDHK",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB6": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-22591",
+        "OD": "For PUT /v2/tokens, when update card from international card to international card success",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "jsonV2TokenApiKey-generateToken",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsLog-Log3",
+            "frontend_cybsLog-Log4",
+            "frontend_cybsDB-DB3",
+            "frontend_cybsDB-DB4",
+            "deleteV2TokenApiKey-delectToken",
+            "frontend_cybsLog-Log5",
+            "frontend_cybsLog-Log6",
+            "frontend_cybsDB-DB5",
+            "frontend_cybsDB-DB6"
+        ],
+        "generateToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData":"XZ13aC5625frSmc4+Rig2X/KeOeee6IBa/zMKcopQCPmt4H+AZsIu6FjKSU=|JJoh|CC|VISA",
+            "tokenProvider": "GATEWAY",
+            "nickname": "Family card",
+            "currency":"KRW",
+            "cardPin":"11",
+            "customerDetails":{
+                "taxNumber":"880808"
+            },
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "VISA",
+                "cardHolderName": "JJoh",
+                "expiryMonth": "03",
+                "expiryYear": "2025",
+                "maskedCardNumber": "422344XXXXXX2222",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider"
+            ]
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT",
+                            "alias":"422344XXXXXX2222",
+                            "status": "CREATED",
+                            "source":"NDHK",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"VISA\""
+                        }
+                    ]
+                }
+            }
+        },
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData": "XZ13aC5625frSmc4j7aHSyWDbGP8QOLnVjzjBg/Uol1Abkw5Uj2ByHcEyrc=|John Doe|CC|Hyundai Card",
+            "tokenProvider": "GATEWAY",
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "MASTERCARD",
+                "cardHolderName": "John Doe",
+                "expiryMonth": "03",
+                "expiryYear": "2025",
+                "maskedCardNumber": "511111XXXXXX1111",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "Log3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "Log4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "DB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT",
+                            "alias":"511111XXXXXX1111",
+                            "status": "MODIFIED",
+                            "source":"NDHK",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"MASTERCARD\""
+                        }
+                    ]
+                }
+            }
+        },
+        "delectToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "expectedResult": {
+                "httpCode": 400,
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+
+        "Log5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "Log6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT"
+                    ]
+                }
+            }
+        },
+        "DB5": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT",
+                            "alias":"511111XXXXXX1111",
+                            "status": "DELETED",
+                            "source":"NDHK",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB6": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"cardBrand\": \"MASTERCARD\""
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-22592",
+        "OD": "For PUT /v2/tokens, when update card from local card to local card fail",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "jsonV2TokenApiKey-generateToken",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsLog-Log3",
+            "frontend_cybsLog-Log4",
+            "frontend_cybsDB-DB3",
+            "frontend_cybsDB-DB4",
+            "deleteV2TokenApiKey-delectToken",
+            "frontend_cybsLog-Log5",
+            "frontend_cybsLog-Log6",
+            "frontend_cybsDB-DB5",
+            "frontend_cybsDB-DB6"
+        ],
+        "generateToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData": "XZ13aC5625frSmc4jfgI3DcD6/26Taf9BbWE2oFgAKLf5a+07jHdN+Wj+vo=|John Doe|CC|Hyundai Card",
+            "tokenProvider": "GATEWAY-KCP",
+            "currency": "KRW",
+            "nickname": "Family card",
+            "cardPin":"10",
+            "customerDetails":{
+                "taxNumber":"880808"
+            },
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "OTHERS",
+                "cardHolderName": "John Doe",
+                "cardIssuer": "Hyundai",
+                "expiryMonth": "01",
+                "expiryYear": "2026",
+                "maskedCardNumber": "949022XXXXXX9217",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY-KCP"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider"
+            ]
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT_JPMC to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT_JPMC"
+                    ]
+                }
+            }
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT_JPMC",
+                            "alias":"949022XXXXXX9217",
+                            "status": "CREATED",
+                            "source":"KCP",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"issuer\": \"Hyundai\", \"cardType\": \"CREDIT\", \"cardBrand\": \"OTHERS\", \"issuerCode\": \"CCDI\", \"cardProgram\": \"COMMERCIAL\", \"issuerCountry\": \"KR\""
+                        }
+                    ]
+                }
+            }
+        },
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData":"XZ13aC5625frSmc4Nm8WWImxulRaX2grxnLaVB6uHZ7V4ngvz5Ecm690XnM=|John?Doe|CC|Shinhan?Card",
+            "tokenProvider": "GATEWAY-KCP",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode":"NE0021",
+                "errorDescription":"Unable to update card token",
+                "responseCode":"01",
+                "responseDescription":"fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "Log3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT_JPMC to NTT"
+                    ]
+                }
+            }
+        },
+        "Log4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT_JPMC"
+                    ]
+                }
+            }
+        },
+        "DB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT_JPMC",
+                            "alias":"949022XXXXXX9217",
+                            "status": "CREATED",
+                            "source":"KCP",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"issuer\": \"Hyundai\", \"cardType\": \"CREDIT\", \"cardBrand\": \"OTHERS\", \"issuerCode\": \"CCDI\", \"cardProgram\": \"COMMERCIAL\", \"issuerCountry\": \"KR\""
+                        }
+                    ]
+                }
+            }
+        },
+        "delectToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "expectedResult": {
+                "httpCode": 400,
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+
+        "Log5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT_JPMC to NTT"
+                    ]
+                }
+            }
+        },
+        "Log6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT_JPMC"
+                    ]
+                }
+            }
+        },
+        "DB5": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT_JPMC",
+                            "alias":"949022XXXXXX9217",
+                            "status": "DELETED",
+                            "source":"KCP",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB6": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"issuer\": \"Hyundai\", \"cardType\": \"CREDIT\", \"cardBrand\": \"OTHERS\", \"issuerCode\": \"CCDI\", \"cardProgram\": \"COMMERCIAL\", \"issuerCountry\": \"KR\""
+                        }
+                    ]
+                }
+            }
+        }
+    },
+{
+        "testDataId": "PaymentGateway_NDHK-22593",
+        "OD": "For PUT /v2/tokens, when update card from local card to international card fail",
+        "merchantId": "nttjpmc",
+        "Skip": false,
+        "caseType": "put token",
+        "testFlow": [
+            "jsonV2TokenApiKey-generateToken",
+            "frontend_cybsLog-Log1",
+            "frontend_cybsLog-Log2",
+            "frontend_cybsDB-DB1",
+            "frontend_cybsDB-DB2",
+            "putV2TokenApiKey-putToken",
+            "frontend_cybsLog-Log3",
+            "frontend_cybsLog-Log4",
+            "frontend_cybsDB-DB3",
+            "frontend_cybsDB-DB4",
+            "deleteV2TokenApiKey-delectToken",
+            "frontend_cybsLog-Log5",
+            "frontend_cybsLog-Log6",
+            "frontend_cybsDB-DB5",
+            "frontend_cybsDB-DB6"
+        ],
+        "generateToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData": "XZ13aC5625frSmc4jfgI3DcD6/26Taf9BbWE2oFgAKLf5a+07jHdN+Wj+vo=|John Doe|CC|Hyundai Card",
+            "tokenProvider": "GATEWAY-KCP",
+            "currency": "KRW",
+            "nickname": "Family card",
+            "cardPin":"10",
+            "customerDetails":{
+                "taxNumber":"880808"
+            },
+            "expectedResult": {
+                "httpCode": 400,
+                "cardBrand": "OTHERS",
+                "cardHolderName": "John Doe",
+                "cardIssuer": "Hyundai",
+                "expiryMonth": "01",
+                "expiryYear": "2026",
+                "maskedCardNumber": "949022XXXXXX9217",
+                "nickname": "Family card",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "tokenProvider": "GATEWAY-KCP"
+            },
+            "needAssert": [
+                "httpCode",
+                "cardBrand",
+                "cardHolderName",
+                "expiryMonth",
+                "expiryYear",
+                "maskedCardNumber",
+                "nickname",
+                "responseCode",
+                "responseDescription",
+                "tokenProvider"
+            ]
+        },
+        "Log1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT_JPMC to NTT"
+                    ]
+                }
+            }
+        },
+        "Log2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT_JPMC"
+                    ]
+                }
+            }
+        },
+        "DB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT_JPMC",
+                            "alias":"949022XXXXXX9217",
+                            "status": "CREATED",
+                            "source":"KCP",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"issuer\": \"Hyundai\", \"cardType\": \"CREDIT\", \"cardBrand\": \"OTHERS\", \"issuerCode\": \"CCDI\", \"cardProgram\": \"COMMERCIAL\", \"issuerCountry\": \"KR\""
+                        }
+                    ]
+                }
+            }
+        },
+        "putToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "cardData": "XZ13aC5625frSmc4oQG4Ncqodn4BQw0E+A+ox+9dvaTX4C5HC3KSAvp/KRs=|John Doe|CC|VISA",
+            "tokenProvider": "GATEWAY-KCP",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode":"NE0021",
+                "errorDescription":"Unable to update card token",
+                "responseCode":"01",
+                "responseDescription":"fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "Log3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT_JPMC to NTT"
+                    ]
+                }
+            }
+        },
+        "Log4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT_JPMC"
+                    ]
+                }
+            }
+        },
+        "DB3": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT_JPMC",
+                            "alias":"949022XXXXXX9217",
+                            "status": "CREATED",
+                            "source":"KCP",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB4": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"issuer\": \"Hyundai\", \"cardType\": \"CREDIT\", \"cardBrand\": \"OTHERS\", \"issuerCode\": \"CCDI\", \"cardProgram\": \"COMMERCIAL\", \"issuerCountry\": \"KR\""
+                        }
+                    ]
+                }
+            }
+        },
+        "delectToken": {
+            "headerSignature":true,
+            "bodySignature":false,
+            "expectedResult": {
+                "httpCode": 400,
+                "responseCode": "00",
+                "responseDescription": "success"
+            },
+            "needAssert": [
+                "httpCode",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+
+        "Log5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT_JPMC to NTT"
+                    ]
+                }
+            }
+        },
+        "Log6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize response from NTT to NTT_JPMC"
+                    ]
+                }
+            }
+        },
+        "DB5": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "customer_id",
+                            "merchantid",
+                            "alias",
+                            "status",
+                            "source",
+                            "save_token"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [                       
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "merchantid":"NTT_JPMC",
+                            "alias":"949022XXXXXX9217",
+                            "status": "DELETED",
+                            "source":"KCP",
+                            "customer_id":"0",
+                            "save_token":"0"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB6": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "token"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token_extra_info",
+                        "columnNames": [
+                            "extra_information"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{token}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "extra_information": "#Contains-\"issuer\": \"Hyundai\", \"cardType\": \"CREDIT\", \"cardBrand\": \"OTHERS\", \"issuerCode\": \"CCDI\", \"cardProgram\": \"COMMERCIAL\", \"issuerCountry\": \"KR\""
+                        }
+                    ]
+                }
+            }
+        }
+    }	
+]

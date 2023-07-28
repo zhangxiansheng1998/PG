@@ -1,0 +1,2235 @@
+[
+    {
+        "testDataId": "PaymentGateway_NDHK-15341",
+        "OD": "Verify post full capture /v2/capture gen by capture success with Oauth token(Master_Merchant) ,apikey，signature , Content-Type(json).",
+        "merchantId": "ntta1auto",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "100",
+                "manualCaptureStatus": "F",
+                "processorCode": "000",
+                "remainingAmount": "0",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "manualCaptureStatus",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "capture_amt",
+                            "txn_amt",
+                            "resp_code",
+                            "resp_msg",
+                            "acc_no",
+                            "merchant_id",
+                            "capture_mode",
+                            "currency"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "capture_amt": "1.0000",
+                            "txn_amt": "1.00",
+                            "resp_code": "000",
+                            "resp_msg": "OK",
+                            "acc_no": "345678XXXXX4564",
+                            "merchant_id": "NTT_a1_AUTO",
+                            "capture_mode": "MANUAL",
+                            "currency": "TWD"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_43"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded",
+                            "user_data_43": "F"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15342",
+        "OD": "Verify post partial capture /v2/capture gen by capture success with Oauth token(Master_Merchant) ,apikey，signature , Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "manualCaptureStatus": "P",
+                "processorCode": "000",
+                "remainingAmount": "50",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "manualCaptureStatus",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "capture_amt",
+                            "txn_amt",
+                            "resp_code",
+                            "resp_msg",
+                            "acc_no",
+                            "merchant_id",
+                            "capture_mode",
+                            "currency"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "capture_amt": "0.5000",
+                            "txn_amt": "1.00",
+                            "resp_code": "000",
+                            "resp_msg": "OK",
+                            "acc_no": "345678XXXXX4564",
+                            "merchant_id": "NTT_V2_AUTO",
+                            "capture_mode": "MANUAL",
+                            "currency": "TWD"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_43"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded",
+                            "user_data_43": "P"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15343",
+        "OD": "Verify post multiple partial capture /v2/capture gen by capture success with Oauth token(Master_Merchant) ,apikey，signature , Content-Type(json) .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture1",
+            "capturesV2ApiKey-capture2",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture1": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "manualCaptureStatus": "P",
+                "processorCode": "000",
+                "remainingAmount": "50",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "manualCaptureStatus",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture2": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "manualCaptureStatus": "F",
+                "processorCode": "000",
+                "remainingAmount": "0",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "manualCaptureStatus",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "capture_amt",
+                            "txn_amt",
+                            "resp_code",
+                            "resp_msg",
+                            "acc_no",
+                            "merchant_id",
+                            "capture_mode",
+                            "currency"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "capture_amt": "0.5000",
+                            "txn_amt": "1.00",
+                            "resp_code": "000",
+                            "resp_msg": "OK",
+                            "acc_no": "345678XXXXX4564",
+                            "merchant_id": "NTT_V2_AUTO",
+                            "capture_mode": "MANUAL",
+                            "currency": "TWD"
+                        },
+                        {
+                            "capture_amt": "0.5000",
+                            "txn_amt": "1.00",
+                            "resp_code": "000",
+                            "resp_msg": "OK",
+                            "acc_no": "345678XXXXX4564",
+                            "merchant_id": "NTT_V2_AUTO",
+                            "capture_mode": "MANUAL",
+                            "currency": "TWD"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_43"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded",
+                            "user_data_43": "F"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15344",
+        "OD": "Verify post full capture /v2/capture gen by capture success with Oauth token(Merchant) ,signature , Content-Type(json) .",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "oauthToken": {
+            "client_id": "0c0b68a3844242d3bb3270c122954f18",
+            "client_secret": "NYC1cNbKjJkHniOqP7n8lOFXstAlVonS",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MERCHANT",
+                "client_name": "NTT",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "100",
+                "manualCaptureStatus": "F",
+                "processorCode": "000",
+                "remainingAmount": "0",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "manualCaptureStatus",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "capture_amt",
+                            "txn_amt",
+                            "resp_code",
+                            "resp_msg",
+                            "acc_no",
+                            "merchant_id",
+                            "capture_mode",
+                            "currency"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "capture_amt": "1.0000",
+                            "txn_amt": "1.00",
+                            "resp_code": "000",
+                            "resp_msg": "OK",
+                            "acc_no": "345678XXXXX4564",
+                            "merchant_id": "NTT",
+                            "capture_mode": "MANUAL",
+                            "currency": "TWD"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_43"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded",
+                            "user_data_43": "F"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15345",
+        "OD": "Verify post partial capture /v2/capture gen by capture success with Oauth token(Merchant) ，signature , Content-Type(json) .",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "oauthToken": {
+            "client_id": "0c0b68a3844242d3bb3270c122954f18",
+            "client_secret": "NYC1cNbKjJkHniOqP7n8lOFXstAlVonS",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MERCHANT",
+                "client_name": "NTT",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "manualCaptureStatus": "P",
+                "processorCode": "000",
+                "remainingAmount": "50",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "manualCaptureStatus",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "capture_amt",
+                            "txn_amt",
+                            "resp_code",
+                            "resp_msg",
+                            "acc_no",
+                            "merchant_id",
+                            "capture_mode",
+                            "currency"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "capture_amt": "0.5000",
+                            "txn_amt": "1.00",
+                            "resp_code": "000",
+                            "resp_msg": "OK",
+                            "acc_no": "345678XXXXX4564",
+                            "merchant_id": "NTT",
+                            "capture_mode": "MANUAL",
+                            "currency": "TWD"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_43"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded",
+                            "user_data_43": "P"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15346",
+        "OD": "Verify post multiple partial capture /v2/capture gen by capture success with Oauth token(Master_Merchant) ,apikey，signature , Content-Type(json) .",
+        "merchantId": "ntt",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture1",
+            "capturesV2ApiKey-capture2",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "oauthToken": {
+            "client_id": "0c0b68a3844242d3bb3270c122954f18",
+            "client_secret": "NYC1cNbKjJkHniOqP7n8lOFXstAlVonS",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MERCHANT",
+                "client_name": "NTT",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture1": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "manualCaptureStatus": "P",
+                "processorCode": "000",
+                "remainingAmount": "50",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "manualCaptureStatus",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture2": {
+            "headerToken": true,
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "50",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "amount": "50",
+                "manualCaptureStatus": "F",
+                "processorCode": "000",
+                "remainingAmount": "0",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "1",
+                "userDefinedData2": "2",
+                "userDefinedData3": "3",
+                "userDefinedData4": "4",
+                "userDefinedData5": "5"
+            },
+            "needAssert": [
+                "amount",
+                "manualCaptureStatus",
+                "processorCode",
+                "remainingAmount",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "capture_amt",
+                            "txn_amt",
+                            "resp_code",
+                            "resp_msg",
+                            "acc_no",
+                            "merchant_id",
+                            "capture_mode",
+                            "currency"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "capture_amt": "0.5000",
+                            "txn_amt": "1.00",
+                            "resp_code": "000",
+                            "resp_msg": "OK",
+                            "acc_no": "345678XXXXX4564",
+                            "merchant_id": "NTT",
+                            "capture_mode": "MANUAL",
+                            "currency": "TWD"
+                        },
+                        {
+                            "capture_amt": "0.5000",
+                            "txn_amt": "1.00",
+                            "resp_code": "000",
+                            "resp_msg": "OK",
+                            "acc_no": "345678XXXXX4564",
+                            "merchant_id": "NTT",
+                            "capture_mode": "MANUAL",
+                            "currency": "TWD"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "stage",
+                            "user_data_43"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "stage": "Transaction Authorization Succeeded",
+                            "user_data_43": "F"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15347",
+        "OD": "Verify post /v2/capture gen by capture failed with access token isn't equal Bearer.",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiUGF5bWVudEdhdGV3YXkiXSwic2NvcGUiOlsicGF5bWVudCJdLCJjbGllbnRfdHlwZSI6Ik1FUkNIQU5UIiwiZXhwIjoxNjM4ODY2OTM0LCJjbGllbnRfbmFtZSI6Ik5UVCIsInZlcnNpb24iOiIyIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJqdGkiOiIxYzgzZjJkYi0yMmJjLTQ1MDktYmU2ZC0xNWEzOGQ2MDIyNWIiLCJjbGllbnRfaWQiOiIwYzBiNjhhMzg0NDI0MmQzYmIzMjcwYzEyMjk1NGYxOCJ9.tI61f9VdXiZivEaUOBZnUjxFgJ-Ck_jmGi_3pKl_YCo4X6e0FGZzbi_mroN3T9Hh7FrlEGHRa3sr6W_Ricfz6ZXXXcxLkXIGKlCFqwBpAszMFs_fKe4JeL94uLnqGaFmKH25MsdPul0LZKXiS8FS8e5nf2GOlmEq7kPQ1dLmM5c",
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "NE0103",
+                "errorDescription": "Incorrect access token type",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15348",
+        "OD": "Verify post /v2/capture gen by capture failed with access token format isn't correct.",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "accessToken": "Bearer RandomAccessToken",
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "NE0104",
+                "errorDescription": "Invalid access token format",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15349",
+        "OD": "Verify post /v2/capture gen by capture failed with access token has expired .",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture"
+        ],
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "accessToken": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiUGF5bWVudEdhdGV3YXkiXSwic2NvcGUiOlsicGF5bWVudCJdLCJjbGllbnRfdHlwZSI6Ik1BU1RFUl9NRVJDSEFOVCIsImV4cCI6MTYzNzY0OTQ0MywiY2xpZW50X25hbWUiOiJOVFRfTUFTVEVSIiwidmVyc2lvbiI6IjIiLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl0sImp0aSI6IjZjODllYWJmLWQxOTAtNDExYS04OWU4LTQ1YjNhNjdmYjM3MiIsImNsaWVudF9pZCI6ImY4OWI0NTllNmEwYjQwMTNhZGRjZTY2Mzk5MTYyMDdhIn0.LY0qbgkv6JQpPf3d1uk4kNOMa7DkS5XUOAxAArlttwmNGhca1izyeDgqJJnn8UW6ug8zbto71Ld80QGUuj9N43a1ZNiI28zOHrQsvcTzZSwGEdj1C_rYC5eqLJ6E3rynRG2ixhHB2lhCYFwGiG1-Y43FvL-JKVCzQEa7X1NIayY",
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 402,
+                "errorCode": "NE0105",
+                "errorDescription": "The access token has expired",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15350",
+        "OD": "Verify post /v2/capture gen by capture(MPGS ) failed with invalid signature ",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "headerSignature": true,
+            "signature": "RandomSignature",
+            "bodySignature": false,
+            "amount": "100",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 403,
+                "errorCode": "NE0100",
+                "errorDescription": "Invalid API credentials",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15351",
+        "OD": "Verify post /v2/capture gen by capture failed with Master_Merchant does't match apikey (use master_merchant access token and use NTT_JPMC capture)",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "apikey": "mJfVsVt7gGJ695uNndBU",
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 401,
+                "errorCode": "NE0107",
+                "errorDescription": "Invalid sub-merchant login",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15352",
+        "OD": "Verify post /v2/capture gen by capture failed with Master_Merchant does't send apikey",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "apikey": "",
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 401,
+                "errorCode": "NE1171",
+                "errorDescription": "Missing parameter - apikey",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway_NDHK-15353",
+        "OD": "Verify post /v2/capture gen by capture failed with Master_Merchant and send invalid apikey",
+        "merchantId": "nttv2auto",
+        "Skip": false,
+        "caseType": "v2captures",
+        "testFlow": [
+            "oauthTokenV2-oauthToken",
+            "jsonTransactionsV2ApiKey-transaction",
+            "capturesV2ApiKey-capture",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "oauthToken": {
+            "client_id": "f89b459e6a0b4013addce6639916207a",
+            "client_secret": "yyTXDyRfMvLEp3f5m2MBbxalELeoXi0N",
+            "grant_type": "client_credentials",
+            "expectedResult": {
+                "token_type": "bearer",
+                "scope": "payment",
+                "client_type": "MASTER_MERCHANT",
+                "client_name": "NTT_MASTER",
+                "version": "2"
+            },
+            "needAssert": [
+                "token_type",
+                "scope",
+                "client_type",
+                "client_name",
+                "version"
+            ]
+        },
+        "transaction": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "transactionCurrency": "TWD",
+            "transactionId": "generate",
+            "orderDescription": "NTT Test",
+            "paymentMode": "AUTH",
+            "channelType": "mpgs",
+            "paymentMethod": "card",
+            "channelId": "amex",
+            "cardData": "XZ13aC5625frSmc4feyP3EqRdsHuT+8AGU36+Ayy43h37RzPr04k48ZSEZE=|John Doe|CC|AMEX",
+            "isAuthentication": false,
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "returnUrl": "https://uat.ndhkpay.com/payment-page",
+            "userDefinedData1": "userDefinedData1",
+            "userDefinedData2": "userDefinedData2",
+            "userDefinedData3": "userDefinedData3",
+            "userDefinedData4": "userDefinedData4",
+            "userDefinedData5": "userDefinedData5",
+            "expectedResult": {
+                "amount": "100",
+                "channelId": "amex",
+                "channelType": "mpgs",
+                "paymentMethod": "card",
+                "paymentMode": "AUTH",
+                "processorCode": "000",
+                "responseCode": "00",
+                "responseDescription": "success",
+                "transactionCurrency": "TWD",
+                "userDefinedData1": "userDefinedData1",
+                "userDefinedData2": "userDefinedData2",
+                "userDefinedData3": "userDefinedData3",
+                "userDefinedData4": "userDefinedData4",
+                "userDefinedData5": "userDefinedData5"
+            },
+            "needAssert": [
+                "amount",
+                "channelId",
+                "channelType",
+                "paymentMethod",
+                "paymentMode",
+                "processorCode",
+                "responseCode",
+                "responseDescription",
+                "transactionCurrency",
+                "userDefinedData1",
+                "userDefinedData2",
+                "userDefinedData3",
+                "userDefinedData4",
+                "userDefinedData5"
+            ]
+        },
+        "capture": {
+            "headerToken": true,
+            "apikey": "RandomApikey",
+            "headerSignature": true,
+            "bodySignature": false,
+            "amount": "100",
+            "gatewayReferenceId": "reuse",
+            "transactionId": "",
+            "userDefinedData1": "1",
+            "userDefinedData2": "2",
+            "userDefinedData3": "3",
+            "userDefinedData4": "4",
+            "userDefinedData5": "5",
+            "expectedResult": {
+                "httpCode": 403,
+                "errorCode": "NE0100",
+                "errorDescription": "Invalid API credentials",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

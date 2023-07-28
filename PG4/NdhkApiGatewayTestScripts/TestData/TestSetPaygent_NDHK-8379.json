@@ -1,0 +1,3853 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-8378",
+        "OD": "verify capture is successful using v2captureRequest for non 3d paygent card payment",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-capturetable",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "capture": {
+            "amt": "1000",
+            "expectedResult": {
+                "respdesc": "success",
+                "manualCaptureStatus": "F",
+                "proc_code": "0",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "login": "NTT_AUTO",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "manualCaptureStatus",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "login",
+                "respcode"
+            ]
+        },
+        "capturetable": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_msg",
+                            "capture_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "capture_mode": "MANUAL",
+                            "resp_msg": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_43"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "user_data_43": "F"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "respcode=00"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8381",
+        "OD": "verify capture is not successful when manualCapture:'N' is sent in paymentRequest",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCaptureStatus": "F",
+                "manualCapture": "N",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "capture": {
+            "amt": "1000",
+            "expectedResult": {
+                "respdesc": "Uncapturable transaction status - captured transaction",
+                "manualCaptureStatus": "N",
+                "errorDesc": "Uncapturable transaction status - captured transaction",
+                "amt": "1000",
+                "errorCode": "NE4013",
+                "txncurr": "JPY",
+                "login": "NTT_AUTO",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respdesc",
+                "manualCaptureStatus",
+                "errorDesc",
+                "amt",
+                "errorCode",
+                "txncurr",
+                "login",
+                "respcode"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "respcode=00"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8384",
+        "OD": "verify capture is successful using v2captureRequest for 3d paygent card payment",
+        "merchantId": "nttauto",
+        "Skip": true,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-capturetable",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "HIwTFREHcb6xd8hXpo+gWZO8fvyIJoLmYdDyX0jdq28=|CardHolder|CC|OTHER",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "Y",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCaptureStatus": "N",
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "respdesc": "pending",
+                "proc_code": "7",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "name",
+                    "byValue": "password",
+                    "value": "123456",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "/html/body/center/form/table/tbody/tr[3]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "capture": {
+            "amt": "1000",
+            "expectedResult": {
+                "respdesc": "success",
+                "manualCaptureStatus": "F",
+                "proc_code": "0",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "login": "NTT_AUTO",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "manualCaptureStatus",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "login",
+                "respcode"
+            ]
+        },
+        "capturetable": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_msg",
+                            "capture_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "capture_mode": "MANUAL",
+                            "resp_msg": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_43"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK",
+                            "user_data_43": "F"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "respcode=00"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8386",
+        "OD": "verify partial capture is not supported for paygent non 3d card",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-capturetable",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCaptureStatus": "N",
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "amt": "500",
+            "expectedResult": {
+                "respdesc": "Partial capture is not available for the payment processor",
+                "manualCaptureStatus": "N",
+                "errorDesc": "Partial capture is not available for the payment processor",
+                "amt": "500",
+                "errorCode": "NE3015",
+                "txncurr": "JPY",
+                "login": "NTT_AUTO",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respdesc",
+                "manualCaptureStatus",
+                "errorDesc",
+                "errorCode",
+                "amt",
+                "txncurr",
+                "login",
+                "respcode"
+            ]
+        },
+        "capturetable": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_msg",
+                            "capture_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "capture_mode": "MANUAL",
+                            "resp_msg": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "respcode=00"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8387",
+        "OD": "verify proper error message is displayed when Authorization Amount is less than the minimum amount",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "0",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "wtuY0ewq97XfDOGiMxsS5hALHe9uhoHmEI8ZVK63HJo=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "respdesc": "Requested zero amount in non-applicable situation",
+                "errorDesc": "Requested zero amount in non-applicable situation",
+                "amt": "0",
+                "errorCode": "NE1025",
+                "txncurr": "JPY",
+                "login": "NTT_AUTO",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respdesc",
+                "errorDesc",
+                "amt",
+                "errorCode",
+                "txncurr",
+                "login",
+                "respcode"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "respcode=01"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8388",
+        "OD": "Paygent card Minimum Authorization Amount,amt=1",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-capturetable",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "1",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCaptureStatus": "N",
+                "manualCapture": "Y",
+                "amt": "1",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "amt": "1",
+            "expectedResult": {
+                "respdesc": "success",
+                "manualCaptureStatus": "F",
+                "proc_code": "0",
+                "amt": "1",
+                "txncurr": "JPY",
+                "login": "NTT_AUTO",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "manualCaptureStatus",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "login",
+                "respcode"
+            ]
+        },
+        "capturetable": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_msg"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "resp_msg": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "respcode=00"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8417",
+        "OD": "verify NDHK-8243 BUG.log without 'Transaction Not Found' error",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "channelId": "Daily Yamazaki",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "paymentMethod": "cvs",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "100",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "respdesc": "pending",
+                "proc_code": "0",
+                "paymentMethod": "cvs",
+                "paymentcodetype": "number",
+                "channelId": "Daily Yamazaki"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod",
+                "paymentcodetype",
+                "channelId"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8418",
+        "OD": "verify manualCapture :'N' and verify whether auto capture takes place and perform refund",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLog4",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "1000",
+            "expectedResult": {
+                "respdesc": "success",
+                "proc_code": "0",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "respcode": "00",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "respdesc",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "respcode"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_msg"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_msg": "SUCCESS"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorize request from NTT to paygent"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorize response from paygent to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Full Refund response from paygent to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Full Refund request from NTT to paygent"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8442",
+        "OD": "verify - 3d paygent card payment and perform Partial refund",
+        "merchantId": "nttauto",
+        "Skip": true,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB1",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-capturetable",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLog4",
+            "frontend_cybsLog-cybsLog5",
+            "frontend_cybsLog-cybsLog6",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "HIwTFREHcb6xd8hXpo+gWZO8fvyIJoLmYdDyX0jdq28=|CardHolder|CC|OTHER",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "Y",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCaptureStatus": "N",
+                "manualCapture": "Y",
+                "amt": "100",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "respdesc": "pending",
+                "proc_code": "7",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "name",
+                    "byValue": "password",
+                    "value": "123456",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "/html/body/center/form/table/tbody/tr[3]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "amt": "100",
+            "expectedResult": {
+                "respdesc": "success",
+                "manualCaptureStatus": "F",
+                "proc_code": "0",
+                "amt": "100",
+                "txncurr": "JPY",
+                "login": "NTT_AUTO",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "manualCaptureStatus",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "login",
+                "respcode"
+            ]
+        },
+        "capturetable": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_msg"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "resp_msg": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "10",
+            "expectedResult": {
+                "respdesc": "success",
+                "proc_code": "0",
+                "amt": "10",
+                "txncurr": "JPY",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "respcode"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_msg"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_msg": "SUCCESS"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorize request from NTT to paygent"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Authorize response from paygent to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Capture request from NTT to paygent"
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Capture response from paygent to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog5": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Refund request from NTT_AUTO to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog6": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Refund response from NTT to NTT_AUTO"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8443",
+        "OD": "verify void -non 3d -sameday",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "refundRequestV2-void",
+            "frontend_cybsDB-refundTable",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCaptureStatus": "N",
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "void": {
+            "amt": "1000",
+            "expectedResult": {
+                "respdesc": "success",
+                "proc_code": "0",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "respcode"
+            ]
+        },
+        "refundTable": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "refund_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "refund_mode": "VOID"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Void request from NTT to paygent"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Void response from paygent to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8444",
+        "OD": "verify void-3d-different day",
+        "merchantId": "nttauto",
+        "Skip": true,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybs3DS-payPage",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "HIwTFREHcb6xd8hXpo+gWZO8fvyIJoLmYdDyX0jdq28=|CardHolder|CC|OTHER",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "Y",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCaptureStatus": "N",
+                "manualCapture": "Y",
+                "amt": "100",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "respdesc": "pending",
+                "proc_code": "7",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "set",
+                    "byType": "name",
+                    "byValue": "password",
+                    "value": "123456",
+                    "waitingTime": "2000"
+                },
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "/html/body/center/form/table/tbody/tr[3]/td/input",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [
+                {
+                    "elementName": "Txn",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[1]/h3/span"
+                },
+                {
+                    "elementName": "Nttrefid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[3]/div[2]/span"
+                },
+                {
+                    "elementName": "Txnid",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[2]/div[2]/span"
+                },
+                {
+                    "elementName": "Date",
+                    "byValue": "//*[@id=\"error-page\"]/div/div/div/div[2]/div[4]/div[2]/span"
+                }
+            ],
+            "expectedResult": {
+                "Txn": "Transaction completed successfully",
+                "Nttrefid": "#Contains-1",
+                "Txnid": "#Contains-1",
+                "Date": "#Contains-202"
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8445",
+        "OD": "verify same day -full capture",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-capturetable",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "amt": "1000",
+            "expectedResult": {
+                "respdesc": "success",
+                "manualCaptureStatus": "F",
+                "proc_code": "0",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "login": "NTT_AUTO",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "manualCaptureStatus",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "login",
+                "respcode"
+            ]
+        },
+        "capturetable": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_msg",
+                            "capture_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "capture_mode": "MANUAL",
+                            "resp_msg": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "respcode=00"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8447",
+        "OD": "verify same day -full capture and different day partial refund",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-capturetable",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "amt": "1000",
+            "expectedResult": {
+                "respdesc": "success",
+                "manualCaptureStatus": "F",
+                "proc_code": "0",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "login": "NTT_AUTO",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "manualCaptureStatus",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "login",
+                "respcode"
+            ]
+        },
+        "capturetable": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_msg",
+                            "capture_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "capture_mode": "MANUAL",
+                            "resp_msg": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "respcode=00"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8449",
+        "OD": "verify paygent and paymentMethod:card and Full refund - non 3d",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1",
+            "captureRequestV2-capture",
+            "frontend_cybsDB-capturetable",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB2",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLog4",
+            "frontend_cybsLog-cybsLogCallback1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCaptureStatus": "N",
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "capture": {
+            "amt": "1000",
+            "expectedResult": {
+                "respdesc": "success",
+                "manualCaptureStatus": "F",
+                "proc_code": "0",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "login": "NTT_AUTO",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "respdesc",
+                "manualCaptureStatus",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "login",
+                "respcode"
+            ]
+        },
+        "capturetable": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "capture",
+                        "columnNames": [
+                            "resp_msg",
+                            "capture_mode"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId": [
+                        {
+                            "capture_mode": "MANUAL",
+                            "resp_msg": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "1000",
+            "expectedResult": {
+                "respdesc": "success",
+                "proc_code": "0",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "respcode": "00",
+                "signature": "{{ResponseSignature}}"
+            },
+            "needAssert": [
+                "respdesc",
+                "proc_code",
+                "amt",
+                "txncurr",
+                "respcode"
+            ]
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_msg"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "resp_msg": "SUCCESS"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Capture request from NTT to paygent"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Capture response from paygent to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Full Refund request from NTT to paygent"
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Full Refund response from paygent to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLogCallback1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Callback Json"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8548",
+        "OD": "verify invalid cert for cvs paymentmethod",
+        "merchantId": "agodaauto",
+        "Skip": true,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "channelId": "Family Mart",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "paymentMethod": "cvs",
+            "customerDetails": {
+                "lastName": "lastname",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "errorDesc": "Payment gateway configuration error",
+                "manualCapture": "N",
+                "amt": "100",
+                "errorCode": "NE9998",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "AGODA_AUTO",
+                "respcode": "01",
+                "respdesc": "Payment gateway configuration error",
+                "paymentMethod": "cvs",
+                "channelId": "Family Mart"
+            },
+            "needAssert": [
+                "errorDesc",
+                "manualCapture",
+                "amt",
+                "errorCode",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "paymentMethod",
+                "channelId"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "rrn",
+                            "user_data_27",
+                            "user_data_28"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8549",
+        "OD": "verify invalid cert for card paymentmethod",
+        "merchantId": "agodaauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "HIwTFREHcb6xd8hXpo+gWZO8fvyIJoLmYdDyX0jdq28=|CardHolder|CC|OTHER",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "paymentMethod": "card",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "authentication": "N",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "errorDesc": "Unauthorized request",
+                "manualCapture": "N",
+                "amt": "1000",
+                "errorCode": "NE0101",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "AGODA_AUTO",
+                "respcode": "01",
+                "respdesc": "Unauthorized request",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "errorDesc",
+                "manualCapture",
+                "amt",
+                "errorCode",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8578",
+        "OD": "verify /v3/requeryRequest with txnid and maskedCardNumber was not sent for CVS paygent payment",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "channelId": "Family Mart",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "paymentMethod": "cvs",
+            "customerDetails": {
+                "lastName": "lastname",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "100",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "respdesc": "pending",
+                "proc_code": "0",
+                "paymentMethod": "cvs",
+                "paymentcodetype": "number",
+                "channelId": "Family Mart"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod",
+                "paymentcodetype",
+                "channelId"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8579",
+        "OD": "verify maskedCardNumber sent correctly for non 3d paygent payment - nttrefid",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8611",
+        "OD": "verify maskedCardNumber sent correctly for non 3d paygent payment - txnid",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8577",
+        "OD": "verify /v3/requeryRequest with nttrefid and maskedCardNumber was not sent for CVS paygent payment",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "channelId": "Family Mart",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "paymentMethod": "cvs",
+            "customerDetails": {
+                "lastName": "lastname",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "100",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "respdesc": "pending",
+                "proc_code": "0",
+                "paymentMethod": "cvs",
+                "paymentcodetype": "number",
+                "channelId": "Family Mart"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod",
+                "paymentcodetype",
+                "channelId"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8446",
+        "OD": "verify different day -full capture",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCaptureStatus": "N",
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8448",
+        "OD": "verify different day- full capture and same day partial/full refund",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "1000",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "carddata": "2cmY2hB/qKMGH7qi7fraskkQWp/bui8SH9mtFk4PYno=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "Y",
+            "authentication": "N",
+            "paymentMethod": "card",
+            "customerDetails": {
+                "lastName": "lastName",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "Y",
+                "amt": "1000",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "0",
+                "paymentMethod": "card"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-8758",
+        "OD": "payment should be successful with ntt merchant with cvs and card",
+        "merchantId": "nttauto",
+        "Skip": false,
+        "caseType": "paygent",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "txncurr": "JPY",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/c95a862f-863d-4987-a84c-b9a3edbcf1e1",
+            "channelType": "paygent",
+            "channelId": "Family Mart",
+            "od": "testing",
+            "remarks": "remarks",
+            "manualCapture": "N",
+            "paymentMethod": "cvs",
+            "customerDetails": {
+                "lastName": "lastname",
+                "firstName": "testing",
+                "phone": "123-0123456785"
+            },
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "100",
+                "txncurr": "JPY",
+                "channelType": "paygent",
+                "login": "NTT_AUTO",
+                "respcode": "02",
+                "respdesc": "pending",
+                "proc_code": "0",
+                "paymentMethod": "cvs",
+                "paymentcodetype": "number",
+                "channelId": "Family Mart"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code",
+                "paymentMethod",
+                "paymentcodetype",
+                "channelId"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "EN"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]

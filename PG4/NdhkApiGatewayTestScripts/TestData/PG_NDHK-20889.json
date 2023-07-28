@@ -1,0 +1,218 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-23611",
+        "OD": "For ISG - Network Token do put /v2/tokens when token is exist in token table and source is the same as ISG, return error NE0021 - Unable to update card token",
+        "merchantId": "nttv2",
+        "Skip": false,
+        "caseType": "ISG - Network Token",
+        "testFlow": [
+            "processorTokensApiKey-createtoken",
+            "frontend_cybs3DS-payPage",
+            "frontend_queryLog-queryLog1",
+            "frontend_cybsDB-cybsDB1",
+            "putV2TokenApiKey-puttoken",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3"
+        ],
+        "createtoken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "tokenProvider": "GATEWAY-ISG",
+            "cardData": "XZ13aC5625frSmc41KRpoxUG22DMiTZ0ItVx1M00D3gn3SDK3xsl3ZTZ1Ec=|JJoh|CC|MASTER",
+            "currency": "SGD",
+            "customerDetails": {
+                "ipAddress": "127.0.0.1"
+            },
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36",
+            "returnUrl": "https://webhook.site/89089778-ef87-4079-87a8-b19213f3750e",
+            "callbackUrl": "https://webhook.site/89089778-ef87-4079-87a8-b19213f3750e",
+            "expectedResult": {
+                "responseCode": "02",
+                "responseDescription": "pending"
+            },
+            "needAssert": [
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "payPage": {
+            "steps": [
+                {
+                    "actionName": "click",
+                    "byType": "xpath",
+                    "byValue": "//*[@id=\"otpForm\"]/div/div/div/div/button",
+                    "value": null,
+                    "waitingTime": "2000"
+                }
+            ],
+            "element": [],
+            "expectedResult": {}
+        },
+        "queryLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize transactionAuthorize Enc Data response from isg to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "CardTokenReferenceNo=1"
+                    ]
+                }
+            }
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "CardTokenReferenceNo"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "token",
+                        "columnNames": [
+                            "source"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "token = '{CardTokenReferenceNo}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "source": "ISG"
+                        }
+                    ]
+                }
+            }
+        },
+        "puttoken": {
+            "headerSignature": true,
+            "bodySignature": false,
+            "token": "{{CardTokenReferenceNo}}",
+            "cardData": "XZ13aC5625frSmc41KRpoxUG22DMiTZ0ItVx1M00D3gn3SDK3xsl3ZTZ1Ec=|JJoh|CC|MASTER",
+            "expectedResult": {
+                "httpCode": "402",
+                "errorCode": "NE0021",
+                "errorDescription": "Unable to update card token",
+                "responseCode": "01",
+                "responseDescription": "fail"
+            },
+            "needAssert": [
+                "httpCode",
+                "errorCode",
+                "errorDescription",
+                "responseCode",
+                "responseDescription"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize request from NTT_V2 to NTT",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Tokenize request from NTT_V2 to NTT"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        ", errorCode=NE0021, "
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "Tokenize response from NTT to NTT_V2",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        ", responseCode=01, responseDescription=fail, errorDescription=Unable to update card token, "
+                    ]
+                }
+            }
+        }
+    }
+]

@@ -1,0 +1,989 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-12165",
+        "OD": "Send purchase request to merchant that does not have hase merchant credential",
+        "merchantId": "ntta1auto",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "paymentRequest-payment"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "processors_config",
+                        "columnNames": [
+                            "count(*)"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id = 'NTT_a1_AUTO' and processor = 'hase' and payment_method = 'card'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "count(*)": "0"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "carddata": "14mKDMhwK7+WsG8Cp3/gHJO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "expectedResult": {
+                "amt": "100",
+                "errorCode": "NE3043",
+                "errorDesc": "Card not issued by HASE",
+                "login": "NTT_a1_AUTO",
+                "respcode": "01",
+                "respdesc": "fail",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12160",
+        "OD": "Test smart routing feature in hase payment request - smart routing: true",
+        "merchantId": "nttcdmpgs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "paymentRequest-payment"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "merchant_config",
+                        "columnNames": [
+                            "feature_config"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "merchant_id = 'NTT_CD_MPGS'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "feature_config": "#Contains-\"smartRouting\": {\"enabled\": true}"
+                        }
+                    ]
+                }
+            }
+        },
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "carddata": "14mKDMhwK7+WsG8Cp3/gHJO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "channelType": "mpgs",
+                "login": "NTT_CD_MPGS",
+                "maskcardnumber": "401200XXXXXX7777",
+                "respcode": "02",
+                "respdesc": "pending",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "channelType",
+                "login",
+                "maskcardnumber",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12155",
+        "OD": "Send purchase request with txncurr = USD",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "USD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "carddata": "14mKDMhwK7+WsG8Cp3/gHJO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "errorCode": "NE3043",
+                "errorDesc": "Card not issued by HASE",
+                "login": "NTT_CD_CYBS",
+                "respcode": "01",
+                "respdesc": "fail",
+                "txncurr": "USD"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12154",
+        "OD": "Send purchase request with channelType = hase + paymentMethod = cashdollar",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "cashdollar",
+            "authentication": "Y",
+            "carddata": "14mKDMhwK7+WsG8Cp3/gHJO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "errorCode": "NE1032",
+                "errorDesc": "Invalid parameter - paymentMethod",
+                "login": "NTT_CD_CYBS",
+                "respcode": "01",
+                "respdesc": "fail",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12153",
+        "OD": "Send purchase request with channelType = hase + paymentMethod = credit",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "credit",
+            "authentication": "Y",
+            "carddata": "14mKDMhwK7+WsG8Cp3/gHJO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "errorCode": "NE1032",
+                "errorDesc": "Invalid parameter - paymentMethod",
+                "login": "NTT_CD_CYBS",
+                "respcode": "01",
+                "respdesc": "fail",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12151",
+        "OD": "Send purchase request with channelType = hase + paymentMethod = credit",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "paymentRequest-payment"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_iin_mapping",
+                        "columnNames": [
+                            "card_property"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "start_range = '450875001' and end_range = '450875001' and provider = 'hase'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "card_property": "#Contains-\"isCardEligibleCashDollar\": \"N\""
+                        }
+                    ]
+                }
+            }
+        },
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "carddata": "NLQl6saXG/zLt+SfeGh9PpO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "isForceProceed": true,
+            "expectedResult": {
+                "amt": "100",
+                "errorCode": "NE0101",
+                "errorDesc": "Unauthorized request",
+                "login": "NTT_CD_CYBS",
+                "respcode": "01",
+                "respdesc": "fail",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12149",
+        "OD": "Send purchase request with HASE card not supporting cash dollar",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "frontend_cybsDB-cybsDB1",
+            "paymentRequest-payment"
+        ],
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "card_iin_mapping",
+                        "columnNames": [
+                            "card_property"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "start_range = '450875001' and end_range = '450875001' and provider = 'hase'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "card_property": "#Contains-\"isCardEligibleCashDollar\": \"N\""
+                        }
+                    ]
+                }
+            }
+        },
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "carddata": "NLQl6saXG/zLt+SfeGh9PpO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "login": "NTT_CD_CYBS",
+                "maskcardnumber": "450875XXXXXX1019",
+                "proc_code": "475",
+                "respcode": "02",
+                "respdesc": "Redirect To 3D Secure Page",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "login",
+                "maskcardnumber",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12148",
+        "OD": "Send purchase request with card not issued by HASE",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "carddata": "ry/7PYufAgczETe7hlNwSpO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "login": "NTT_CD_CYBS",
+                "maskcardnumber": "400000XXXXXX0002",
+                "proc_code": "475",
+                "respcode": "02",
+                "respdesc": "Redirect To 3D Secure Page",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "login",
+                "maskcardnumber",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12147",
+        "OD": "Send purchase request with invalid login credential",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment"
+        ],
+        "payment": {
+            "pass": "RandomPass",
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "carddata": "14mKDMhwK7+WsG8Cp3/gHJO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "errorCode": "NE0100",
+                "errorDesc": "Invalid API credentials",
+                "login": "NTT_CD_CYBS",
+                "respcode": "01",
+                "respdesc": "Invalid API credentials",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "login",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12146",
+        "OD": "Send purchase request without login credential",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment"
+        ],
+        "payment": {
+            "login": "",
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "carddata": "14mKDMhwK7+WsG8Cp3/gHJO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "errorCode": "NE1012",
+                "errorDesc": "Missing parameter - login",
+                "respcode": "01",
+                "respdesc": "Missing parameter - login",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "errorCode",
+                "errorDesc",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12145",
+        "OD": "Send purchase request with od & udf1-5",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB1"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "carddata": "14mKDMhwK7+WsG8Cp3/gHJO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "udf1": "I am udf1 test",
+            "udf2": "I am udf2 test",
+            "udf3": "I am udf3 test",
+            "udf4": "I am udf4 test",
+            "udf5": "I am udf5 test",
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "login": "NTT_CD_CYBS",
+                "maskcardnumber": "401200XXXXXX7777",
+                "proc_code": "475",
+                "respcode": "02",
+                "respdesc": "Redirect To 3D Secure Page",
+                "txncurr": "HKD",
+                "udf1": "I am udf1 test",
+                "udf2": "I am udf2 test",
+                "udf3": "I am udf3 test",
+                "udf4": "I am udf4 test",
+                "udf5": "I am udf5 test"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "login",
+                "maskcardnumber",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "udf1",
+                "udf2",
+                "udf3",
+                "udf4",
+                "udf5"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "user_data_15",
+                            "user_data_23",
+                            "user_data_27",
+                            "user_data_28",
+                            "user_data_29",
+                            "user_data_30"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "user_data_15": "NTT Test - Hase v1",
+                            "user_data_23": "I am udf1 test",
+                            "user_data_27": "I am udf2 test",
+                            "user_data_28": "I am udf3 test",
+                            "user_data_29": "I am udf4 test",
+                            "user_data_30": "I am udf5 test"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12144",
+        "OD": "Send purchase request with aes carddata and processor = mpgs",
+        "merchantId": "nttcdmpgs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "cardEncryptionMethod": "AES",
+            "carddata": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "channelType": "mpgs",
+                "login": "NTT_CD_MPGS",
+                "maskcardnumber": "401200XXXXXX7777",
+                "respcode": "02",
+                "respdesc": "pending",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "channelType",
+                "login",
+                "maskcardnumber",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12143",
+        "OD": "Send purchase request with aes carddata and processor = cybs",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "cardEncryptionMethod": "AES",
+            "carddata": "XZ13aC5625frSmc4hFNKsyaFKbXzlPsT0p63oPTV8ONgZhGhDHQW5+Ki22A=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "login": "NTT_CD_CYBS",
+                "maskcardnumber": "401200XXXXXX7777",
+                "proc_code": "475",
+                "respcode": "02",
+                "respdesc": "Redirect To 3D Secure Page",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "login",
+                "maskcardnumber",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12142",
+        "OD": "Send purchase request with authentication = N",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "N",
+            "carddata": "14mKDMhwK7+WsG8Cp3/gHJO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "auth_code": "831000",
+                "channelType": "cybs",
+                "login": "NTT_CD_CYBS",
+                "manualCapture": "N",
+                "paymentMethod": "card",
+                "proc_code": "100",
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "auth_code",
+                "channelType",
+                "login",
+                "manualCapture",
+                "paymentMethod",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-12141",
+        "OD": "Send purchase request with manualCapture = Y",
+        "merchantId": "nttcdcybs",
+        "Skip": false,
+        "caseType": "hase",
+        "testFlow": [
+            "paymentRequest-payment",
+            "frontend_cybsLog-cybsLog1",
+            "frontend_cybsLog-cybsLog2",
+            "frontend_cybsLog-cybsLog3",
+            "frontend_cybsLog-cybsLog4"
+        ],
+        "payment": {
+            "amt": "100",
+            "txnid": "generate",
+            "od": "NTT Test - Hase v1",
+            "txncurr": "HKD",
+            "channelType": "hase",
+            "paymentMethod": "card",
+            "authentication": "Y",
+            "carddata": "14mKDMhwK7+WsG8Cp3/gHJO8fvyIJoLm6HnVN2W8+mg=|John Doe|CC|VISA",
+            "manualCapture": "Y",
+            "ru": "https://uat.ndhkpay.com/NTT_Pages/return",
+            "callbackUrl": "https://webhook.site/f1a513e7-9a8e-4375-8e23-122f37284432",
+            "customerDetails": {
+                "name": "John",
+                "phone": "852-11112222"
+            },
+            "expectedResult": {
+                "amt": "100",
+                "authenticationStatus": "Y",
+                "login": "NTT_CD_CYBS",
+                "maskcardnumber": "401200XXXXXX7777",
+                "proc_code": "475",
+                "respcode": "02",
+                "respdesc": "Redirect To 3D Secure Page",
+                "txncurr": "HKD"
+            },
+            "needAssert": [
+                "amt",
+                "authenticationStatus",
+                "login",
+                "maskcardnumber",
+                "proc_code",
+                "respcode",
+                "respdesc",
+                "txncurr"
+            ]
+        },
+        "cybsLog1": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{reuse}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment request from NTT_CD_CYBS to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog2": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "AuthEnroll request from NTT to cybs with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog3": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "AuthEnroll response from cybs to NTT with HKD"
+                    ]
+                }
+            }
+        },
+        "cybsLog4": {
+            "body": {
+                "login": "NTT",
+                "signature": "{{signature}}",
+                "systemLogQueries": {
+                    "systemQuery1": {
+                        "logProvider": "splunk",
+                        "logGroup": "{{logGroup}}",
+                        "logStream": "{{logStream}}",
+                        "startDateTime": "{{startDateTime}}",
+                        "endDateTime": "{{endDateTime}}",
+                        "query": "{{query}}",
+                        "columnNames": [
+                            "billTo_email",
+                            "card_expirationMonth"
+                        ],
+                        "conditionStrings": []
+                    }
+                }
+            },
+            "expectedResult": {
+                "systemLogQueries": {
+                    "systemQuery1": [
+                        "Payment response from NTT to NTT_CD_CYBS with HKD"
+                    ]
+                }
+            }
+        }
+    }
+]

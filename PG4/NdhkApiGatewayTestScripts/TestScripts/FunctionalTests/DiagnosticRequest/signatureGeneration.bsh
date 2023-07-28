@@ -1,0 +1,46 @@
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+public static byte[] encodeWithHMACSHA2(String text, String keyString)
+		throws NoSuchAlgorithmException, java.security.InvalidKeyException {
+	if(text == null){
+		return null;
+	}
+	Key sk = new SecretKeySpec(keyString.getBytes(StandardCharsets.UTF_8), "HMACSHA512");
+	Mac mac = Mac.getInstance(sk.getAlgorithm());
+	mac.init(sk);
+	return mac.doFinal(text.getBytes(StandardCharsets.UTF_8));
+}
+
+public static String byteToHexString(byte[] byData) {
+	if(byData == null){
+		return null;
+	}
+	StringBuilder sb = new StringBuilder(byData.length * 2);
+
+	for (int i = 0; i < byData.length; i++) {
+		int v = byData[i] & 0xff;
+		if (v < 16){
+			sb.append('0');
+		}
+		sb.append(Integer.toHexString(v));
+	}
+	return sb.toString();
+}
+
+String signatureData = vars.get("signatureData");
+// String signatureKey = vars.get("signatureKey");
+String signatureKey = "35d97d4459ae1883cbd2bb8be644115";
+
+log.info("see value ------------signatureData3db----->"+signatureData);
+log.info("see value ------------signatureKey----->"+signatureKey);
+
+String encryptedResult = byteToHexString(encodeWithHMACSHA2(signatureData, signatureKey));
+vars.put("signature", encryptedResult);

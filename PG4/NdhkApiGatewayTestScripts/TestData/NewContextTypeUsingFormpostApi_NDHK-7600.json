@@ -1,0 +1,1572 @@
+[
+    {
+        "testDataId": "PaymentGateway-NDHK-7654",
+        "merchantId": "agodaauto",
+        "OD": "Verify the Success payment using created token",
+        "Skip": false,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5457210001000019",
+            "expiryDate": "12/25",
+            "cvv": "946",
+            "saveRequest": true,
+            "verifyRequest": false,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "545721XXXXXX0019"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7655",
+        "merchantId": "agodaauto",
+        "OD": "Verify the Failed payment using created token",
+        "Skip": false,
+        "caseType": "tokenize",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "54248200038419111",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respdesc": "Card verification failed",
+                "errorDesc": "Card verification failed",
+                "errorCode": "NE0015",
+                "respcode": "01"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "errorDesc",
+                "errorDesc"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "errorCode": "PE4013",
+                "errorDesc": "API format error - invalid data by merchants",
+                "manualCapture": "N",
+                "proc_code": "2593",
+                "respcode": "01",
+                "respdesc": "[2593] cardNumber is required"
+            },
+            "needAssert": [
+                "errorCode",
+                "errorDesc",
+                "manualCapture",
+                "proc_code",
+                "respcode"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "FL"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7656",
+        "merchantId": "agodaauto",
+        "OD": "Verify the full refund for success payment",
+        "Skip": false,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB",
+            "refundRequestV2-refund",
+            "frontend_cybsDB-cybsDB1",
+            "frontend_cybsDB-cybsDB2"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        },
+        "refund": {
+            "amt": "250",
+            "expectedResult": {
+                "respdesc": "success",
+                "proc_code": "SUCCESS",
+                "amt": "250",
+                "txncurr": "PHP",
+                "respcode": "00"
+            },
+            "needAssert": [
+                "amt",
+                "txncurr",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB1": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "refund",
+                        "columnNames": [
+                            "resp_msg",
+                            "rrn",
+                            "currency"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = {nttrefid}"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "currency": "PHP",
+                            "resp_msg": "SUCCESS",
+                            "rrn": "isNotNull"
+                        }
+                    ]
+                }
+            }
+        },
+        "cybsDB2": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "user_data_25"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "user_data_25": "Fully_Refunded"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7657",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": false,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5457210001000019",
+            "expiryDate": "12/25",
+            "cvv": "946",
+            "saveRequest": true,
+            "verifyRequest": false,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "545721XXXXXX0019"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7649",
+        "merchantId": "agodaauto",
+        "OD": "Verify the Masked Card Number in first 6 last 4 format",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7630",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7629",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7628",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7627",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7626",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7625",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7624",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7623",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7622",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7621",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "testDataId": "PaymentGateway-NDHK-7620",
+        "merchantId": "agodaauto",
+        "OD": "Verify the partial refund for success payment",
+        "Skip": true,
+        "caseType": "paymaya",
+        "testFlow": [
+            "tokenizeRequest-tokenize",
+            "paymentRequest-payment",
+            "frontend_cybsDB-cybsDB"
+        ],
+        "tokenize": {
+            "card": "5424820003841911",
+            "expiryDate": "04/23",
+            "cvv": "111",
+            "saveRequest": true,
+            "verifyRequest": true,
+            "txncurr": "PHP",
+            "expectedResult": {
+                "respcode": "00",
+                "respdesc": "success",
+                "txncurr": "PHP",
+                "maskcardnumber": "542482XXXXXX1911"
+            },
+            "needAssert": [
+                "respcode",
+                "respdesc",
+                "txncurr",
+                "maskcardnumber"
+            ]
+        },
+        "payment": {
+            "amt": "250",
+            "txnid": "generate",
+            "txncurr": "PHP",
+            "od": "NTT Test",
+            "channelType": "paymaya",
+            "authentication": "N",
+            "manualCapture": "N",
+            "udf1": "Merchant Defined Field 1 Testing",
+            "callbackUrl": "https://script.google.com/macros/s/AKfycbwRpCfYEQiDPGvCdE_mJXPWa9z42oSquQ4Ua5jQjd9B_k-L1wA/exec",
+            "expectedResult": {
+                "manualCapture": "N",
+                "amt": "250",
+                "txncurr": "PHP",
+                "channelType": "paymaya",
+                "login": "AGODA_AUTO",
+                "respcode": "00",
+                "respdesc": "success",
+                "proc_code": "SUCCESS"
+            },
+            "needAssert": [
+                "manualCapture",
+                "amt",
+                "txncurr",
+                "channelType",
+                "login",
+                "respcode",
+                "respdesc",
+                "proc_code"
+            ]
+        },
+        "cybsDB": {
+            "body": {
+                "login": "NTT",
+                "signature": "1111111111111111111111",
+                "signMix": [
+                    "nttrefid"
+                ],
+                "databaseQueries": {
+                    "dbQueryId1": {
+                        "hostName": "uatDB",
+                        "databaseName": "pgdb",
+                        "tableName": "transaction_log",
+                        "columnNames": [
+                            "txn_status",
+                            "user_data_36"
+                        ],
+                        "queryType": "value",
+                        "conditionStrings": [
+                            "transaction_id = '{nttrefid}'"
+                        ]
+                    }
+                }
+            },
+            "expectedResult": {
+                "signature": "",
+                "databaseQueries": {
+                    "dbQueryId1": [
+                        {
+                            "txn_status": "OK"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]
